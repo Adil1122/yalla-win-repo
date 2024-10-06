@@ -194,11 +194,36 @@ export async function GET(request: Request) {
       var user_type = searchparams.get('user_type') + '';
       var skip = parseInt(searchparams.get('skip') + '');
       var limit = parseInt(searchparams.get('limit') + '');
+      var schedule = searchparams.get('schedule') + '';
+      schedule = 'monthly'; // for time being
+      console.log('user_type: ', user_type)
 
-      var users = await User.find({
-          user_type: user_type,
+      var start_date = new Date().toISOString().slice(0, 10)
+      var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+      var end_date = tomorrowDate.toISOString().slice(0, 10);
 
-      }).sort({'createdAt': -1}).skip(skip).limit(limit);
+      if(schedule === 'weekly') {
+          start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      }
+
+      if(schedule === 'monthly') {
+          start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      }
+
+      var users = await User.find(
+        { 
+            $and:[ 
+                {
+                    createdAt: {
+                        $gte : new Date(start_date), 
+                        $lt: new Date(end_date)
+                    }
+                }, 
+                {user_type: user_type}
+            ]
+        }
+      ).sort({'createdAt': -1}).skip(skip).limit(limit)
+      .select(['_id', 'name', 'email', 'city', 'country', 'mobile']);
 
 
       var invoices: any = [];
