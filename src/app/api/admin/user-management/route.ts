@@ -65,7 +65,7 @@ export async function POST(request: Request) {
             locked: 0,
             mac: getMAC(),
             qr_code: qr_code,
-            image: '/uploads/users/' + image_name,
+            image: blob ? blob.url : '',
             platform: platform,
             role: 'user',
             user_type: user_type
@@ -118,7 +118,7 @@ export async function PUT(request: Request) {
           var residentialAddress = data.get('residentialAddress');
           var image:any = data.get('image');
           var image_name = user.image;
-          console.log(name+ '/' + city + '/' + area)
+          //console.log(name+ '/' + city + '/' + area)
           var blob = null;
           if(image) {
             image_name = qr_code + '-' + image.name;
@@ -145,7 +145,7 @@ export async function PUT(request: Request) {
                 locked: 0,
                 mac: getMAC(),
                 qr_code: qr_code,
-                image: '/uploads/users/' + image_name
+                image: blob ? blob.url : user.image
             }
           };
 

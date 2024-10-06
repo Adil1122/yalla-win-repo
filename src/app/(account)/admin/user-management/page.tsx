@@ -126,12 +126,13 @@ export default function AdminUserManagement() {
     });
 
     setId("");
+    setPreviewImage('')
     setModalTwoIsOpen(true);
   }
 
-  async function openEditPopup(notif_id: any) {
-    setId(notif_id);
-    var url = "/api/admin/user-management?id=" + notif_id;
+  async function openEditPopup(id: any) {
+    setId(id);
+    var url = "/api/admin/user-management?id=" + id;
     let response = await fetch(url, {
       method: "PATCH",
     });
@@ -160,6 +161,7 @@ export default function AdminUserManagement() {
         server_error: "",
         server_success: "",
       });
+      setPreviewImage('')
       setModalTwoIsOpen(true);
     }
   }
