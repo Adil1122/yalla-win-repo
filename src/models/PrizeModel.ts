@@ -7,7 +7,8 @@ const prizeSchema = new Schema (
         name: {type: String, required: false},
         image: {type: String, required: false},
         price: {type: Number, required: false},
-        specifications: {type: String, required: false}
+        specifications: {type: String, required: false},
+        date: {type: Date, required: false}
     },
     {
         timestamps: true

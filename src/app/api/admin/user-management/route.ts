@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import getMAC, { isMAC } from 'getmac';
 import User from "@/models/UserModel";
 import connectMongoDB from "@/libs/mongoosdb";
-import { writeFile } from "fs/promises";
 import Invoice from "@/models/InvoiceModel";
 import { put } from '@vercel/blob';
 

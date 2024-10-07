@@ -20,6 +20,9 @@ export default function AdminGameProdManagement() {
    var merchant_app: any = 'merchant';
    var product_type:any = 'games';
 
+   const [product_image, setProductImage] = useState<File | undefined>();
+   const [prize_image, setPrizeImage] = useState<File | undefined>();
+
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
       product_type = activeTabTwo;
@@ -36,22 +39,6 @@ export default function AdminGameProdManagement() {
 
    const handleToggle = () => {
       setToggled(!toggled)
-   }
-
-   const handleGameActionClick = () => {
-
-      {/* manipulate modal as per the action */}
-      setModalIsOpen(true)
-   }
-   
-   const handleProductActionClick = () => {
-
-      {/* manipulate modal as per the action */}
-      setModalThreeIsOpen(true)
-   }
-   
-   const handleDelete = () => {
-      setModalTwoIsOpen(true)
    }
 
    const handleAddDetails = () => {
@@ -89,6 +76,8 @@ export default function AdminGameProdManagement() {
       product_date_error: "",
       prize_name_error: "",
       prize_price_error: "",
+      product_image_error: "",
+      prize_image_error: "",
       //prize_specifications_error: "",
       server_error: "",
       server_success: ""
@@ -113,6 +102,8 @@ export default function AdminGameProdManagement() {
          product_date_error: "",
          prize_name_error: "",
          prize_price_error: "",
+         product_image_error: "",
+         prize_image_error: "",
          //prize_specifications_error: "",
       };
       var is_error = false;
@@ -172,6 +163,22 @@ export default function AdminGameProdManagement() {
          is_error = true;
       }
 
+      if (typeof product_image !== 'undefined') {
+         var image_type = product_image.type;
+         if (image_type.indexOf('image/') === -1) {
+            err['product_image_error'] = 'Invalid image format';
+            is_error = true;
+         }
+      }
+
+      if (typeof prize_image !== 'undefined') {
+         var image_type = prize_image.type;
+         if (image_type.indexOf('image/') === -1) {
+            err['prize_image_error'] = 'Invalid image format';
+            is_error = true;
+         }
+      }
+
       setForm((prev) => {
          return { ...prev, ...err };
       });
@@ -207,6 +214,8 @@ export default function AdminGameProdManagement() {
          product_date_error: "",
          prize_name_error: "",
          prize_price_error: "",
+         product_image_error: "",
+         prize_image_error: "",
          //prize_specifications_error: "",
          server_error: "",
          server_success: ""
@@ -217,7 +226,9 @@ export default function AdminGameProdManagement() {
       } else {
          setModalThreeIsOpen(true);
       }
-      
+      setProductDetails([{ key: '', value: '' }])
+      setPrizeImage(undefined)
+      setProductImage(undefined)
    }
 
    async function openEditPopup(prod_id: any) {
@@ -231,8 +242,9 @@ export default function AdminGameProdManagement() {
          product_name: content.product.name,
          product_price: content.product.price,
          product_status: content.product.status,
-         product_date: content.product.date,
+         product_date: content.product.date ? new Date(content.product.date).toISOString().slice(0, 10) : '',
          product_description: content.product.description,
+         product_image: content.product.image,
 
          game_name_error: "",
          game_type_error: "",
@@ -255,8 +267,10 @@ export default function AdminGameProdManagement() {
       } else {
          data['prize_name'] = content.prize.name;
          data['prize_price'] = content.prize.price;
-         data['prize_date'] = content.prize.date;
+         data['prize_date'] = content.prize.date ? new Date(content.prize.date).toISOString().slice(0, 10) : '';
+         data['prize_image'] = content.prize.image;
          if(content.prize.specifications !== null && content.prize.specifications !== '') {
+            console.log(content.prize.specifications)
             setProductDetails(JSON.parse(content.prize.specifications))
          } else {
             setProductDetails(content.prize.specifications)
@@ -273,8 +287,21 @@ export default function AdminGameProdManagement() {
          } else {
             setModalThreeIsOpen(true);
          }
-         
       }
+      setPrizeImage(undefined)
+      setProductImage(undefined)
+   }
+
+   const handleChangeProductFile = (e: any) => {
+      const files = e.currentTarget.files;
+      if (files)
+         setProductImage(files[0]);
+   }
+
+   const handleChangePrizeFile = (e: any) => {
+      const files = e.currentTarget.files;
+      if (files)
+         setPrizeImage(files[0]);
    }
 
    async function onSubmit(e: any) {
@@ -311,6 +338,14 @@ export default function AdminGameProdManagement() {
             success_message = 'Notification updated successfully.';
          }
 
+         if (typeof product_image !== 'undefined') {
+            formData.append('product_image', product_image);
+         }
+
+         if (typeof prize_image !== 'undefined') {
+            formData.append('prize_image', prize_image);
+         }
+
          try {
             let response = await fetch(url, {
                method: method,
@@ -336,6 +371,8 @@ export default function AdminGameProdManagement() {
                merchant_app = activeTab;
                getTotalRecords();
             }
+            setProductImage(undefined)
+            setPrizeImage(undefined)
          } catch (error) {
             setForm((prev) => {
                return { ...prev, server_error: `A problem occurred with your fetch operation: ${error}` };
@@ -410,8 +447,8 @@ export default function AdminGameProdManagement() {
       if(!response.ok) {
 
       } else {
-         product_type = activeTab;
-         merchant_app = activeTabTwo;
+         //product_type = activeTab;
+         //merchant_app = activeTabTwo;
          getTotalRecords();
       }
    } 
@@ -517,7 +554,9 @@ export default function AdminGameProdManagement() {
                               ) : (
                                  <>
                                  <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.prizeInProduct.length > 0 ? product.prizeInProduct[0].name : ''}</td>
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.prizeInProduct.length > 0 ? product.prizeInProduct[0].price : ''}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">
+                                    <img className="max-w-[60px] mx-auto" src={product.prizeInProduct.length > 0 ? product.prizeInProduct[0].image : ''} alt="No Image Found" />
+                                 </td>
                                  </>
                               )}
 
@@ -728,12 +767,21 @@ export default function AdminGameProdManagement() {
                      <div className="flex flex-col gap-4">
                         <div className="text-darkone text-size-4">Product Image</div>
                         <div className="text-darkone text-size-2 border border-lightone rounded">
+
                            <div className="relative">
                               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer">
                                  <FontAwesomeIcon icon={faImage} size="1x" />
                               </div>
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="file"
+                              onChange={handleChangeProductFile} />
                            </div>
+
+                           {
+                              form.product_image_error !== '' && (
+                                 <span style={{color: "red"}}>{form.product_image_error}</span>
+                              )
+                           }
+
                         </div>
                      </div>
                   </div>
@@ -821,14 +869,22 @@ export default function AdminGameProdManagement() {
                               }
                            </div>
                            <div className="flex flex-col gap-2">
-                              <div className="text-darkone text-size-4">Image</div>
+                              <div className="text-darkone text-size-4">Product Image</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
                                  <div className="relative">
                                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer">
                                        <FontAwesomeIcon icon={faImage} size="1x" />
                                     </div>
-                                    <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                                    <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="file"
+                                    onChange={handleChangeProductFile} />
                                  </div>
+
+                                 {
+                                    form.prize_image_error !== '' && (
+                                       <span style={{color: "red"}}>{form.prize_image_error}</span>
+                                    )
+                                 }
+
                               </div>
                            </div>
                         </div>
@@ -919,13 +975,14 @@ export default function AdminGameProdManagement() {
 
                            </div>
                            <div className="flex flex-col gap-2">
-                              <div className="text-darkone text-size-4">Image</div>
+                              <div className="text-darkone text-size-4">Prize Image</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
                                  <div className="relative">
                                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer">
                                        <FontAwesomeIcon icon={faImage} size="1x" />
                                     </div>
-                                    <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                                    <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="file"
+                                    onChange={handleChangePrizeFile} />
                                  </div>
                               </div>
                            </div>

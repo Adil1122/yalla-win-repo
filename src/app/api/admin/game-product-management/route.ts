@@ -90,7 +90,7 @@ export async function POST(request: Request) {
             var qr_code:any = Date.now() + Math.random();
             var blob = null;
             if(prize_image) {
-                prize_image = qr_code + '-' + prize_image.name;
+                image_name = qr_code + '-' + prize_image.name;
                 blob = await put(image_name, prize_image, {
                 access: 'public',
                 });
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
         
     } catch (error) {
         return NextResponse.json({
-            messge: "Failed to create Game / Product ....",
+            messge: "Failed to create Game / Product....",
             error: JSON.stringify(error)
           }, {status: 500});
     }
@@ -276,7 +276,7 @@ export async function PUT(request: Request) {
                     var qr_code:any = Date.now() + Math.random();
                     var blob = null;
                     if(prize_image) {
-                        prize_image = qr_code + '-' + prize_image.name;
+                        image_name = qr_code + '-' + prize_image.name;
                         blob = await put(image_name, prize_image, {
                             access: 'public',
                         });
@@ -291,9 +291,11 @@ export async function PUT(request: Request) {
                         }
                         
                     }
-                    let prizeUpdated = await Prize.updateOne({id: prize._id}, prizeUpdates);
+                    let prizeUpdated = await Prize.updateOne({_id: prize._id}, prizeUpdates);
                     return NextResponse.json({
                         messge: "Prize / Product updated successfully ....",
+                        prizeUpdated: prizeUpdated,
+                        productUpdated: productUpdated,
                         prize: prize,
                         product: product
                     }, {status: 200});
