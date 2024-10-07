@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         var email:any = data.get('email');
         await connectMongoDB();
         let user = await User.findOne({email});
-        if(user) {
+        if(user) { 
           return NextResponse.json({messge: "User already exists ..."}, {status: 201});
         } else {
           var qr_code:any = Date.now() + Math.random();
@@ -194,7 +194,10 @@ export async function GET(request: Request) {
       var skip = parseInt(searchparams.get('skip') + '');
       var limit = parseInt(searchparams.get('limit') + '');
       var schedule = searchparams.get('schedule') + '';
+      var search_by = searchparams.get('search_by') + '';
+      var search = searchparams.get('search') + '';
       schedule = 'monthly'; // for time being
+
       console.log('user_type: ', user_type)
 
       var start_date = new Date().toISOString().slice(0, 10)
@@ -209,6 +212,11 @@ export async function GET(request: Request) {
           start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
       }
 
+      var search_json = search_by === 'countries' ? 
+      {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
+      :
+      {city: { $regex: '.*' + search + '.*', $options: 'i' }}
+
       var users = await User.find(
         { 
             $and:[ 
@@ -218,7 +226,8 @@ export async function GET(request: Request) {
                         $lt: new Date(end_date)
                     }
                 }, 
-                {user_type: user_type}
+                {user_type: user_type},
+                search_json
             ]
         }
       ).sort({'createdAt': -1}).skip(skip).limit(limit)

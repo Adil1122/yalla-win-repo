@@ -31,10 +31,6 @@ export default function AdminUserManagement() {
   const [searchType, setSearchType] = useState<SearchScope>("cities");
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [selectedImage, setSelectedImage] = useState(
-    "/assets/dashboard/profile-pic.svg"
-  );
   const [messageReply, setMessageReply] = useState<boolean>(false);
 
   /*const handleButtonClick = () => {
@@ -337,6 +333,8 @@ export default function AdminUserManagement() {
 
    var [app_users_count, setAppUsersCount] = useState(0);
    var [web_users_count, setWebUsersCount] = useState(0);
+   var [search_by, setSearchBy] = useState('country');
+   var [search, setSearch] = useState('');
    var skip = 0;
 
    var getTotalRecords = async() => {
@@ -360,7 +358,7 @@ export default function AdminUserManagement() {
    var getUsers = async() => {
     console.log('user_tyoe_get: ', user_type)
       try {
-         let response = await fetch('/api/admin/user-management?user_type=' + user_type + '&skip=' + skip + '&limit=' + recordsPerPage, {
+         let response = await fetch('/api/admin/user-management?user_type=' + user_type + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + search_by + '&search=' + search, {
             method: 'GET',
          });
          var content = await response.json();
