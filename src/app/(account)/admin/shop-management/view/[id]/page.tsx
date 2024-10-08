@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { faArrowLeft, faChevronDown, faChevronLeft, faChevronRight, faPencil, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
@@ -16,6 +16,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [activeInvoiceTab, setInvoiceActiveTab] = useState<InvoiceTab>('invoice')
    const [showInvoice, setShowInvoice] = useState<boolean>(false)
+   var active_tab = 'games';
 
    const handleEditClick = () => {
       setModalIsOpen(true)
@@ -23,6 +24,10 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+      setCurrentPage(1)
+      active_tab = tab;
+      skip = 0;
+      getTotalRecords();
    }
 
    const handleShowInvoice = (input: string) => {
@@ -31,6 +36,85 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    const handleInvoiceTabChange = (tab: InvoiceTab) => {
       setInvoiceActiveTab(tab)
+   }
+
+   useEffect(() => {
+      getTotalRecords()
+   }, [])
+
+   var [total_records_count, setTotalRecordsCount] = useState<any>(0);
+   var [records, setRecords] = useState<any>([]);
+   //var [record, setRecord] = useState<any>({});
+   //var [invoices_details, setInvoicesDetails] = useState<any>([]);
+   var limit = 5;
+   var skip = 0;
+
+
+   var getTotalRecords = async() => {
+      try {
+         let response = await fetch('/api/admin/shop-management/view?count=1&type=' + active_tab + '&id=' + params.id + '&search=', {
+            method: 'GET',
+         });
+         var content = await response.json();
+         console.log(content)
+         if(!response.ok) {
+
+         } else {
+            setTotalRecordsCount(content.total_records_count)
+            //setRecord(content.record)
+            //setInvoicesDetails(content.invoices_details)
+            getRecords();
+         }
+      } catch (error) {
+         
+      }
+   }
+
+   var getRecords = async() => {
+        try {
+           let response = await fetch('/api/admin/shop-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=', {
+              method: 'GET',
+           });
+           var content = await response.json();
+           console.log('content page: ', content)
+  
+           if(!response.ok) {
+  
+           } else {
+              setRecords(content.records)
+           }
+  
+        } catch (error) {
+        }
+   }
+
+   var totalPages = 0;
+   var [currentPage, setCurrentPage] = useState(1);
+   var [recordsPerPage, setRecordsPerPages] = useState(5);
+   totalPages = total_records_count;
+   
+   var pages = [];
+   var show_pages: any = [];
+   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
+      pages.push(i);
+      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
+         show_pages.push(i);
+      }
+   }
+   console.log('pages: ', pages)
+
+   function setPagination(current_page: any) {
+      if(current_page < 1) {
+         current_page = 1;
+      }
+
+      if(current_page > pages.length) {
+         current_page = pages.length
+      }
+      skip = recordsPerPage * (current_page - 1);
+      active_tab = activeTab;
+      getRecords()
+      setCurrentPage(current_page);
    }
 
    return (
@@ -89,37 +173,41 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Category</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th> 
+                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th> 
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Category</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                           <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Yalla 3</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Straight</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Pen</td>
+                        {
+                           records.map((rec: any) => (
+                           <tr key={rec._id}>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_number}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.productWithInvoice && rec.productWithInvoice.length > 0 ? rec.productWithInvoice[0].name : 'None'}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
-                                 <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
+                                 <img className="max-w-[60px] mx-auto" src={rec.productWithInvoice && rec.productWithInvoice.length > 0 ? rec.productWithInvoice[0].image : ''} alt="" />
                               </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Awaiting</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].name : 'None'}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].type : 'None'}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.total_amount}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice('12')} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
+                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
                                        Invoice
                                     </button>
                                  </div>
                               </td>
                            </tr>
+                           ))
+                        }
                         </tbody>
                      </table>
                   )}
@@ -128,11 +216,10 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Product Name</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize Name</th>
+                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize Name</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
@@ -140,27 +227,28 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                           <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Cap</td>
+                        {
+                           records.map((rec: any) => (
+                           <tr key={rec._id}>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_number}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Product name</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                                  <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
                               </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Pen</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
-                                 <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
-                              </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Awaiting</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">iPhone</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.total_amount}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice('12')} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
+                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
                                        Invoice
                                     </button>
                                  </div>
                               </td>
                            </tr>
+                           ))
+                        }
                         </tbody>
                      </table>
                   )}
@@ -202,41 +290,57 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Trasaction #</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Order #</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Machine No</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Order Amount</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Order Detail</th>
+                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Trasnaction #</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Payment</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Via</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Card No</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Amount</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Note</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                           <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">coupon</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 300</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Received</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center max-w-[200px] whitespace-pre-line">Amount deposited against order 123</td>
+                        {
+                           records.map((rec: any, index: any) => (
+                           <tr key={rec._id}>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{index + 1}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.payment_type}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.via}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.card_details}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.amount}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.note}</td>
                            </tr>
+                           ))
+                        }
                         </tbody>
                      </table>
                   )}
 
                   <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                     {
+                        pages.length > 0 &&
+                        <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
                         <FontAwesomeIcon size="1x" icon={faChevronLeft} />
-                     </div>
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer">1</div>
-                     <div className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer">2</div>
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer">3</div>
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                        </div>
+                     }
+
+                     {
+                        pages.map((page: any) => (
+                        show_pages.includes(page) && (
+                              page === currentPage ?
+                              <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                              :
+                              <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                        ) 
+                     ))}
+
+                     {
+                        pages.length > 0 &&
+                        <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
                         <FontAwesomeIcon size="1x" icon={faChevronRight} />
-                     </div>
+                        </div>
+                     }
                   </div>
                </div>
             </div>
