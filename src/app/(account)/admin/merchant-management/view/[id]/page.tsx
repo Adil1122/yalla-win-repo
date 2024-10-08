@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
@@ -12,6 +12,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
    const [activeTab, setActiveTab] = useState<Tab>('details')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [messageReply, setMessageReply] = useState<boolean>(false)
+   var active_tab = 'details';
    
 
    const handleMessageActionClick = (action: 'view' | 'send') => {
@@ -22,6 +23,89 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+      setCurrentPage(1)
+      active_tab = tab;
+      skip = 0;
+      getTotalRecords();
+   }
+
+   useEffect(() => {
+      getTotalRecords()
+   }, [])
+
+   var [total_records_count, setTotalRecordsCount] = useState<any>(0);
+   var [records, setRecords] = useState<any>([]);
+   var [record, setRecord] = useState<any>({});
+   //var [invoices_details, setInvoicesDetails] = useState<any>([]);
+   var limit = 5;
+   var skip = 0;
+
+
+   var getTotalRecords = async() => {
+      try {
+         let response = await fetch('/api/admin/merchant-management/view?count=1&type=' + active_tab + '&id=' + params.id + '&search=', {
+            method: 'GET',
+         });
+         var content = await response.json();
+         console.log(content)
+         if(!response.ok) {
+
+         } else {
+            setTotalRecordsCount(content.total_records_count)
+            setRecord(content.record)
+            //setInvoicesDetails(content.invoices_details)
+            getRecords();
+         }
+      } catch (error) {
+         
+      }
+   }
+
+   var getRecords = async() => {
+        try {
+           let response = await fetch('/api/admin/merchant-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=', {
+              method: 'GET',
+           });
+           var content = await response.json();
+           console.log('content page: ', content)
+  
+           if(!response.ok) {
+  
+           } else {
+              setRecords(content.records)
+           }
+  
+        } catch (error) {
+        }
+   }
+
+   var totalPages = 0;
+   var [currentPage, setCurrentPage] = useState(1);
+   var [recordsPerPage, setRecordsPerPages] = useState(5);
+   totalPages = total_records_count;
+   
+   var pages = [];
+   var show_pages: any = [];
+   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
+      pages.push(i);
+      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
+         show_pages.push(i);
+      }
+   }
+   console.log('pages: ', pages)
+
+   function setPagination(current_page: any) {
+      if(current_page < 1) {
+         current_page = 1;
+      }
+
+      if(current_page > pages.length) {
+         current_page = pages.length
+      }
+      skip = recordsPerPage * (current_page - 1);
+      active_tab = activeTab;
+      getRecords()
+      setCurrentPage(current_page);
    }
 
    return (
@@ -38,15 +122,15 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   <div className="flex flex-col gap-3">
                      <div className="flex items-center gap-2 font-medium text-head-1">
                         <div className="text-white w-[80px]">ID:</div>
-                        <div className="text-lighttwo">123</div>
+                        <div className="text-lighttwo">{record._id ?? record._id}</div>
                      </div>
                      <div className="flex items-center gap-2 font-medium text-head-1">
                         <div className="text-white w-[80px]">Name:</div>
-                        <div className="text-lighttwo">Customer Name</div>
+                        <div className="text-lighttwo">{record.name ?? record.name}</div>
                      </div>
                      <div className="flex items-center gap-2 font-medium text-head-1">
                         <div className="text-white w-[80px]">Email:</div>
-                        <div className="text-lighttwo">customer@gmail.com</div>
+                        <div className="text-lighttwo">{record.email ?? record.email}</div>
                      </div>
                   </div>
                </div>
@@ -68,18 +152,17 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                        <tr>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">XYZ</td>
+                     {
+                        records.map((rec: any) => (
+                        <tr key={rec._id}>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.name}</td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">20%</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
                         </tr>
-                        <tr>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">XYZ</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">20%</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                        </tr>
+                        ))
+                     }
+                        
                      </tbody>
                   </table>
                )}
@@ -95,10 +178,13 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                        <tr>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">This is the message</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
+
+                     {
+                        records.map((rec: any) => (
+                        <tr key={rec._id}>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.contents}</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
                            <td>
                               <div className="flex items-center justify-center gap-2">
                                  <button type="button" onClick={() => handleMessageActionClick('view')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
@@ -110,35 +196,37 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                               </div>
                            </td>
                         </tr>
-                        <tr>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1234</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">This is the message</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                           <td>
-                              <div className="flex items-center justify-center gap-2">
-                                 <button type="button" onClick={() => handleMessageActionClick('view')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
-                                    <FontAwesomeIcon size="lg" icon={faEye} />
-                                 </button>
-                                 <button type="button" onClick={() => handleMessageActionClick('send')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
-                                    <FontAwesomeIcon size="lg" icon={faPaperPlane} />
-                                 </button>
-                              </div>
-                           </td>
-                        </tr>
+                        ))
+                     }
+
                      </tbody>
                   </table>
                )}
 
                <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                  {
+                     pages.length > 0 &&
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
                      <FontAwesomeIcon size="1x" icon={faChevronLeft} />
-                  </div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">1</div>
-                  <div className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer">2</div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">3</div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                     </div>
+                  }
+
+                  {
+                     pages.map((page: any) => (
+                     show_pages.includes(page) && (
+                           page === currentPage ?
+                           <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                           :
+                           <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                     ) 
+                  ))}
+
+                  {
+                     pages.length > 0 &&
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
                      <FontAwesomeIcon size="1x" icon={faChevronRight} />
-                  </div>
+                     </div>
+                  }
                </div>
             </div>
          </div>

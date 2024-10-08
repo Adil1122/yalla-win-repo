@@ -251,9 +251,12 @@ async function getTotalRecordsCountAndRecord(request: Request) {
 
         if(type === 'communication') {
             total_records_count = await Message
-            .find(
-                { user_id: id }
-            ).countDocuments();
+            .find({ 
+                $or: [ 
+                    {sender_id: new mongoose.Types.ObjectId(id) },
+                    {receiver_id: new mongoose.Types.ObjectId(id)}
+                ]
+            }).countDocuments();
         }
 
         return NextResponse.json({
