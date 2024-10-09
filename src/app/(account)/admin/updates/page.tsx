@@ -2,7 +2,7 @@
 
 import { faChevronRight, faImage, faPlay, faPlus, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React, { useRef, useState, ChangeEvent } from 'react'
 import Modal from '@/components/modal'
 import Link from 'next/link'
 
@@ -11,12 +11,22 @@ interface Item {
    imageUrl: string;
 }
 
+interface VideoItem {
+   id: number;
+   imageUrl: string;
+   data: string;
+}
+
 const itemsPerPage = 2
 
 export default function AdminUpdatesSection() {
 
+   const fileInputRef = useRef<HTMLInputElement | null>(null)
+   const fileInputVidRef = useRef<HTMLInputElement | null>(null)
+
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
+   const [addItemType, setAddItemType] = useState<string>('')
    
    const [hbCurrentPage, setHbCurrentPage] = useState(0)
    const [mhbCurrentPage, setMhbCurrentPage] = useState(0)
@@ -37,11 +47,11 @@ export default function AdminUpdatesSection() {
    const currentMobileHomeBanners = mobileomeBanners.slice(mhbCurrentPage * itemsPerPage, (mhbCurrentPage + 1) * itemsPerPage)
 
    const [wvCurrentPage, setWvCurrentPage] = useState(0)
-   const [winnersVideos, setWinnersVideos] = useState<Item[]>([
-      { id: 1, imageUrl: '/assets/images/home.svg' },
-      { id: 2, imageUrl: '/assets/home-slider/image.svg' },
-      { id: 3, imageUrl: '/assets/images/winner-img.svg' },
-      { id: 4, imageUrl: '/assets/home-slider/slider-img.svg' }
+   const [winnersVideos, setWinnersVideos] = useState<VideoItem[]>([
+      { id: 1, imageUrl: '/assets/images/home.svg', data: '' },
+      { id: 2, imageUrl: '/assets/home-slider/image.svg', data: '' },
+      { id: 3, imageUrl: '/assets/images/winner-img.svg', data: '' },
+      { id: 4, imageUrl: '/assets/home-slider/slider-img.svg', data: '' }
    ])
    const currentWinnersVideos = winnersVideos.slice(wvCurrentPage * itemsPerPage, (wvCurrentPage + 1) * itemsPerPage)
 
@@ -63,6 +73,70 @@ export default function AdminUpdatesSection() {
       }
    }
 
+   const handleButtonClick = (type: string) => {
+      setAddItemType(type)
+      fileInputRef.current?.click()
+   }
+   
+   const handleButtonVideoClick = (type: string) => {
+      setAddItemType(type)
+      fileInputVidRef.current?.click()
+   }
+
+   const handleFileChange = (event: any) => {
+      const file = event.target.files?.[0]
+      if (file) {
+         if (file.type.startsWith('video/')) {
+            const videoElement = document.createElement('video')
+            const videoURL = URL.createObjectURL(file)
+            videoElement.src = videoURL
+   
+            videoElement.addEventListener('loadeddata', () => {
+               videoElement.currentTime = 1 
+            })
+      
+            videoElement.addEventListener('seeked', () => {
+               const canvas = document.createElement('canvas')
+               canvas.width = 120
+               canvas.height = 90 
+               const context = canvas.getContext('2d')
+               if (context) {
+                     context.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
+                     const thumbnailUrl = canvas.toDataURL('image/png')
+            
+                     const newVideo: VideoItem = {
+                        id: winnersVideos.length + 1,
+                        imageUrl: thumbnailUrl as string,
+                        data: videoURL
+                     }
+                     setWinnersVideos((prevVideos) => [...prevVideos, newVideo])
+               }
+            })
+         
+            videoElement.load()
+         } else {
+
+            const reader = new FileReader()
+            reader.onloadend = () => {
+               if (addItemType == 'desktop-banners') {
+                   const newBanner: Item = {
+                      id: homeBanners.length + 1,
+                      imageUrl: reader.result as string
+                   }
+                   setHomeBanners((prevBanners) => [...prevBanners, newBanner])
+                } else if (addItemType == 'mobile-banners') {
+                   const newBanner: Item = {
+                      id: mobileomeBanners.length + 1,
+                      imageUrl: reader.result as string
+                   }
+                   setMobileHomeBanners((prevBanners) => [...prevBanners, newBanner])
+                }
+            }
+            reader.readAsDataURL(file)
+         }
+      }
+   }
+
    const handleClick = () => {
       setModalIsOpen(true)
    }
@@ -80,7 +154,7 @@ export default function AdminUpdatesSection() {
                   <button type="button" className="font-bold text-white text-size-4">View all</button>
                </div>
                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-                  <button type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
+                  <button onClick={() => handleButtonClick('desktop-banners')} type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
                      <div className="flex items-center justify-center border-[3px] border-themetwo rounded-full w-[35px] h-[35px]">
                         <FontAwesomeIcon className="text-themetwo" icon={faPlus} size="lg" /> 
                      </div>
@@ -109,12 +183,14 @@ export default function AdminUpdatesSection() {
                   <button type="button" className="font-bold text-white text-size-4">View all</button>
                </div>
                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-                  <button type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
+                  <button onClick={() => handleButtonClick('mobile-banners')} type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
                      <div className="flex items-center justify-center border-[3px] border-themetwo rounded-full w-[35px] h-[35px]">
                         <FontAwesomeIcon className="text-themetwo" icon={faPlus} size="lg" /> 
                      </div>
                      <div className="text-darkone text-head-2">Add More</div>
                   </button>
+                  <input type="file" className="opacity-0 absolute top-0 left-0 w-0 h-0" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
+                  <input type="file" className="opacity-0 absolute top-0 left-0 w-0 h-0" accept="video/*" ref={fileInputVidRef} onChange={handleFileChange} />
                   {currentMobileHomeBanners.map((item) => (
                      <div key={item.id} className="flex flex-col items-center justify-center gap-3 bg-white h-[200px] relative">
                         <div style={{backgroundImage: `url(${item.imageUrl})`}} className={`bg-center bg-cover bg-no-repeat w-full h-full border border-white`}></div>
@@ -135,7 +211,7 @@ export default function AdminUpdatesSection() {
             <div className="flex flex-col gap-8">
                <h3 className="text-head-4 text-white">Winners Videos</h3>
                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-                  <button type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
+                  <button onClick={() => handleButtonVideoClick('winner-videos')} type="button" className="flex flex-col items-center justify-center gap-3 bg-white py-12 h-[200px]">
                      <div className="flex items-center justify-center border-[3px] border-themetwo rounded-full w-[35px] h-[35px]">
                         <FontAwesomeIcon className="text-themetwo" icon={faPlus} size="lg" /> 
                      </div>

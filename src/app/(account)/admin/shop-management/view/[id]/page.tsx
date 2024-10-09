@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { SwitchComponent } from '@/components/SwitchComponent'
+import { get } from 'http'
 
 type Tab = 'games' | 'products' | 'sales' | 'transaction'
 type InvoiceTab = 'invoice' | 'ticket'
@@ -116,6 +117,163 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
       getRecords()
       setCurrentPage(current_page);
    }
+
+   var [saleId, setSaleId] = useState("");
+   var [form, setForm] = useState({
+      total_sales: '',
+      total_orders: '',
+      winning_orders: '',
+      merchant_percentage: '',
+      our_percentage: '',
+      payment_status: '',
+
+      total_sales_error: "",
+      total_orders_error: "",
+      winning_orders_error: "",
+      merchant_percentage_error: "",
+      our_percentage_error: "",
+      payment_status_error: "",
+      server_error: "",
+      server_success: ""
+   });
+
+   async function openEditPopup(sale_id: any) {
+      setSaleId(sale_id)
+      var url = '/api/admin/shop-management/view?id=' + sale_id;
+      let response = await fetch(url, {
+         method: 'PATCH',
+      });
+      const content = await response.json();
+      if(!response.ok) {
+
+      } else {
+
+         setForm({
+            total_sales: content.sale.total_sales,
+            total_orders: content.sale.total_orders,
+            winning_orders: content.sale.winning_orders,
+            merchant_percentage: content.sale.merchant_percentage,
+            our_percentage: content.sale.our_percentage,
+            payment_status: content.sale.payment_status,
+
+            total_sales_error: "",
+            total_orders_error: "",
+            winning_orders_error: "",
+            merchant_percentage_error: "",
+            our_percentage_error: "",
+            payment_status_error: "",
+            server_error: "",
+            server_success: ""
+         });
+
+         setModalIsOpen(true);
+
+      }
+   }
+
+   function updateForm(value: any) {
+      console.log(value)
+      return setForm((prev) => {
+         return { ...prev, ...value };
+      });
+   }
+
+   function isValidateErrorForm() {
+      var err = {
+         total_sales_error: "",
+         total_orders_error: "",
+         winning_orders_error: "",
+         merchant_percentage_error: "",
+         our_percentage_error: "",
+         payment_status_error: ""
+      };
+
+      var is_error = false;
+
+      // Validation logic
+      if (form.total_sales === '') {
+         err['total_sales_error'] = 'Total Sales is Required';
+         is_error = true;
+      }
+
+      if (form.total_orders === '') {
+         err['total_orders_error'] = 'Total Orders is Required';
+         is_error = true;
+      }
+
+      if (form.winning_orders === '') {
+         err['winning_orders_error'] = 'Winning Orders is Required';
+         is_error = true;
+      }
+
+      if (form.merchant_percentage === '') {
+         err['merchant_percentage_error'] = 'Merchant Percentage is Required';
+         is_error = true;
+      }
+
+      if (form.our_percentage === '') {
+         err['our_percentage_error'] = 'Our Percentage is Required';
+         is_error = true;
+      }
+
+      if (form.payment_status === '') {
+         err['payment_status_error'] = 'payment Status is Required';
+         is_error = true;
+      }
+
+      setForm((prev) => {
+         return { ...prev, ...err };
+      });
+
+      console.log('is_error: ', is_error)
+
+      return is_error;
+   }
+
+   async function onSubmit(e: any) {
+      e.preventDefault();
+      if (!isValidateErrorForm()) {
+         let formData = new FormData();
+         formData.append('total_sales', form.total_sales);
+         formData.append('total_orders', form.total_orders);
+         formData.append('winning_orders', form.winning_orders);
+         formData.append('merchant_percentage', form.merchant_percentage);
+         formData.append('our_percentage', form.our_percentage);
+         formData.append('payment_status', form.payment_status);
+
+         var url = '/api/admin/shop-management/view?id=' + saleId;
+         var method = 'PUT';
+         var success_message = 'Sale updated successfully.';
+
+         try {
+            let response = await fetch(url, {
+               method: method,
+               body: formData
+            });
+
+            setModalIsOpen(false)
+
+            if (!response.ok) {
+               setForm((prev) => {
+                  return { ...prev, server_error: `HTTP error! status: ${response.status}` };
+               });
+            } else {
+               setForm((prev) => {
+                  return { ...prev, server_success: success_message };
+               });
+               setCurrentPage(1)
+               active_tab = activeTab;
+               skip = 0;
+               getRecords();
+            }
+         } catch (error) {
+            setForm((prev) => {
+               return { ...prev, server_error: `A problem occurred with your fetch operation: ${error}` };
+            });
+         }
+      }
+   }
+
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -267,21 +425,26 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                           <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 500</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">20</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 200</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 300</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Received / Pending</td>
-                              <td>
-                                 <div className="flex items-center justify-center gap-2">
-                                    <button type="button" onClick={() => handleEditClick()} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
-                                       <FontAwesomeIcon size="lg" icon={faPencil} />
-                                    </button>
-                                 </div>
-                              </td>
-                           </tr>
+                        {
+                           records.map((rec: any) => (
+                              <tr key={rec._id}>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.total_sales}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.total_orders}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.winning_orders}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.merchant_percentage}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.our_percentage}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.payment_status}</td>
+                                 <td>
+                                    <div className="flex items-center justify-center gap-2">
+                                       <button type="button" onClick={() => openEditPopup(rec._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
+                                          <FontAwesomeIcon size="lg" icon={faPencil} />
+                                       </button>
+                                    </div>
+                                 </td>
+                              </tr>
+                           ))
+                        }
+
                         </tbody>
                      </table>
                   )}
@@ -482,42 +645,54 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Total Sales</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
+                        value={form.total_sales}
+                        onChange={(e) => updateForm({ total_sales: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Total Orders</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
+                        value={form.total_orders}
+                        onChange={(e) => updateForm({ total_orders: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Winning Orders</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder=""
+                        value={form.winning_orders}
+                        onChange={(e) => updateForm({ winning_orders: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Merchant %</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder=""
+                        value={form.merchant_percentage}
+                        onChange={(e) => updateForm({ merchant_percentage: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Our %</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder=""
+                        value={form.our_percentage}
+                        onChange={(e) => updateForm({ our_percentage: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Payment Status</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="" />
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder=""
+                        value={form.payment_status}
+                        onChange={(e) => updateForm({ payment_status: e.target.value })} />
                      </div>
                   </div>
                   <div className="flex items-center ml-auto gap-6">
                      <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
-                     <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
+                     <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={onSubmit}>Save</button>
                   </div>
                </div>
             </div>

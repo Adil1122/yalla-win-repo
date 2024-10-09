@@ -429,6 +429,14 @@ export default function AdminUserManagement() {
     setCurrentPage(current_page);
  }
 
+ const handleRadioChange = (event: any) => {
+   setSearchType(event.target.value)
+ }
+
+ const handleMenuItemClick = (event: any) => {
+   event.stopPropagation()
+ }
+
   return ( 
     <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 flex-grow h-full">
       <div className="flex flex-col w-full h-full">
@@ -456,26 +464,35 @@ export default function AdminUserManagement() {
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
-                      checked
+                      id="countries-input"
+                      checked={searchType === 'countries'}
+                      value="countries"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={handleMenuItemClick}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="countries-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       Country
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
+                      id="cities-input"
+                      checked={searchType === 'cities'}
+                      value="cities"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={(event) => {event.stopPropagation()}}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="cities-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       City
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
               </MenuItems>

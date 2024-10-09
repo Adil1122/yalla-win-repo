@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
@@ -10,9 +10,12 @@ type Tab = 'details' | 'communication'
 
 export default function AdminViewMerchantDetails({ params } : {params: { name: string; }}) {
 
+   const fileInputRef = useRef<HTMLInputElement | null>(null)
+   
    const [activeTab, setActiveTab] = useState<Tab>('details')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [messageReply, setMessageReply] = useState<boolean>(false)
+   const [imgSrc, setImgSrc] = useState<string>('/assets/images/home.svg')
    
 
    const handleMessageActionClick = (action: 'view' | 'send') => {
@@ -23,6 +26,21 @@ export default function AdminViewMerchantDetails({ params } : {params: { name: s
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+   }
+
+   const handleButtonClick = () => {
+      fileInputRef.current?.click()
+   }
+
+   const handleFileChange = (event: any) => {
+      const file = event.target.files?.[0]
+      if (file) {
+         const reader = new FileReader()
+         reader.onloadend = () => {
+            setImgSrc(reader.result as string)
+         }
+         reader.readAsDataURL(file)
+      }
    }
 
    return (
@@ -40,11 +58,11 @@ export default function AdminViewMerchantDetails({ params } : {params: { name: s
                   <div className="text-white text-head-4">Yalla 3</div>
                   <div className="flex flex-col">
                      <div className="flex flex-col relative border border-white">
-                        <img className="max-w-[270px]" src="/assets/images/home.svg" alt="" />
+                        <img className="max-w-[270px]" src={imgSrc} alt="" />
                      </div>
                      <div className="flex w-full bg-white items-center justify-between px-5 py-3">
                         <div className="text-darkone text-size-2">Img</div>
-                        <div className="text-theme-gradient text-size-2 cursor-pointer">Edit</div>
+                        <button type="button" onClick={handleButtonClick} className="text-theme-gradient text-size-2 cursor-pointer">Edit</button>
                      </div>
                   </div>
                </div>
@@ -66,6 +84,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { name: s
                            </div>
                         </div>
                      </div>
+                     <input type="file" className="opacity-0 absolute top-0 left-0 w-0 h-0" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
                      <div className="flex flex-col gap-2 flex-1">
                         <div className="text-darkone font-semibold text-size-4">Introduction</div>
                         <textarea className="text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none">

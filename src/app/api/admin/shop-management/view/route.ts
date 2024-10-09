@@ -6,6 +6,7 @@ import Transaction from "@/models/TransactionModel";
 import Message from "@/models/MessageModel";
 import User from "@/models/UserModel";
 import mongoose from "mongoose";
+import Sale from "@/models/SaleModel";
 
 export async function GET(request: Request) {
     try {
@@ -152,37 +153,11 @@ async function getSales(request: Request) {
         var id = searchparams.get('id') + '';
         var skip = parseInt(searchparams.get('skip') + '');
         var limit = parseInt(searchparams.get('limit') + '');
-        /*const records = await Message
-            .aggregate([
-                { $match:
-                    {
-                        $or: [ 
-                            {sender_id: new mongoose.Types.ObjectId(id) },
-                            {receiver_id: new mongoose.Types.ObjectId(id)}
-                        ]
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: "sender_id",
-                        foreignField: "_id",
-                        as: "senderWithMessage",
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: "receiver_id",
-                        foreignField: "_id",
-                        as: "receiverWithMessage",
-                    }
-                }
-            ]).sort({'createdAt': -1}).skip(skip).limit(limit);*/
+        const records = await Sale.find({merchant_id: id});
 
         return NextResponse.json({
             messge: "Query successful ....",
-            records: []
+            records: records
         }, {status: 200});
 
     } catch (error) {
@@ -242,11 +217,8 @@ async function getTotalRecordsCountAndRecord(request: Request) {
             }).countDocuments();
         }
 
-        if(type === 'transaction') {
-            total_records_count = await Transaction
-            .find(
-                { user_id: id }
-            ).countDocuments();
+        if(type === 'sales') {
+            total_records_count = 1;
         }
 
         if(type === 'communication') {
@@ -268,5 +240,75 @@ async function getTotalRecordsCountAndRecord(request: Request) {
             messge: "Query error ....",
             error: JSON.stringify(error)
         }, {status: 500});
+    }
+}
+
+export async function PATCH(request: Request) {
+    try {
+
+        await connectMongoDB();
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var id = searchparams.get('id') + '';
+        var sale = await Sale.findOne({_id: id});
+        return NextResponse.json({
+            messge: "Query successful ....",
+            sale: sale
+          }, {status: 200});
+
+    } catch (error) {
+
+        return NextResponse.json({
+            messge: "Query error ....",
+          }, {status: 500});
+
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        await connectMongoDB();
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var id = searchparams.get('id') + '';
+
+        const data = await request.formData();
+        var total_sales:any = data.get('total_sales');
+        var total_orders:any = data.get('total_orders');
+        var winning_orders: any = data.get('winning_orders');
+        var merchant_percentage: any = data.get('merchant_percentage');
+        var our_percentage:any = data.get('our_percentage');
+        var payment_status:any = data.get('payment_status');
+
+        var saleObj = await Sale.findOne({_id: id});
+        if(saleObj) {
+            const query = { _id: saleObj._id };
+            let updates = {
+                $set: {
+                    total_sales: total_sales,
+                    total_orders: total_orders,
+                    winning_orders: winning_orders,
+                    merchant_percentage: merchant_percentage,
+                    our_percentage: our_percentage,
+                    payment_status: payment_status
+                }
+            };
+            var sale = await Sale.updateOne(query, updates);
+            return NextResponse.json({
+                messge: "Sale successfully updated ....",
+                sale: sale
+              }, {status: 200});
+        } else {
+            return NextResponse.json({
+                messge: "Sale could not be found ....",
+              }, {status: 500});
+        }
+        
+    } catch (error) {
+
+        return NextResponse.json({
+            messge: "Sale could not be updated ....",
+          }, {status: 500});
+        
     }
 }
