@@ -427,6 +427,26 @@ export default function AdminMerchantManagement() {
     getDropdownsData('machines', value);
   }
 
+  async function changeStatus(id:any) {
+    try {
+       let response = await fetch('/api/admin/merchant-management/extras?action=change_status&id=' + id, {
+          method: 'PUT',
+       });
+       //var content = await response.json();
+       //setId('');
+ 
+       if(!response.ok) {
+ 
+       } else {
+          //product_type = activeTabTwo;
+          //merchant_app = activeTab;
+          getMerchantCounts();
+       }
+    } catch (error) {
+       
+    }
+ }
+
   return (
     <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 h-full">
       <div className="flex flex-col w-full h-full">
@@ -617,15 +637,19 @@ export default function AdminMerchantManagement() {
                     <div className="flex items-center gap-2 lg:gap-3 px-2 border-[2px] border-white rounded py-2">
                       <div
                         className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer"
-                        onClick={handleToggle}
+                        onClick={() => changeStatus(merchant._id)}
                       >
                         <div
                           className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${
-                            toggled
+                            merchant.active === 1
                               ? "translate-x-[-5px] lg:translate-x-[-6px]"
                               : "translate-x-[5px] lg:translate-x-[7px]"
                           }`}
-                        ></div>
+
+
+                        >
+
+                        </div>
                       </div>
                     </div>
                     <button

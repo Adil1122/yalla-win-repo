@@ -202,7 +202,7 @@ export async function GET(request: Request) {
                 $lt: new Date(end_date)
             }},
             {role: 'merchant'}
-        ).sort({'createdAt': -1}).skip(skip).limit(limit).select(['_id', 'name', 'area', 'email', 'mobile']);
+        ).sort({'createdAt': -1}).skip(skip).limit(limit).select(['_id', 'eid', 'name', 'area', 'email', 'mobile', 'active']);
 
         if(merchants && merchants.length > 0) {
             var merchant_ids = [];

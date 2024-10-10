@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
-import { writeFile } from "fs/promises";
 import Game from "@/models/GameModel";
 import Category from "@/models/CategoryModel";
 import Product from "@/models/ProductModel";
 import { put } from '@vercel/blob';
 import Prize from "@/models/PrizeModel";
-import { isNull } from "util";
 
 export async function POST(request: Request) {
     try {
