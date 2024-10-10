@@ -274,6 +274,29 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
       }
    }
 
+   var [invoice, setInvoice] = useState<any>([])
+   var [tickets, setTickets] = useState<any>([])
+
+   async function getInvoiceDetails(inv_id: any) {
+      try {
+        let response = await fetch("/api/user/current-game-purchasing?id=" + inv_id, {
+            method: "PATCH",
+         });
+         const content = await response.json();
+         console.log(content)
+
+         if(!response.ok) {
+
+         } else {
+            setInvoice(content.invoice)
+            setTickets(content.tickets)
+            console.log('content.invoice: ', content.invoice)
+         }
+      } catch (error) {
+         
+      }
+   }
+
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -386,7 +409,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                         {
-                           records.map((rec: any) => (
+                           records.map((rec: any) => ( 
                            <tr key={rec._id}>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_number}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Product name</td>
