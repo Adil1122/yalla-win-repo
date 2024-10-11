@@ -17,7 +17,10 @@ export async function POST(request: Request) {
             location: location,
             machine_id: machine_id,
             shop_id: shop_id,
+            status: "Active",
+            locked: 0,
         }
+        console.log('newDocument: ', newDocument)
 
         let result = await Machine.create(newDocument);
         console.log(result)
@@ -59,11 +62,15 @@ export async function PUT(request: Request) {
                     location: location,
                     machine_id: machine_id,
                     shop_id: shop_id,
+                    status: "Active",
+                    locked: 0,
                 }
             }
 
+            console.log('updates: ', updates)
+
             let result = await Machine.updateOne({_id: machine._id}, updates);
-            console.log(result)
+            //console.log(result)
 
             return NextResponse.json({
                 messge: "Machine updated successfully ....",

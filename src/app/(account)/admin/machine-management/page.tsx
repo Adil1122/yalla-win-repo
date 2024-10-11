@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { faChevronDown, faChevronLeft, faChevronRight, faLocation, faLock, faPencil, faPlus, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faChevronLeft, faChevronRight, faLocation, faLock, faPencil, faPlus, faTimes, faTrashAlt, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { CountryCitySearch } from '@/components/CountryCitySearch'
@@ -21,6 +21,7 @@ export default function AdminMachineManagement() {
    const [modalThreeIsOpen, setModalThreeIsOpen] = useState<boolean>(false)
    const [toggled, setToggled] = useState(false)
    const [selectedShop, setSelectedShop] = useState<Shop>()
+   var [lock_id, setLockId] = useState('')
 
    const handleMachineActionClick = (action: 'add' | 'edit') => {
 
@@ -32,7 +33,8 @@ export default function AdminMachineManagement() {
       setModalTwoIsOpen(true)
    }
 
-   const handleMachineLockToggle = (action: 'lock' | 'unlock') => {
+   const handleMachineLockToggle = (id: any) => {
+      setLockId(id + '')
       setModalThreeIsOpen(true)
    }
    
@@ -323,6 +325,49 @@ export default function AdminMachineManagement() {
     setCurrentPage(current_page);
   }
 
+  async function changeStatus(id:any) {
+   try {
+      let response = await fetch('/api/admin/machine-management/extras?action=change_status&id=' + id, {
+         method: 'PUT',
+      });
+      //var content = await response.json();
+      //setId('');
+
+      if(!response.ok) {
+
+      } else {
+         //product_type = activeTabTwo;
+         //merchant_app = activeTab;
+         getMachineCounts();
+      }
+   } catch (error) {
+      
+   }
+}
+
+async function changeLocked() {
+   try {
+      let response = await fetch('/api/admin/machine-management/extras?action=change_locked&id=' + lock_id, {
+         method: 'PUT',
+      });
+      //var content = await response.json();
+      //setId('');
+
+      if(!response.ok) {
+
+      } else {
+         //product_type = activeTabTwo;
+         //merchant_app = activeTab;
+         //setLockId('')
+         
+         getMachineCounts();
+         setModalThreeIsOpen(false)
+      }
+   } catch (error) {
+      
+   }
+}
+
 
 
 
@@ -415,12 +460,12 @@ export default function AdminMachineManagement() {
                                  <button type="button" onClick={(e) => openEditPopup(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
                                     <FontAwesomeIcon size="lg" icon={faPencil} />
                                  </button>
-                                 <button type="button" onClick={() => handleMachineLockToggle('lock')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
-                                    <FontAwesomeIcon size="lg" icon={faLock} />
+                                 <button type="button" onClick={() => handleMachineLockToggle(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
+                                    <FontAwesomeIcon size="lg" icon={machine.locked === 0 ? faLock : faUnlock} />
                                  </button>
                                  <div className="flex items-center gap-2 lg:gap-3 px-2 border-[2px] border-white rounded py-2">
-                                    <div className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer" onClick={handleMachineStatusToggle}>
-                                       <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${toggled ? 'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
+                                    <div className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer" onClick={() => changeStatus(machine._id)}>
+                                       <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${machine.status === 'Active' ? 'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
                                     </div>
                                  </div>
                                  <button type="button" onClick={() => handleDelete(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
@@ -559,7 +604,7 @@ export default function AdminMachineManagement() {
                <div className="text-darkone text-size-4">Are you sure you want to lock this machine?</div>
                <div className="flex items-center gap-6 mt-3">
                   <button onClick={() => setModalThreeIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
-                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Lock</button>
+                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={changeLocked}>Lock</button>
                </div>
             </div>
          </Modal>

@@ -5,6 +5,7 @@ import Product from "@/models/ProductModel";
 import Draw from "@/models/DrawModel";
 import Winner from "@/models/WinnerModel";
 import Game from "@/models/GameModel";
+import mongoose from "mongoose";
 
 export async function GET(request: any) {
 
@@ -35,7 +36,7 @@ export async function GET(request: any) {
                   {
                       $match: {
                         $and: [
-                            {draw_type: 'game'},
+                            {draw_type: 'games'},
                             {
                                 draw_date: {
                                     $gt : new Date(), 
@@ -61,7 +62,7 @@ export async function GET(request: any) {
                   {
                       $match: {
                         $and: [
-                            {draw_type: 'prize'},
+                            {draw_type: 'products'},
                             {
                                 draw_date: {
                                     $gt : new Date(), 
@@ -244,8 +245,14 @@ export async function GET(request: any) {
                 {
                     $match:
                     {
+
                         $and: [ 
-                            { game_id: { $ne: null } },  
+                            { game_id: { $ne: null } }, 
+                            {
+                                game_id: {
+                                    $in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
+                                }
+                            }, 
                             {
                         $or: [ 
                             {name: { $regex: '.*' + search + '.*', $options: 'i' }},

@@ -7,6 +7,8 @@ const machineSchema = new Schema (
         merchant_id: {type: mongoose.Types.ObjectId, ref: 'User', required: false},
         shop_id: {type: mongoose.Types.ObjectId, ref: 'Shop', required: false},
         location: {type: String, required: false},
+        status: {type: String, required: false},
+        locked: {type: Number, required: false},
     },
     {
         timestamps: true
