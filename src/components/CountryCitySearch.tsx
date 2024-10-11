@@ -20,7 +20,7 @@ export const CountryCitySearch: React.FC<CountryCitySearchProps> = ({
    const [width, setWidth] = useState<number>(0)
    const containerRef = useRef<HTMLDivElement>(null)
 
-   const countries : Item[] = [
+   /*var countries : Item[] = [
       { id: 1, name: 'United Arab Emirates' },
       { id: 2, name: 'Saudi Arabia' },
       { id: 3, name: 'Qatar' },
@@ -28,25 +28,109 @@ export const CountryCitySearch: React.FC<CountryCitySearchProps> = ({
       { id: 5, name: 'Kuwait' },
    ]
    
-   const cities : Item[] = [
+   var cities : Item[] = [
       { id: 1, name: 'Damam' },
       { id: 2, name: 'Mecca' },
       { id: 3, name: 'Dubai' }
-   ]
+   ]*/
+
+   const [countries, setCountries] = useState<any>([]);
+   const [cities, setCities] = useState<any>([]);
+   //var cities: Item[] = [];
+
+
 
    useEffect(() => {
       if (containerRef.current) {
          setWidth(containerRef.current.offsetWidth)
       }
+      getCitiesAndCountries();
    }, [])
+
+   function getUniqueArray(array: any){
+      var uniqueArray = [];
+      if (array.length > 0) {
+         uniqueArray[0] = array[0];
+      }
+      for(var i = 0; i < array.length; i++){
+          var isExist = false;
+          for(var j = 0; j < uniqueArray.length; j++){
+              if(array[i] == uniqueArray[j]){
+                  isExist = true;
+                  break;
+              }
+              else{
+                  isExist = false;
+              }
+          }
+          if(isExist == false){
+              uniqueArray[uniqueArray.length] = array[i];
+          }
+      }
+      return uniqueArray;
+  }
+
+   async function getCitiesAndCountries() {
+      try {
+         let response = await fetch('/api/admin/search', {
+            method: 'GET',
+         });
+         var content = await response.json();
+         if(!response.ok) {
+
+         } else {
+            //console.log('content: ', content)
+            var users = content.users;
+            var cities_array:any = [];
+            var countries_array:any = [];
+            for(var i = 0; i < users.length; i++) {
+               if(users[i].city !== null) {
+                  cities_array.push(users[i].city)
+               }
+               
+               if(users[i].country !== null) {
+                  countries_array.push(users[i].country)
+               }
+            }
+            cities_array = getUniqueArray(cities_array);
+            countries_array = getUniqueArray(countries_array);
+            var count = 1;
+            for(var i = 0; i < cities_array.length; i++) {
+               cities.push({
+                  id: count,
+                  name: cities_array[i]
+               })
+               count++;
+            }
+
+            count = 1;
+            for(var i = 0; i < countries_array.length; i++) {
+               countries.push({
+                  id: count,
+                  name: countries_array[i]
+               })
+               count++;
+            }
+            setCities(cities)
+            setCountries(countries)
+
+            console.log('cities: ', cities)
+            console.log('countries: ', countries)
+         }
+      } catch (error) {
+         
+      }
+   }
 
    const [query, setQuery] = useState('')
    const [selectedItem, setSelectedItem] = useState<Item | null>(null)
 
    const items = searchIn === 'countries' ? countries : cities;
 
+   
    const filteredItems = query === ''
       ? items
+      //@ts-ignore
       : items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()))
 
    const handleSelectItem = (item: Item | null) => {

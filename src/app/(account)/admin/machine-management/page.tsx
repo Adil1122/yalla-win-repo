@@ -210,11 +210,13 @@ export default function AdminMachineManagement() {
   useEffect(() => {
     getMachineCounts()
     getDropdownsData('merchants', '')
-  }, [])
+  }, [selectedItem])
 
   var getMachineCounts = async() => {
    try {
-     let response = await fetch('/api/admin/machine-management/machine-counts', {
+     console.log(selectedItem) 
+     var selected_name = selectedItem !== null ? selectedItem.name : ''
+     let response = await fetch('/api/admin/machine-management/machine-counts?search=' + selected_name, {
        method: 'GET',
      });
      var content = await response.json()
@@ -332,14 +334,9 @@ export default function AdminMachineManagement() {
       let response = await fetch('/api/admin/machine-management/extras?action=change_status&id=' + id, {
          method: 'PUT',
       });
-      //var content = await response.json();
-      //setId('');
-
       if(!response.ok) {
 
       } else {
-         //product_type = activeTabTwo;
-         //merchant_app = activeTab;
          getMachineCounts();
       }
    } catch (error) {
@@ -356,7 +353,7 @@ var deleteMachine = async() => {
    let response = await fetch('/api/admin/machine-management?id=' + id, {
       method: 'DELETE',
    });
-   var content = await response.json();
+   //var content = await response.json();
    setId('');
    setModalTwoIsOpen(false)
 
@@ -372,16 +369,9 @@ async function changeLocked() {
       let response = await fetch('/api/admin/machine-management/extras?action=change_locked&id=' + lock_id, {
          method: 'PUT',
       });
-      //var content = await response.json();
-      //setId('');
-
       if(!response.ok) {
 
       } else {
-         //product_type = activeTabTwo;
-         //merchant_app = activeTab;
-         //setLockId('')
-         
          getMachineCounts();
          setModalThreeIsOpen(false)
       }
