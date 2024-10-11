@@ -48,9 +48,9 @@ export default function AdminMachineManagement() {
    var [id, setId] = useState("");
 
    var [form, setForm] = useState({
-      machine_id: "66e053d0c59f779acb326b63",
-      shop_id: "66e058c34b111cf411b5ed20",
-      merchant_id: "66dfe62ad05edc7551a638e9",
+      machine_id: "",
+      shop_id: "",
+      merchant_id: "",
       location: "",
    
 
@@ -64,9 +64,9 @@ export default function AdminMachineManagement() {
 
    function openCreatePopup() {
       setForm({
-         machine_id: "66e053d0c59f779acb326b63",
-         shop_id: "66e058c34b111cf411b5ed20",
-         merchant_id: "66dfe62ad05edc7551a638e9",
+         machine_id: "",
+         shop_id: "",
+         merchant_id: "",
          location: "",
         
    
@@ -190,6 +190,8 @@ export default function AdminMachineManagement() {
                   return { ...prev, server_success: success_message };
                });
             }
+            setModalIsOpen(false)
+            getMachineCounts()
          } catch (error) {
             setForm((prev) => {
                return { ...prev, server_error: `A problem occurred with your fetch operation: ${error}` };
@@ -345,6 +347,26 @@ export default function AdminMachineManagement() {
    }
 }
 
+function setIdAndOpenDeletePopup(Id: any) {
+   setId(Id);
+   setModalTwoIsOpen(true);
+}
+
+var deleteMachine = async() => {
+   let response = await fetch('/api/admin/machine-management?id=' + id, {
+      method: 'DELETE',
+   });
+   var content = await response.json();
+   setId('');
+   setModalTwoIsOpen(false)
+
+   if(!response.ok) {
+
+   } else {
+      getMachineCounts();
+   }
+}
+
 async function changeLocked() {
    try {
       let response = await fetch('/api/admin/machine-management/extras?action=change_locked&id=' + lock_id, {
@@ -451,7 +473,7 @@ async function changeLocked() {
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.merchant_id}</td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.location}</td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.updatedAt}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Connected</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.status}</td>
                            <td>
                               <div className="flex items-center justify-center gap-2">
                                  <Link href="machine-management/map/12" className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
@@ -468,7 +490,7 @@ async function changeLocked() {
                                        <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${machine.status === 'Active' ? 'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
                                     </div>
                                  </div>
-                                 <button type="button" onClick={() => handleDelete(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
+                                 <button type="button" onClick={() => setIdAndOpenDeletePopup(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
                                     <FontAwesomeIcon size="lg" icon={faTrashAlt} />
                                  </button>
                               </div>
@@ -593,7 +615,7 @@ async function changeLocked() {
                <div className="text-darkone text-size-4">Are you sure you want to delete this record?</div>
                <div className="flex items-center gap-6 mt-3">
                   <button onClick={() => setModalTwoIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
-                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Delete</button>
+                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={deleteMachine}>Delete</button>
                </div>
             </div>
          </Modal>

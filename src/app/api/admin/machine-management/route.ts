@@ -91,6 +91,7 @@ export async function DELETE(request: Request) {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var id: any = searchparams.get('id') + '';
+        console.log('id: ', id)
         var deletedMachine = await Machine.deleteOne({_id: id});
         if(deletedMachine) {
             return NextResponse.json({
