@@ -329,17 +329,19 @@ export default function AdminUserManagement() {
 
    useEffect(() => {
       getTotalRecords()
-   }, [])
+   }, [selectedItem])
 
    var [app_users_count, setAppUsersCount] = useState(0);
    var [web_users_count, setWebUsersCount] = useState(0);
    var [search_by, setSearchBy] = useState('country');
    var [search, setSearch] = useState('');
    var skip = 0;
+   var schedule = 'monthly';
 
    var getTotalRecords = async() => {
       try {
-         let response = await fetch('/api/admin/user-management', {
+         var selected_name = selectedItem !== null ? selectedItem.name : ''
+         let response = await fetch('/api/admin/user-management?search_by=' + searchType + '&search=' + selected_name + '&schedule=' + schedule, {
             method: 'OPTIONS',
          });
          var content = await response.json();
@@ -358,7 +360,8 @@ export default function AdminUserManagement() {
    var getUsers = async() => {
     console.log('user_tyoe_get: ', user_type)
       try {
-         let response = await fetch('/api/admin/user-management?user_type=' + user_type + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + search_by + '&search=' + search, {
+         var selected_name = selectedItem !== null ? selectedItem.name : ''
+         let response = await fetch('/api/admin/user-management?user_type=' + user_type + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name + '&schedule=' + schedule, {
             method: 'GET',
          });
          var content = await response.json();
