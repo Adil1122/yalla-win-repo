@@ -6,34 +6,54 @@ import Shop from "@/models/ShopModel";
 export async function GET(request: Request) {
     try {
         await connectMongoDB();
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var search_by = searchparams.get('search_by') + '';
+        var search = searchparams.get('search') + '';
+
         var daily_start_date = new Date().toISOString().slice(0, 10)
         var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
         var end_date = tomorrowDate.toISOString().slice(0, 10);
         var weekly_start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
         var monthly_start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
+        var search_json = search_by === 'countries' ? 
+        {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
+        :
+        {city: { $regex: '.*' + search + '.*', $options: 'i' }}
+        
+
         const daily_shop_counts = await Shop
         .find({
-            registeration_date: {
-                $gte : new Date(daily_start_date), 
-                $lt: new Date(end_date)
-            }
+            $and: [
+                {registeration_date: {
+                    $gte : new Date(daily_start_date), 
+                    $lt: new Date(end_date)
+                }},
+                search_json
+            ]
         }).countDocuments();
 
         const weekly_shop_counts = await Shop
         .find({
-            registeration_date: {
-                $gte : new Date(weekly_start_date), 
-                $lt: new Date(end_date)
-            }
+            $and: [
+                {registeration_date: {
+                    $gte : new Date(weekly_start_date), 
+                    $lt: new Date(end_date)
+                }},
+                search_json
+            ]
         }).countDocuments();
 
         const monthly_shop_counts = await Shop
         .find({
-            registeration_date: {
-                $gte : new Date(monthly_start_date), 
-                $lt: new Date(end_date)
-            }
+            $and: [
+                {registeration_date: {
+                    $gte : new Date(monthly_start_date), 
+                    $lt: new Date(end_date)
+                }},
+                search_json
+            ]
         }).countDocuments();
             
         return NextResponse.json({
