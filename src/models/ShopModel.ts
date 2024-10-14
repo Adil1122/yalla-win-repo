@@ -8,6 +8,8 @@ const shopSchema = new Schema (
         machine_id: {type: mongoose.Types.ObjectId, ref: 'Machine', required: false},
         location: {type: String, required: false},
         registeration_date: {type: Date, required: false},
+        city: {type: String, required: false},
+        country: {type: String, required: false},
     },
     {
         timestamps: true

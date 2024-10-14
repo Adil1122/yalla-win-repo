@@ -311,11 +311,12 @@ export default function AdminMerchantManagement() {
   useEffect(() => {
     getMerchantCounts()
     getDropdownsData('shops', '')
-  }, [])
+  }, [selectedItem])
 
   var getMerchantCounts = async() => {
     try {
-      let response = await fetch('/api/admin/merchant-management/merchant-counts', {
+      var selected_name = selectedItem !== null ? selectedItem.name : ''
+      let response = await fetch('/api/admin/merchant-management/merchant-counts?search_by=' + searchType + '&search=' + selected_name, {
         method: 'GET',
       });
       var content = await response.json()
@@ -369,7 +370,8 @@ export default function AdminMerchantManagement() {
 
   var getMerchants = async() => {
     try {
-        let response = await fetch("/api/admin/merchant-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage, {
+        var selected_name = selectedItem !== null ? selectedItem.name : ''
+        let response = await fetch("/api/admin/merchant-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
           method: 'GET',
         });
 

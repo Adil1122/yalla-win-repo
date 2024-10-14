@@ -181,6 +181,8 @@ export async function GET(request: Request) {
         var schedule = searchparams.get('schedule') + '';
         var skip = parseInt(searchparams.get('skip') + '');
         var limit = parseInt(searchparams.get('limit') + '');
+        var search_by = searchparams.get('search_by') + '';
+        var search = searchparams.get('search') + '';
 
         var start_date = new Date().toISOString().slice(0, 10)
         var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
@@ -195,14 +197,24 @@ export async function GET(request: Request) {
             start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
         }
 
+        var search_json = search_by === 'countries' ? 
+        {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
+        :
+        {city: { $regex: '.*' + search + '.*', $options: 'i' }}
+
         const merchants = await User
-        .find(
-            {createdAt: {
-                $gte : new Date(start_date), 
-                $lt: new Date(end_date)
-            }},
-            {role: 'merchant'}
-        ).sort({'createdAt': -1}).skip(skip).limit(limit).select(['_id', 'eid', 'name', 'area', 'email', 'mobile', 'active']);
+        .find({
+            $and:[ 
+                {
+                    createdAt: {
+                        $gte : new Date(start_date), 
+                        $lt: new Date(end_date)
+                    }
+                }, 
+                {role: 'merchant'},
+                search_json
+            ]
+        }).sort({'createdAt': -1}).skip(skip).limit(limit).select(['_id', 'eid', 'name', 'area', 'email', 'mobile', 'active', 'role']);
 
         if(merchants && merchants.length > 0) {
             var merchant_ids = [];
@@ -212,7 +224,7 @@ export async function GET(request: Request) {
             console.log(merchant_ids)
 
             const machines = await Machine
-            .find({merchant_id: {$in: merchant_ids}}).select(['_id', 'machine_id']);
+            .find({merchant_id: {$in: merchant_ids}}).select(['_id', 'machine_id', 'merchant_id']);
             
             return NextResponse.json({
                 messge: "Query success ....",
@@ -222,8 +234,10 @@ export async function GET(request: Request) {
 
         } else {
             return NextResponse.json({
-                messge: "Machines not found ....",
-            }, {status: 500});
+                messge: "Query success ....",
+                merchants: [],
+                machines: [],
+            }, {status: 200});
         }
 
     } catch (error) {
