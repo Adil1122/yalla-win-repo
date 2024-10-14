@@ -60,15 +60,14 @@ export async function PUT(request: Request) {
             }, {status: 500});
         } else {
 
+            const data = await request.formData();
+            var name:any = data.get('name');
+            var merchant_id:any = data.get('merchant_id');
+            var location:any = data.get('location');
+            var machine_id:any = data.get('machine_id');
+            var registeration_date:any = data.get('registeration_date');
             var merchant: any = User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
             if(merchant) {
-
-                const data = await request.formData();
-                var name:any = data.get('name');
-                var merchant_id:any = data.get('merchant_id');
-                var location:any = data.get('location');
-                var machine_id:any = data.get('machine_id');
-                var registeration_date:any = data.get('registeration_date');
                 let updates = {
                     $set: {
                         name: name,
