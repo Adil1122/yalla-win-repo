@@ -12,9 +12,13 @@ export default function Model() {
 
    const { actions } = useAnimations(animations, scene)
    const [texture] = useTexture(["/assets/animations/textures/red.jpeg"])
-   
-   const scroll = useScroll()
-   let rotationAnim2 : any
+   const rotationAnim = actions["initaial rotation.001"]
+   const ballOutAnimations = [
+      { action: actions["ball.2_roll_out"], name: "ball.2_roll_out" },
+      { action: actions["ball.3_roll_out.001"], name: "ball.3_roll_out.001" },
+      { action: actions["ball.4_roll_out"], name: "ball.4_roll_out" },
+   ]
+   const ballAnimations = Array.from({ length: 25 }, (_, i) => actions[`ball_1st_anim_${i}`])
 
    useEffect(() => {
 
@@ -31,8 +35,6 @@ export default function Model() {
          material.needsUpdate = true
       }
 
-      const rotationAnim = actions["initaial rotation.001"]
-
       if (rotationAnim) {
          // Log when the animation starts
          rotationAnim.clampWhenFinished = true
@@ -41,38 +43,58 @@ export default function Model() {
 
          console.log("Animation 'initaial rotation.001' started")
       }
+      
+      ballAnimations.forEach((ballAnim) => {
+         if (ballAnim) {
+            ballAnim.clampWhenFinished = true
+            ballAnim.setLoop(LoopOnce, 1)
+            ballAnim.reset().play()
+         }
+      })
 
       return () => {
-         
+
          if (rotationAnim) {
             rotationAnim.stop()
          }
 
-         if (rotationAnim2) {
-            rotationAnim2.stop()
-         }
+         ballAnimations.forEach((ballAnim) => {
+            if (ballAnim) {
+               ballAnim.stop()
+            }
+         })
+
+         ballOutAnimations.forEach(({ action, name }) => {
+            if (action) {
+               action.stop();
+               console.log(`Animation '${name}' stopped`);
+            }
+         })
       }
    }, [actions, texture, materials])
 
    useFrame(() => {
       
-      const rotationAnim = actions["initaial rotation.001"]
       if (rotationAnim) {
          // Check if the animation is near the end of its duration
          if (rotationAnim.getClip().duration - rotationAnim.time < 0.01) {
             console.log("Animation 'initaial rotation.001' ended")
             rotationAnim.reset().stop()
+            
+            ballAnimations.forEach((ballAnim) => {
+               if (ballAnim) {
+                  //ballAnim.paused = true
+               }
+            })
 
-            rotationAnim2 = actions["ball.2_roll_out"]
-
-            if (rotationAnim2) {
-               
-               rotationAnim2.clampWhenFinished = true
-               rotationAnim2.setLoop(LoopOnce, 1)
-               rotationAnim2.reset().play()
-
-               console.log("Animation 'ball.2_roll_out' started")
-            }
+            ballOutAnimations.forEach(({ action, name }) => {
+               if (action) {
+                  action.clampWhenFinished = true;
+                  action.setLoop(LoopOnce, 1);
+                  action.reset().play();
+                  console.log(`Animation '${name}' started`);
+               }
+            })
          }
       }
    })
