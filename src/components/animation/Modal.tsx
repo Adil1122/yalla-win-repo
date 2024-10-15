@@ -98,4 +98,6 @@ const Model = forwardRef((props, ref) => {
    )
 })
 
+Model.displayName = "Model"
+
 export default Model
