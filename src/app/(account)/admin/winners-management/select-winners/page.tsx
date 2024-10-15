@@ -6,10 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import IBarChart from '@/components/dashboard/IBarChart'
 import Modal from '@/components/modal'
+import { useRouter } from "next/navigation"
+
+type WinnerType = 'games' | 'products'
 
 export default function AdminSelectWinners() {
 
+  const router = useRouter()
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+   const [newWInnerType, setNewWinnerType] = useState<WinnerType>('games')
    const dataset = [
       { sales: 12, day: 'MON' },
       { sales: 34, day: 'TUE' },
@@ -20,7 +25,8 @@ export default function AdminSelectWinners() {
       { sales: 16, day: 'SUN' },
    ]
 
-   const handleAnnouneWinner = (action: 'games' | 'products') => {
+   const handleAnnouneWinner = (action: WinnerType) => {
+      setNewWinnerType(action)
       setModalIsOpen(true)
    }
 
@@ -77,48 +83,75 @@ export default function AdminSelectWinners() {
                      <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
                   </div>
                </div>
-               <div className="flex flex-col gap-10">
-                  <div className="flex flex-col gap-6">
-                     <div className="flex flex-col gap-4">
-                        <div className="text-darkone text-size-4">Amount</div>
-                        <div className="text-darkone text-size-2 border border-lightone rounded">
-                           <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="AED 20" />
-                        </div>
-                     </div>
-                     <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+               <form action="/admin/winners-management/search-results" method="get">
+
+                  <div className="flex flex-col gap-10">
+                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">Game Name</div>
+                           <div className="text-darkone text-size-4">Expected Amount</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="AED 20" name="amount" />
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+                           {newWInnerType == 'games' && (
+                              <div className="flex flex-col gap-4">
+                                 <div className="text-darkone text-size-4">Choose Game</div>
+                                 <div className="text-darkone text-size-2 border border-lightone rounded">
+                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="game">
+                                       <option value="">Game one</option>
+                                       <option value="">Game two</option>
+                                       <option value="">Game three</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           )}
+                           {newWInnerType == 'products' && (
+                              <div className="flex flex-col gap-4">
+                                 <div className="text-darkone text-size-4">Choose Product</div>
+                                 <div className="text-darkone text-size-2 border border-lightone rounded">
+                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="product">
+                                       <option value="">Product one</option>
+                                       <option value="">Product two</option>
+                                       <option value="">Product three</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           )}
+                           <div className="flex flex-col gap-4">
+                              <div className="text-darkone text-size-4">People %</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="people-percent" />
+                              </div>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+                           <div className="flex flex-col gap-4">
+                              <div className="text-darkone text-size-4">Country</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="country" />
+                              </div>
+                           </div>
+                           <div className="flex flex-col gap-4">
+                              <div className="text-darkone text-size-4">City</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="city" />
+                              </div>
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">People %</div>
+                           <div className="text-darkone text-size-4">Area</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="area" />
                            </div>
                         </div>
-                     </div>
-                     <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">Country</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
-                           </div>
+                        <div className="flex items-center ml-auto gap-6">
+                           <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
+                           <button type="submit" className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Search</button>
                         </div>
-                        <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">City</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
-                           </div>
-                        </div>
-                     </div>
-                     <div className="flex items-center ml-auto gap-6">
-                        <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
-                        <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
                      </div>
                   </div>
-               </div>
+               </form>
             </div>
          </Modal>
       </section>

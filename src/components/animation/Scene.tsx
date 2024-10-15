@@ -13,13 +13,13 @@ function Loader() {
 export default function Scene() {
   return (
     <div className="flex items-center justify-center flex-grow w-full h-full">
-      <Canvas camera={{ position: [0, 7, 15] }} gl={{ antialias: true }} dpr={[1, 2]} className="relative h-svh">
+      <Canvas camera={{ position: [-3, 2, 6] }} gl={{ antialias: true }} dpr={[1, 2]} className="relative h-svh">
          <Suspense fallback={<Loader />}>
             <Environment files="/assets/animations/env.hdr" background backgroundBlurriness={0.2} />
-            <ScrollControls damping={0.5} pages={3}>
+            <ScrollControls damping={0.5} pages={100}>
                <Model />
             </ScrollControls>
-            <OrbitControls enablePan={false} enableZoom={false} />
+            <OrbitControls enablePan={false} enableZoom={true} />
          </Suspense>
       </Canvas>
     </div>
