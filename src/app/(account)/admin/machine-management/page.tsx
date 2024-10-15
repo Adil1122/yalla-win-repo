@@ -216,7 +216,7 @@ export default function AdminMachineManagement() {
    try {
      console.log(selectedItem) 
      var selected_name = selectedItem !== null ? selectedItem.name : ''
-     let response = await fetch('/api/admin/machine-management/machine-counts?search=' + selected_name, {
+     let response = await fetch('/api/admin/machine-management/machine-counts?search_by=' + searchType + '&search=' + selected_name, {
        method: 'GET',
      });
      var content = await response.json()
@@ -274,9 +274,10 @@ export default function AdminMachineManagement() {
 
   var getMachines = async() => {
     try {
-        let response = await fetch("/api/admin/machine-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage, {
-          method: 'GET',
-        });
+         var selected_name = selectedItem !== null ? selectedItem.name : ''
+         let response = await fetch("/api/admin/machine-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
+            method: 'GET',
+         });
 
         var content = await response.json();
         if(!response.ok) {

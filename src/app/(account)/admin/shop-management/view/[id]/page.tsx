@@ -17,6 +17,8 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [activeInvoiceTab, setInvoiceActiveTab] = useState<InvoiceTab>('invoice')
    const [showInvoice, setShowInvoice] = useState<boolean>(false)
+   const [search, setSearch] = useState('')
+   var search_str = ''
    var active_tab = 'games';
 
    const handleEditClick = () => {
@@ -28,6 +30,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
       setCurrentPage(1)
       active_tab = tab;
       skip = 0;
+      search_str = search;
       getTotalRecords();
    }
 
@@ -53,7 +56,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    var getTotalRecords = async() => {
       try {
-         let response = await fetch('/api/admin/shop-management/view?count=1&type=' + active_tab + '&id=' + params.id + '&search=', {
+         let response = await fetch('/api/admin/shop-management/view?count=1&type=' + active_tab + '&id=' + params.id + '&search=' + search_str, {
             method: 'GET',
          });
          var content = await response.json();
@@ -73,7 +76,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    var getRecords = async() => {
         try {
-           let response = await fetch('/api/admin/shop-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=', {
+           let response = await fetch('/api/admin/shop-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=' + search_str, {
               method: 'GET',
            });
            var content = await response.json();
@@ -297,6 +300,16 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
       }
    }
 
+   function changeSearch(value: any) {
+
+      active_tab = activeTab;
+      skip = 0;
+      search_str = value;
+      setSearch(value)
+      getTotalRecords()
+
+   }
+
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -316,7 +329,8 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                            <FontAwesomeIcon size="lg" icon={faSearch} />
                         </div>
                         <div className="w-full">
-                           <input type="text" className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder="Search By QR Id" />
+                           <input type="text" className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder="Search By QR Id"
+                           value={search} onChange={(e) => changeSearch(e.target.value)} />
                         </div>
                      </div>
                      <div className="w-full lg:w-fit">

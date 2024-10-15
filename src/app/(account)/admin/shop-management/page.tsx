@@ -54,9 +54,9 @@ export default function AdminShopManagement() {
 
   var [form, setForm] = useState({
     name: "",
-    merchant_id: "66dfe62ad05edc7551a638e9",
+    merchant_id: "",
     location: "",
-    machine_id: "66e053d0c59f779acb326b63",
+    machine_id: "",
     registeration_date: "",
 
     name_error: "",
@@ -71,9 +71,9 @@ export default function AdminShopManagement() {
   function openCreatePopup() {
     setForm({
       name: "",
-      merchant_id: "66dfe62ad05edc7551a638e9",
+      merchant_id: "",
       location: "",
-      machine_id: "66e053d0c59f779acb326b63",
+      machine_id: "",
       registeration_date: "",
 
       name_error: "",
@@ -204,6 +204,9 @@ export default function AdminShopManagement() {
             return { ...prev, server_success: success_message };
           });
         }
+        setModalIsOpen(false);
+        getShopCounts();
+        
       } catch (error) {
         setForm((prev) => {
           return {
@@ -225,11 +228,12 @@ export default function AdminShopManagement() {
   useEffect(() => {
     getShopCounts()
     getDropdownsData('merchants', '')
-  }, [])
+  }, [selectedItem])
 
   var getShopCounts = async() => {
     try {
-      let response = await fetch('/api/admin/shop-management/shop-counts', {
+      var selected_name = selectedItem !== null ? selectedItem.name : ''
+      let response = await fetch('/api/admin/shop-management/shop-counts?search_by=' + searchType + '&search=' + selected_name, {
         method: 'GET',
       });
       var content = await response.json()
@@ -288,7 +292,8 @@ export default function AdminShopManagement() {
 
   var getShops = async() => {
     try {
-        let response = await fetch("/api/admin/shop-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage, {
+        var selected_name = selectedItem !== null ? selectedItem.name : ''
+        let response = await fetch("/api/admin/shop-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
           method: 'GET',
         });
 
@@ -608,7 +613,7 @@ export default function AdminShopManagement() {
                     <input
                       className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                       type="text" 
-                        placeholder="Yalla 3"
+                        placeholder="Shop Name"
                         value={form.name}
                         onChange={(e) => updateForm({ name: e.target.value })}
                       />

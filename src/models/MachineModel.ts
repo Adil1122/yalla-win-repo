@@ -9,6 +9,8 @@ const machineSchema = new Schema (
         location: {type: String, required: false},
         status: {type: String, required: false},
         locked: {type: Number, required: false},
+        city: {type: String, required: false},
+        country: {type: String, required: false},
     },
     {
         timestamps: true

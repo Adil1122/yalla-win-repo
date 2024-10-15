@@ -12,23 +12,30 @@ export async function POST(request: Request) {
         var location:any = data.get('location');
         var machine_id:any = data.get('machine_id');
         var shop_id:any = data.get('shop_id');
-        let newDocument = {
-            merchant_id: merchant_id,
-            location: location,
-            machine_id: machine_id,
-            shop_id: shop_id,
-            status: "Active",
-            locked: 0,
+        var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+        if(merchant) {
+            let newDocument = {
+                merchant_id: merchant_id,
+                location: location,
+                machine_id: machine_id,
+                shop_id: shop_id,
+                status: "Active",
+                locked: 0,
+                city: merchant.city,
+                country: merchant.country,
+            }
+    
+            let result = await Machine.create(newDocument);
+    
+            return NextResponse.json({
+                messge: "Machine created successfully ....",
+                result: result
+            }, {status: 200});
+        } else {
+            return NextResponse.json({
+                messge: "Merchant not found ....",
+            }, {status: 500}); 
         }
-        console.log('newDocument: ', newDocument)
-
-        let result = await Machine.create(newDocument);
-        console.log(result)
-
-        return NextResponse.json({
-            messge: "Machine created successfully ....",
-            result: result
-        }, {status: 200});
 
     } catch (error) {
         return NextResponse.json({
@@ -56,26 +63,33 @@ export async function PUT(request: Request) {
             var location:any = data.get('location');
             var machine_id:any = data.get('machine_id');
             var shop_id:any = data.get('shop_id');
-            let updates = {
-                $set: {
-                    merchant_id: merchant_id,
-                    location: location,
-                    machine_id: machine_id,
-                    shop_id: shop_id,
-                    status: "Active",
-                    locked: 0,
+            var merchant: any = User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+            if(merchant) {
+                let updates = {
+                    $set: {
+                        merchant_id: merchant_id,
+                        location: location,
+                        machine_id: machine_id,
+                        shop_id: shop_id,
+                        status: "Active",
+                        locked: 0,
+                        city: merchant.city,
+                        country: merchant.country,
+                    }
                 }
+
+                let result = await Machine.updateOne({_id: machine._id}, updates);
+
+                return NextResponse.json({
+                    messge: "Machine updated successfully ....",
+                    result: result
+                }, {status: 200});
+            } else {
+                return NextResponse.json({
+                    messge: "Merchant not found ....",
+                }, {status: 200});
             }
 
-            console.log('updates: ', updates)
-
-            let result = await Machine.updateOne({_id: machine._id}, updates);
-            //console.log(result)
-
-            return NextResponse.json({
-                messge: "Machine updated successfully ....",
-                result: result
-            }, {status: 200});
         }
 
     } catch (error) {
@@ -169,9 +183,10 @@ export async function GET(request: Request) {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var schedule = searchparams.get('schedule') + '';
-        //var merchant_id = searchparams.get('merchant_id') + '';
         var skip = parseInt(searchparams.get('skip') + '');
         var limit = parseInt(searchparams.get('limit') + '');
+        var search_by = searchparams.get('search_by') + '';
+        var search = searchparams.get('search') + '';
 
         var start_date = new Date().toISOString().slice(0, 10)
         var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
@@ -185,14 +200,25 @@ export async function GET(request: Request) {
             start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
         }
 
+        var search_json = search_by === 'countries' ? 
+        {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
+        :
+        {city: { $regex: '.*' + search + '.*', $options: 'i' }}
+
         const machines = await Machine
         .aggregate([
             {
                 $match: {
-                    createdAt: {
-                        $gte : new Date(start_date), 
-                        $lt: new Date(end_date)
-                    }  
+                    
+                    $and:[ 
+                        {
+                            createdAt: {
+                                $gte : new Date(start_date), 
+                                $lt: new Date(end_date)
+                            }
+                        },
+                        search_json
+                    ] 
                 },
             },
             {

@@ -14,21 +14,30 @@ export async function POST(request: Request) {
         var location:any = data.get('location');
         var machine_id:any = data.get('machine_id');
         var registeration_date:any = data.get('registeration_date');
-        let newDocument = {
-            name: name,
-            merchant_id: merchant_id,
-            location: location,
-            machine_id: machine_id,
-            registeration_date: registeration_date,
+        var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+
+        if(merchant) {
+            let newDocument = {
+                name: name,
+                merchant_id: merchant_id,
+                location: location,
+                machine_id: machine_id,
+                registeration_date: registeration_date,
+                city: merchant.city,
+                country: merchant.country,
+            }
+    
+            let result = await Shop.create(newDocument);
+    
+            return NextResponse.json({
+                messge: "Shop created successfully ....",
+                result: result
+            }, {status: 200});
+        } else {
+            return NextResponse.json({
+                messge: "Merchant not found ....",
+            }, {status: 500});
         }
-
-        let result = await Shop.create(newDocument);
-        console.log(result)
-
-        return NextResponse.json({
-            messge: "Shop created successfully ....",
-            result: result
-        }, {status: 200});
 
     } catch (error) {
         return NextResponse.json({
@@ -57,23 +66,33 @@ export async function PUT(request: Request) {
             var location:any = data.get('location');
             var machine_id:any = data.get('machine_id');
             var registeration_date:any = data.get('registeration_date');
-            let updates = {
-                $set: {
-                    name: name,
-                    merchant_id: merchant_id,
-                    location: location,
-                    machine_id: machine_id,
-                    registeration_date: registeration_date,
+            var merchant: any = User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+            if(merchant) {
+                let updates = {
+                    $set: {
+                        name: name,
+                        merchant_id: merchant_id,
+                        location: location,
+                        machine_id: machine_id,
+                        registeration_date: registeration_date,
+                        city: merchant.city,
+                        country: merchant.country,
+                    }
                 }
+
+                let result = await Shop.updateOne({_id: shop._id}, updates);
+                console.log(result)
+
+                return NextResponse.json({
+                    messge: "Shop updated successfully ....",
+                    result: result
+                }, {status: 200});
+
+            } else {
+                return NextResponse.json({
+                    messge: "Merchant not found ....",
+                }, {status: 500});
             }
-
-            let result = await Shop.updateOne({_id: shop._id}, updates);
-            console.log(result)
-
-            return NextResponse.json({
-                messge: "Shop updated successfully ....",
-                result: result
-            }, {status: 200});
         }
 
     } catch (error) {
@@ -169,6 +188,8 @@ export async function GET(request: Request) {
         //var merchant_id = searchparams.get('merchant_id') + '';
         var skip = parseInt(searchparams.get('skip') + '');
         var limit = parseInt(searchparams.get('limit') + '');
+        var search_by = searchparams.get('search_by') + '';
+        var search = searchparams.get('search') + '';
 
         var start_date = new Date().toISOString().slice(0, 10)
         var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
@@ -182,14 +203,24 @@ export async function GET(request: Request) {
             start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
         }
 
+        var search_json = search_by === 'countries' ? 
+        {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
+        :
+        {city: { $regex: '.*' + search + '.*', $options: 'i' }}
+
         const shops = await Shop
         .aggregate([
             {
                 $match: {
-                    registeration_date: {
-                        $gte : new Date(start_date), 
-                        $lt: new Date(end_date)
-                    }  
+                    $and:[ 
+                        {
+                            registeration_date: {
+                                $gte : new Date(start_date), 
+                                $lt: new Date(end_date)
+                            }
+                        },
+                        search_json
+                    ]
                 },
             },
             {
@@ -232,8 +263,10 @@ export async function GET(request: Request) {
 
         } else {
             return NextResponse.json({
-                messge: "Shops not found ....",
-            }, {status: 500});
+                messge: "Query success ....",
+                invoices: [],
+                shops: [],
+            }, {status: 200});
         }
 
     } catch (error) {
