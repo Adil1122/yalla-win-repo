@@ -22,6 +22,13 @@ const Model = forwardRef((props, ref) => {
    // Expose startAnimation method to parent component
    useImperativeHandle(ref, () => ({
       startAnimation: () => {
+
+         ballOutAnimations.forEach(({ action, name }) => {
+            if (action) {
+               action.reset().stop()
+            }
+         })
+
          if (rotationAnim) {
             rotationAnim.clampWhenFinished = true
             rotationAnim.setLoop(LoopOnce, 1)
