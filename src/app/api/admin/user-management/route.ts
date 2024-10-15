@@ -11,6 +11,7 @@ export async function POST(request: Request) {
     
     try {
       
+        await connectMongoDB();
         const data = await request.formData();
         var email:any = data.get('email');
         await connectMongoDB();
@@ -87,6 +88,7 @@ export async function PUT(request: Request) {
     
     try {
 
+        await connectMongoDB();
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var id: any = searchparams.get('id') + '';
