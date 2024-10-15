@@ -15,6 +15,8 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
    const [showInvoice, setShowInvoice] = useState<boolean>(false)
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [messageReply, setMessageReply] = useState<boolean>(false)
+   const [search, setSearch] = useState('')
+   var search_str = ''
    var active_tab = 'games';
    
 
@@ -33,6 +35,7 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
       setCurrentPage(1)
       active_tab = tab;
       skip = 0;
+      search_str = search;
       getTotalRecords();
    }
 
@@ -54,7 +57,7 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
 
    var getTotalRecords = async() => {
       try {
-         let response = await fetch('/api/admin/user-management/profile?count=1&type=' + active_tab + '&id=' + params.id + '&search=', {
+         let response = await fetch('/api/admin/user-management/profile?count=1&type=' + active_tab + '&id=' + params.id + '&search=' + search_str, {
             method: 'GET',
          });
          var content = await response.json();
@@ -74,7 +77,7 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
 
    var getRecords = async() => {
         try {
-           let response = await fetch('/api/admin/user-management/profile?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=', {
+           let response = await fetch('/api/admin/user-management/profile?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=' + search_str, {
               method: 'GET',
            });
            var content = await response.json();
@@ -117,6 +120,16 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
       active_tab = activeTab;
       getRecords()
       setCurrentPage(current_page);
+   }
+
+   function changeSearch(value: any) {
+
+      active_tab = activeTab;
+      skip = 0;
+      search_str = value;
+      setSearch(value)
+      getTotalRecords()
+
    }
 
    return (
@@ -166,7 +179,8 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
                         <FontAwesomeIcon size="lg" icon={faSearch} />
                      </div>
                      <div className="w-full">
-                        <input type="text" className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder="Search By QR Id" />
+                        <input type="text" className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder="Search By QR Id"
+                        value={search} onChange={(e) => changeSearch(e.target.value)} />
                      </div>
                   </div>
                </div>
