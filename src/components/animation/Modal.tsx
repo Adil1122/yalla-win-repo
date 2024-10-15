@@ -5,9 +5,7 @@ import { useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei
 
 const Model = forwardRef((props, ref) => {
    const group = useRef<Group>(null)
-   const { nodes, materials, animations, scene } = useMemo(() => {
-      return useGLTF("/assets/animations/6_fig_yalla.glb")
-   }, [])
+   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/6_fig_yalla.glb")
 
    const { actions } = useAnimations(animations, scene)
    const [texture] = useTexture(["/assets/animations/textures/texture-2.webp"])

@@ -1,14 +1,17 @@
 'use client'
 
 import React, { useState } from 'react'
-import { faArrowLeft, faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faChevronLeft, faChevronRight, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Modal from '@/components/modal'
 
 export default function AdminWinnersSearchResult() {
    
    const searchParams = useSearchParams()
+   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+   const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
    const [amount, game, product, peoplePercent, country, city, area] = [
       searchParams.get('amount'),
       searchParams.get('game'),
@@ -18,6 +21,15 @@ export default function AdminWinnersSearchResult() {
       searchParams.get('city'),
       searchParams.get('area'),
    ]
+   const router = useRouter()
+
+   const handleSelectRandom = () => {
+      setModalIsOpen(true)
+   }
+   
+   const handleEnterTicketNumber = () => {
+      setModalTwoIsOpen(true)
+   }
 
    console.log(amount, game, product, peoplePercent, country, city, area)
 
@@ -44,11 +56,16 @@ export default function AdminWinnersSearchResult() {
                      <Link href={`/admin/winners-management/verify-results/${game !== null ? 'games' : 'products'}`} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                         Verify Results
                      </Link>
-                     <Link href="/admin/winners-management/verify-results" className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
+                     <button type="button" onClick={handleSelectRandom} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                         Select Random Number
-                     </Link>
-                     <button type="button" className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
-                        <div className="capitalize font-medium text-size-2 whitespace-nowrap">Enter Ticket Number</div>
+                     </button>
+                     <button type="button" onClick={handleEnterTicketNumber}  className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
+                        {game !== null && (
+                           <div className="capitalize font-medium text-size-2 whitespace-nowrap">Enter Ticket Number</div>
+                        )}
+                        {product !== null && (
+                           <div className="capitalize font-medium text-size-2 whitespace-nowrap">Enter QR ID</div>
+                        )}
                      </button>
                   </div>
                </div>
@@ -101,6 +118,68 @@ export default function AdminWinnersSearchResult() {
                </div>
             </div>
          </div>
+         <Modal open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+            <div className="flex flex-col items-center justify-center gap-4 px-12 py-6 w-full lg:min-w-[500px]">
+               <div className="text-darkone text-size-4">Are you sure you want to select random number</div>
+               <div className="flex items-center gap-6 mt-3">
+                  <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
+                  <button onClick={() => {router.push(`/admin/winners-management/select-random-number/${game !== null ? 'games' : 'products'}`)}} className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Yes</button>
+               </div>
+            </div>
+         </Modal>
+         <Modal open={modalTwoIsOpen} onClose={() => setModalTwoIsOpen(false)}>
+            <div className="flex flex-col justify-center gap-12 px-12 py-6 w-full lg:min-w-[800px]">
+               <div className="flex items-center justify-between w-full">
+                  <div className="text-darkone text-head-2">Enter {game !== null ? 'Ticket Number' : 'QR Code'}</div>
+                  <div onClick={() => setModalIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] rounded-full flex items-center justify-center">
+                     <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
+                  </div>
+               </div>
+               <div className="flex flex-col gap-6">
+                  {game !== null && (
+                     <div className="flex flex-col gap-4">
+                     <div className="text-darkone text-size-4">Choose Game</div>
+                     <div className="text-darkone text-size-2 border border-lightone rounded">
+                        <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full">
+                           <option value="1">Game one</option>
+                           <option value="0">Game two</option>
+                        </select>
+                     </div>
+                  </div>
+                  )}
+
+                  {product !== null && (
+                     <div className="flex flex-col gap-4">
+                     <div className="text-darkone text-size-4">Choose Product</div>
+                     <div className="text-darkone text-size-2 border border-lightone rounded">
+                        <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full">
+                           <option value="1">Product one</option>
+                           <option value="0">Product two</option>
+                        </select>
+                     </div>
+                  </div>
+                  )}
+
+                  <div className="flex flex-col gap-4">
+                     <div className="text-darkone text-size-4">{game !== null ? 'Ticket No' : 'QR Code'}</div>
+                     <div className="text-darkone text-size-2 border border-lightone rounded">
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                     </div>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                     <div className="text-darkone text-size-4">Announcement Date</div>
+                     <div className="text-darkone text-size-2 border border-lightone rounded">
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                     </div>
+                  </div>
+
+                  <div className="flex items-center ml-auto gap-6">
+                     <button onClick={() => setModalTwoIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
+                     <button onClick={() => {router.push(`/admin/winners-management/enter-ticket-number/${game !== null ? 'games' : 'products'}`)}} className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Search</button>
+                  </div>
+               </div>
+            </div>
+         </Modal>
       </section>
    )
 }

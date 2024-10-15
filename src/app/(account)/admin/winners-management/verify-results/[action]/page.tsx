@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { faArrowLeft, faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faChevronDown, faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
 
 type Tab = 'all' | 'app' | 'web' | 'shop'
 
@@ -50,9 +51,56 @@ export default function AdminWinnersVerifyResult({ params } : {params: { action:
                <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'shop' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('shop')}>Shop</div>
             </div>
 
-            <div className="mx-12 mt-12 flex items-center w-full">
-               <div>
-                  
+            <div className="w-full px-12 mt-12 flex items-center">
+               <div className="flex items-center gap-4">
+                  <Menu>
+                     <MenuButton className="w-full">
+                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-10 text-white">
+                           <div className="capitalize font-medium text-size-2">All</div>
+                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                        </div>
+                     </MenuButton>
+                     <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Yalla 3</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Yalla 4</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Yalla 6</div>
+                        </MenuItem>
+                     </MenuItems>
+                  </Menu>
+                  <Menu>
+                     <MenuButton className="w-full">
+                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-10 text-white">
+                           <div className="capitalize font-medium text-size-2">All</div>
+                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                        </div>
+                     </MenuButton>
+                     <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Straight</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Rumble</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Chance</div>
+                        </MenuItem>
+                     </MenuItems>
+                  </Menu>
+               </div>
+               <div className="flex flex-col gap-3 ml-auto text-white text-head-1 font-medium">
+                  <div className="flex flex-row items-center gap-1">
+                     <div>No of winners: </div>
+                     <div>234</div>
+                  </div>
+                  <div className="flex flex-row items-center gap-1">
+                     <div>Winning amount: </div>
+                     <div>12200 AED</div>
+                  </div>
                </div>
             </div>
 
