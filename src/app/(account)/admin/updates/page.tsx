@@ -2,17 +2,17 @@
 
 import { faChevronRight, faImage, faPlay, faPlus, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useRef, useState, ChangeEvent } from 'react'
+import React, { useRef, useState, ChangeEvent, useEffect } from 'react'
 import Modal from '@/components/modal'
 import Link from 'next/link'
 
 interface Item {
-   id: number;
+   id: string;
    imageUrl: string;
 }
 
-interface VideoItem {
-   id: number;
+interface VideoItem { 
+   id: string;
    imageUrl: string;
    data: string;
 }
@@ -30,29 +30,14 @@ export default function AdminUpdatesSection() {
    
    const [hbCurrentPage, setHbCurrentPage] = useState(0)
    const [mhbCurrentPage, setMhbCurrentPage] = useState(0)
-   const [homeBanners, setHomeBanners] = useState<Item[]>([
-      { id: 1, imageUrl: '/assets/images/home.svg' },
-      { id: 2, imageUrl: '/assets/home-slider/image.svg' },
-      { id: 3, imageUrl: '/assets/images/winner-img.svg' },
-      { id: 4, imageUrl: '/assets/home-slider/slider-img.svg' }
-   ])
+   const [homeBanners, setHomeBanners] = useState<Item[]>([])
    const currentHomebanners = homeBanners.slice(hbCurrentPage * itemsPerPage, (hbCurrentPage + 1) * itemsPerPage)
    
-   const [mobileomeBanners, setMobileHomeBanners] = useState<Item[]>([
-      { id: 1, imageUrl: '/assets/images/home.svg' },
-      { id: 2, imageUrl: '/assets/home-slider/image.svg' },
-      { id: 3, imageUrl: '/assets/images/winner-img.svg' },
-      { id: 4, imageUrl: '/assets/home-slider/slider-img.svg' }
-   ])
+   const [mobileomeBanners, setMobileHomeBanners] = useState<Item[]>([])
    const currentMobileHomeBanners = mobileomeBanners.slice(mhbCurrentPage * itemsPerPage, (mhbCurrentPage + 1) * itemsPerPage)
 
    const [wvCurrentPage, setWvCurrentPage] = useState(0)
-   const [winnersVideos, setWinnersVideos] = useState<VideoItem[]>([
-      { id: 1, imageUrl: '/assets/images/home.svg', data: '' },
-      { id: 2, imageUrl: '/assets/home-slider/image.svg', data: '' },
-      { id: 3, imageUrl: '/assets/images/winner-img.svg', data: '' },
-      { id: 4, imageUrl: '/assets/home-slider/slider-img.svg', data: '' }
-   ])
+   const [winnersVideos, setWinnersVideos] = useState<VideoItem[]>([])
    const currentWinnersVideos = winnersVideos.slice(wvCurrentPage * itemsPerPage, (wvCurrentPage + 1) * itemsPerPage)
 
    const handleHomeBannersNext = () => {
@@ -103,13 +88,7 @@ export default function AdminUpdatesSection() {
                if (context) {
                      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
                      const thumbnailUrl = canvas.toDataURL('image/png')
-            
-                     const newVideo: VideoItem = {
-                        id: winnersVideos.length + 1,
-                        imageUrl: thumbnailUrl as string,
-                        data: videoURL
-                     }
-                     setWinnersVideos((prevVideos) => [...prevVideos, newVideo])
+                     onSubmit(file, 'winner-videos', thumbnailUrl as string)
                }
             })
          
@@ -119,21 +98,76 @@ export default function AdminUpdatesSection() {
             const reader = new FileReader()
             reader.onloadend = () => {
                if (addItemType == 'desktop-banners') {
-                   const newBanner: Item = {
-                      id: homeBanners.length + 1,
-                      imageUrl: reader.result as string
-                   }
-                   setHomeBanners((prevBanners) => [...prevBanners, newBanner])
                 } else if (addItemType == 'mobile-banners') {
-                   const newBanner: Item = {
-                      id: mobileomeBanners.length + 1,
-                      imageUrl: reader.result as string
-                   }
-                   setMobileHomeBanners((prevBanners) => [...prevBanners, newBanner])
                 }
+                onSubmit(file, addItemType, '')
             }
             reader.readAsDataURL(file)
          }
+      }
+   }
+
+   async function onSubmit(file:any, type: any, thumbnail: any) {
+      console.log('thumbnail: ', thumbnail)
+      try {
+         let formData = new FormData();
+         formData.append("type", type);
+         formData.append("file", file);
+         formData.append("thumbnail", thumbnail);
+
+         let response = await fetch('/api/admin/updates', {
+            method: 'POST',
+            body: formData,
+          });
+
+          getAllRecords()
+      } catch(error) {
+
+      }
+   }
+
+   useEffect(() => {
+      getAllRecords()
+   }, [])
+
+   async function getAllRecords() {
+      try {
+         let response = await fetch('/api/admin/updates', {
+            method: 'GET',
+          });
+
+          var content = await response.json();
+
+          if(!response.ok) {
+
+          } else {
+
+            var records: any = content.records;
+            var desktop_banners = [];
+            var mobile_banners = [];
+            var winner_videos = [];
+
+            for(var i = 0; i < records.length; i++) {
+
+               if(records[i].type === 'desktop-banners') {
+                  var banner = { id: records[i]._id, imageUrl: records[i].file_url };
+                  desktop_banners.push(banner)
+               } else if(records[i].type === 'mobile-banners') {
+                  var banner = { id: records[i]._id, imageUrl: records[i].file_url };
+                  mobile_banners.push(banner)
+               } else if(records[i].type === 'winner-videos') { 
+                  var video = { id: records[i]._id, imageUrl: records[i].thumbnail, data: records[i].file_url };
+                  winner_videos.push(video)
+               }
+
+            }
+            setHomeBanners(desktop_banners)
+            setMobileHomeBanners(mobile_banners)
+            setWinnersVideos(winner_videos)
+
+          }
+      } catch (error) {
+         
       }
    }
 
@@ -141,8 +175,22 @@ export default function AdminUpdatesSection() {
       setModalIsOpen(true)
    }
 
-   const handleRemove = (id: number) => {
+   var [deleteId, setDeleteId] = useState('')
+   const handleRemove = (id: string) => {
+      setDeleteId(id)
       setModalTwoIsOpen(true)
+   }
+
+   async function deleteRecord() {
+      try {
+         let response = await fetch('/api/admin/updates?id=' + deleteId, {
+            method: 'DELETE',
+          });
+          setModalTwoIsOpen(false)
+          getAllRecords()
+      } catch (error) {
+         
+      }
    }
 
    return (
@@ -279,7 +327,7 @@ export default function AdminUpdatesSection() {
                <div className="text-darkone text-size-4">Are you sure you want to delete this record?</div>
                <div className="flex items-center gap-6 mt-3">
                   <button onClick={() => setModalTwoIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
-                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Delete</button>
+                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={deleteRecord}>Delete</button>
                </div>
             </div>
          </Modal>
