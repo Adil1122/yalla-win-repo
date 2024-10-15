@@ -4,23 +4,32 @@ import React, { useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Modal from '@/components/modal'
 
 export default function AdminWinnersSearchResult() {
    
-   const searchParams = useSearchParams()
+   //const searchParams = useSearchParams()
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
+   // const [amount, game, product, peoplePercent, country, city, area] = [
+   //    searchParams.get('amount'),
+   //    searchParams.get('game'),
+   //    searchParams.get('product'),
+   //    searchParams.get('people-percent'),
+   //    searchParams.get('country'),
+   //    searchParams.get('city'),
+   //    searchParams.get('area'),
+   // ]
    const [amount, game, product, peoplePercent, country, city, area] = [
-      searchParams.get('amount'),
-      searchParams.get('game'),
-      searchParams.get('product'),
-      searchParams.get('people-percent'),
-      searchParams.get('country'),
-      searchParams.get('city'),
-      searchParams.get('area'),
-   ]
+         '1',
+         'game',
+         'product',
+         'perople-percent',
+         'country',
+         'city',
+         'country',
+      ]
    const router = useRouter()
 
    const handleSelectRandom = () => {
