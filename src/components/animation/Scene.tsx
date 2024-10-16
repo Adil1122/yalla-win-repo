@@ -7,7 +7,7 @@ import { useProgress, Html, OrbitControls, Environment } from "@react-three/drei
 
 function Loader() {
   const { progress } = useProgress()
-  return <Html center>{progress.toFixed(1)} % loaded</Html>
+  return <Html center style={{ color: 'white' }}>{progress.toFixed(1)} % loaded</Html>
 }
 
 export default function Scene({ modelRef }: any) {

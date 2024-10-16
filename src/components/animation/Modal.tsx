@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from "react"
 import { useFrame } from "@react-three/fiber"
-import { Group, MeshStandardMaterial, LoopOnce } from "three"
-import { useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei"
+import { Group, LoopOnce } from "three"
+import { useAnimations, useGLTF } from "@react-three/drei"
 
-const Model = forwardRef((props, ref) => {
+const Modal = forwardRef((props, ref) => {
    const group = useRef<Group>(null)
-   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/6_fig_yalla.glb")
+   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/6_fig_yalla_v3.glb")
 
    const { actions } = useAnimations(animations, scene)
-   const [texture] = useTexture(["/assets/animations/textures/texture-2.webp"])
-   const rotationAnim = actions["initaial rotation.001"]
+   const rotationAnim = actions["wheel_roll_1"]
    const ballOutAnimations = [
       { action: actions["ball.2_roll_out"], name: "ball.2_roll_out" },
       { action: actions["ball.3_roll_out.001"], name: "ball.3_roll_out.001" },
@@ -31,7 +30,7 @@ const Model = forwardRef((props, ref) => {
             rotationAnim.clampWhenFinished = true
             rotationAnim.setLoop(LoopOnce, 1)
             rotationAnim.reset().play()
-            console.log("Animation 'initaial rotation.001' started")
+            console.log("Wheel animation has started")
          }
 
          ballAnimations.forEach((ballAnim) => {
@@ -45,12 +44,9 @@ const Model = forwardRef((props, ref) => {
    }))
 
    useEffect(() => {
-      const material = materials[""] as MeshStandardMaterial | undefined
 
-      if (material) {
-         material.map = texture
-         material.needsUpdate = true
-      }
+      console.log(actions)
+      console.log(materials)
 
       return () => {
          if (rotationAnim) {
@@ -70,14 +66,14 @@ const Model = forwardRef((props, ref) => {
             }
          })
       }
-   }, [actions, texture, materials])
+   }, [actions, materials])
 
    useFrame(() => {
       if (rotationAnim) {
          // Check if the animation is near the end of its duration
-         if (rotationAnim.getClip().duration - rotationAnim.time < 0.01) {
-            console.log("Animation 'initaial rotation.001' ended")
-            rotationAnim.reset().stop()
+         if (rotationAnim.getClip().duration - rotationAnim.time < 0.00001) {
+            console.log("Wheel animation has ended")
+            rotationAnim.stop()
 
             ballOutAnimations.forEach(({ action, name }) => {
                if (action) {
@@ -98,6 +94,6 @@ const Model = forwardRef((props, ref) => {
    )
 })
 
-Model.displayName = "Model"
+Modal.displayName = "Modal"
 
-export default Model
+export default Modal
