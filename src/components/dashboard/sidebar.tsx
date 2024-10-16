@@ -196,7 +196,7 @@ export default function DashboardSideBar() {
       {name : 'Winners Management', active: false, href: null, icon: 'winners', children: [
          {name: 'Select Winners', href: '/admin/winners-management/select-winners', active: false},
          {name: 'Winners History', href: '/admin/winners-management/winners-history', active: false},
-         {name: 'results', href: '/admin/winners-management/results', active: false},
+         {name: 'Results', href: '/admin/winners-management/results', active: false},
       ]},
       {name : 'Notifications', active: false, href: '/admin/notifications', icon: 'notif', children: []},
    ])
