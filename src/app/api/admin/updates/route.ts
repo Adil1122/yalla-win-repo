@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Update from "@/models/UpdateModel";
+import Product from "@/models/ProductModel";
 import { put } from '@vercel/blob';
 
 export async function POST(request: Request) {
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
     try {
+        await connectMongoDB();
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var id: any = searchparams.get('id') + '';
@@ -66,10 +68,13 @@ export async function DELETE(request: Request) {
 export async function GET(request: Request) {
     try {
 
+        await connectMongoDB();
         var records = await Update.find({_id: {$ne: null}}).sort({'createdAt': -1});
+        var products = await Product.find({_id: {$ne: null}}).sort({'createdAt': -1}).limit(3);
         return NextResponse.json({
             messge: "Query successful ....",
-            records: records
+            records: records,
+            products: products
         }, {status: 200});
 
     } catch (error) {

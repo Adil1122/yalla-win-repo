@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 type Tab = 'details' | 'communication'
 
-export default function AdminViewMerchantDetails({ params } : {params: { name: string; }}) {
+export default function AdminViewMerchantDetails({ params } : {params: { id: string; }}) {
 
    const fileInputRef = useRef<HTMLInputElement | null>(null)
    

@@ -1,7 +1,7 @@
 // @ts-ignore
 import mongoose, {Schema} from "mongoose";
 
-const sakeSchema = new Schema (
+const saleSchema = new Schema (
     {
         merchant_id: {type: mongoose.Types.ObjectId, ref: 'User', required: false},
         total_sales: {type: Number, required: false},
@@ -16,5 +16,5 @@ const sakeSchema = new Schema (
     }
 )
 
-const SaleModel = mongoose.models.Sale || mongoose.model("Sale", sakeSchema);
+const SaleModel = mongoose.models.Sale || mongoose.model("Sale", saleSchema);
 export default SaleModel;

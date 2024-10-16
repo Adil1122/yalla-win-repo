@@ -39,6 +39,7 @@ export default function AdminUpdatesSection() {
    const [wvCurrentPage, setWvCurrentPage] = useState(0)
    const [winnersVideos, setWinnersVideos] = useState<VideoItem[]>([])
    const currentWinnersVideos = winnersVideos.slice(wvCurrentPage * itemsPerPage, (wvCurrentPage + 1) * itemsPerPage)
+   const [products, setProducts] = useState([])
 
    const handleHomeBannersNext = () => {
       if ((hbCurrentPage + 1) * itemsPerPage < homeBanners.length) {
@@ -164,6 +165,7 @@ export default function AdminUpdatesSection() {
             setHomeBanners(desktop_banners)
             setMobileHomeBanners(mobile_banners)
             setWinnersVideos(winner_videos)
+            setProducts(content.products)
 
           }
       } catch (error) {
@@ -286,17 +288,20 @@ export default function AdminUpdatesSection() {
             <div className="flex flex-col gap-8">
                <h3 className="text-head-4 text-white">Rules & Pricing</h3>
                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-                  <div className="flex flex-col items-center justify-center">
+               {products.map((product: any) => (
+                  <div key={product._id} className="flex flex-col items-center justify-center">
                      <div className="flex flex-col w-full h-[200px] relative">
                         <div className={`bg-[url("/assets/images/home.svg")] bg-center bg-cover bg-no-repeat w-full h-full border border-white`}></div>
-                        <Link href="updates/view/yalla-3" className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white py-1.5 px-12 rounded-standard text-themeone text-size-4 whitespace-nowrap">View Details</Link>
+                        <Link href={"updates/view/" + product._id} className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white py-1.5 px-12 rounded-standard text-themeone text-size-4 whitespace-nowrap">View Details</Link>
                      </div>
                      <div className="flex w-full bg-white items-center justify-between px-5 py-3">
-                        <div className="text-darkone text-head-2">Yalla 3</div>
-                        <div className="text-theme-gradient text-head-2">AED 12</div>
+                        <div className="text-darkone text-head-2">{product.name}</div>
+                        <div className="text-theme-gradient text-head-2">AED {product.price}</div>
                      </div>
                   </div>
-                  <div className="flex flex-col items-center justify-center">
+               ))}
+
+                  {/*<div className="flex flex-col items-center justify-center">
                      <div className="flex flex-col w-full h-[200px] relative">
                         <div className={`bg-[url("/assets/images/home.svg")] bg-center bg-cover bg-no-repeat w-full h-full border border-white`}></div>
                         <Link href="" className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white py-1.5 px-12 rounded-standard text-themeone text-size-4 whitespace-nowrap">View Details</Link>
@@ -315,7 +320,7 @@ export default function AdminUpdatesSection() {
                         <div className="text-darkone text-head-2">Yalla 6</div>
                         <div className="text-theme-gradient text-head-2">AED 12</div>
                      </div>
-                  </div>
+                  </div>*/}
                   
                </div>
             </div>
