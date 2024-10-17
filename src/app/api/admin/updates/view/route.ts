@@ -3,6 +3,7 @@ import Rule from "@/models/RuleModel";
 import connectMongoDB from "@/libs/mongoosdb";
 import mongoose from "mongoose";
 import Product from "@/models/ProductModel";
+import { put } from '@vercel/blob';
 
 export async function GET(request: Request) {
     try {
@@ -11,6 +12,7 @@ export async function GET(request: Request) {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var id: any = searchparams.get('id') + '';
+        var product = await Product.findOne({_id: id});
         var record: any = await Rule.aggregate([
             {
                 $match: {
@@ -31,16 +33,19 @@ export async function GET(request: Request) {
             return NextResponse.json({
                 messge: "Query success ....",
                 record: record,
+                product: product
             }, {status: 200});
         }
 
         return NextResponse.json({
-            messge: "Query error, record not found ....",
-        }, {status: 500});
+            messge: "Record not found ....",
+            record: [],
+            product: product
+        }, {status: 200});
 
     } catch (error) {
         return NextResponse.json({
-            messge: "Query success ....",
+            messge: "Query error ....",
             error: JSON.stringify(error),
         }, {status: 500});
     }
@@ -65,10 +70,13 @@ export async function POST(request: Request) {
         var option_chance_3_correct_win_price:any = data.get('option_chance_3_correct_win_price');
         var option_chance_2_correct_win_price:any = data.get('option_chance_2_correct_win_price');
         var option_chance_1_correct_win_price:any = data.get('option_chance_1_correct_win_price');
+        let image = data.get('image');
 
         var rule: any = await Rule.find({product_id: product_id}).select('_id');
+        var product: any = await Product.find({_id: product_id}).select(['_id', 'image']);
 
         let document = {
+            product_id: product_id,
             product_name: product_name,
             product_price: product_price,
             introduction: introduction,
@@ -94,10 +102,24 @@ export async function POST(request: Request) {
             result = await Rule.create(document);
         }
 
+        var blob = null;
+        let image_name = '';
+        const qr_code = Date.now() + Math.random();
+        if (image && image instanceof Blob) {
+            console.log('Image found:', image);
+            image_name = qr_code + '-' + image.name;
+            blob = await put(image_name, image, {
+                access: 'public',
+            });
+
+            console.log('Image successfully saved:', image_name); 
+        }
+
         let productUpdates = {
             $set: {
                 name: product_name,
-                price: product_price
+                price: product_price,
+                image: blob ? blob.url : product.image
             }
         }
         let productResult = await Product.updateOne({_id: product_id}, productUpdates);

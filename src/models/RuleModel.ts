@@ -7,7 +7,7 @@ const ruleSchema = new Schema (
         product_name: {type: String, required: false},
         product_price: {type: Number, required: false},
         introduction: {type: String, required: false},
-        how_to_participate: {type: Number, required: false},
+        how_to_participate: {type: String, required: false},
         option_straight_text: {type: String, required: false},
         option_chance_text: {type: String, required: false},
         option_rumble_text: {type: String, required: false},

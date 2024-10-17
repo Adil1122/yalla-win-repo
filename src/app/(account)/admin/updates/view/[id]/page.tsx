@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
@@ -16,6 +16,45 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [messageReply, setMessageReply] = useState<boolean>(false)
    const [imgSrc, setImgSrc] = useState<string>('/assets/images/home.svg')
+   const [image, setImage] = useState<File | undefined>()
+   //const [record, setRecord] = useState([]);
+   //const [product, setProduct] = useState<any>([]);
+
+   var [product, setProduct] = useState({
+      name: "",
+      price: "",
+  
+      name_error: "",
+      price_error: "",
+      server_error: "",
+      server_success: "",
+    });
+
+   var [record, setRecord] = useState({
+
+      introduction: "",
+      how_to_participate: "",
+      option_straight_text: "",
+      option_chance_text: "",
+      option_rumble_text: "",
+      option_straight_win_price: "",
+      option_rumble_win_price: "",
+      option_chance_3_correct_win_price: "",
+      option_chance_2_correct_win_price: "",
+      option_chance_1_correct_win_price: "",
+
+      introduction_error: "",
+      how_to_participate_error: "",
+      option_straight_text_error: "",
+      option_chance_text_error: "",
+      option_rumble_text_error: "",
+      option_straight_win_price_error: "",
+      option_rumble_win_price_error: "",
+      option_chance_3_correct_win_price_error: "",
+      option_chance_2_correct_win_price_error: "",
+      option_chance_1_correct_win_price_error: "",
+      
+   }) 
    
 
    const handleMessageActionClick = (action: 'view' | 'send') => {
@@ -35,6 +74,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
    const handleFileChange = (event: any) => {
       const file = event.target.files?.[0]
       if (file) {
+         setImage(file)
          const reader = new FileReader()
          reader.onloadend = () => {
             setImgSrc(reader.result as string)
@@ -42,6 +82,217 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
          reader.readAsDataURL(file)
       }
    }
+
+   useEffect(() => {
+      getRecord()
+   }, [])
+
+   async function getRecord() {
+      try {
+
+         let response = await fetch('/api/admin/updates/view?id=' + params.id, {
+            method: 'GET',
+          });
+
+          var content = await response.json();
+
+          if(!response.ok) {
+
+          } else {
+            console.log('record: ', record)
+            if(content.record && content.record.length > 0) {
+               setRecord({
+                  introduction: content.record[0].introduction,
+                  how_to_participate: content.record[0].how_to_participate,
+                  option_straight_text: content.record[0].option_straight_text,
+                  option_chance_text: content.record[0].option_chance_text,
+                  option_rumble_text: content.record[0].option_rumble_text,
+                  option_straight_win_price: content.record[0].option_straight_win_price,
+                  option_rumble_win_price: content.record[0].option_rumble_win_price,
+                  option_chance_3_correct_win_price: content.record[0].option_chance_3_correct_win_price,
+                  option_chance_2_correct_win_price: content.record[0].option_chance_2_correct_win_price,
+                  option_chance_1_correct_win_price: content.record[0].option_chance_1_correct_win_price,
+            
+                  introduction_error: "",
+                  how_to_participate_error: "",
+                  option_straight_text_error: "",
+                  option_chance_text_error: "",
+                  option_rumble_text_error: "",
+                  option_straight_win_price_error: "",
+                  option_rumble_win_price_error: "",
+                  option_chance_3_correct_win_price_error: "",
+                  option_chance_2_correct_win_price_error: "",
+                  option_chance_1_correct_win_price_error: "",
+               })
+            }
+
+            setProduct({
+               name: content.product.name,
+               price: content.product.price,
+           
+               name_error: "",
+               price_error: "",
+               server_error: "",
+               server_success: "",
+            })
+
+            if(content.product.image !== '') {
+               setImgSrc(content.product.image)
+            }
+            
+          }
+
+      } catch (error) {
+         
+      }
+   }
+
+   function updateProduct(value: any) {
+      console.log(value);
+      return setProduct((prev) => {
+        return { ...prev, ...value };
+      });
+   }
+
+   function updateRecord(value: any) {
+      console.log('val: ', value);
+      return setRecord((prev) => {
+        return { ...prev, ...value };
+      });
+   }
+
+   function isValidateErrorForm() {
+      var err = {
+         name_error: "",
+         price_error: "",
+         introduction_error: "",
+         how_to_participate_error: "",
+         option_straight_text_error: "",
+         option_chance_text_error: "",
+         option_rumble_text_error: "",
+         option_straight_win_price_error: "",
+         option_rumble_win_price_error: "",
+         option_chance_3_correct_win_price_error: "",
+         option_chance_2_correct_win_price_error: "",
+         option_chance_1_correct_win_price_error: "",
+       };
+       var is_error = false;
+       console.log('record: ', record)
+   
+       // Validation logic
+       if (product.name === "") {
+         err["name_error"] = "Name is Required";
+         is_error = true;
+       }
+
+       if (product.price === "") {
+         err["price_error"] = "Price is Required";
+         is_error = true;
+       }
+
+       if (record.introduction === "") {
+         err["introduction_error"] = "Introduction is Required";
+         is_error = true;
+       }
+
+       if (record.how_to_participate === "") {
+         err["how_to_participate_error"] = "How to Participate is Required";
+         is_error = true;
+       }
+
+       if (record.option_straight_text === "") {
+         err["option_straight_text_error"] = "Option straight text is Required";
+         is_error = true;
+       }
+
+       if (record.option_rumble_text === "") {
+         err["option_rumble_text_error"] = "Option rumble text is Required";
+         is_error = true;
+       }
+
+       if (record.option_chance_text === "") {
+         err["option_chance_text_error"] = "Option chance text is Required";
+         is_error = true;
+       }
+
+       if (record.option_straight_win_price === "") {
+         err["option_straight_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
+
+       if (record.option_rumble_win_price === "") {
+         err["option_rumble_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
+
+       if (record.option_chance_3_correct_win_price === "") {
+         err["option_chance_3_correct_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
+
+       if (record.option_chance_2_correct_win_price === "") {
+         err["option_chance_2_correct_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
+
+       if (record.option_chance_3_correct_win_price === "") {
+         err["option_chance_1_correct_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
+
+       setProduct((prev) => {
+         return { ...prev, ...err };
+       });
+
+       setRecord((prev) => {
+         return { ...prev, ...err };
+       });
+   
+       console.log("is_error: ", is_error);
+   
+       return is_error;
+   }
+
+   async function onSubmit(e: any) {
+      e.preventDefault();
+      if (!isValidateErrorForm()) {
+         let formData = new FormData();
+         formData.append("product_id", params.id);
+         formData.append("product_name", product.name);
+         formData.append("product_price", product.price);
+
+         formData.append("introduction", record.introduction);
+         formData.append("how_to_participate", record.how_to_participate);
+         formData.append("option_straight_text", record.option_straight_text);
+         formData.append("option_chance_text", record.option_chance_text);
+         formData.append("option_rumble_text", record.option_rumble_text);
+         formData.append("option_straight_win_price", record.option_straight_win_price);
+         formData.append("option_rumble_win_price", record.option_rumble_win_price);
+         formData.append("option_chance_3_correct_win_price", record.option_chance_3_correct_win_price);
+         formData.append("option_chance_2_correct_win_price", record.option_chance_2_correct_win_price);
+         formData.append("option_chance_1_correct_win_price", record.option_chance_1_correct_win_price);
+         if (typeof image !== "undefined") {
+            formData.append("image", image);
+         }
+
+         try {
+            let response = await fetch('/api/admin/updates/view', {
+               method: 'POST',
+               body: formData,
+             });
+
+             if(!response.ok) {
+
+             } else {
+               alert('added ... ')
+             }
+   
+         } catch (error) {
+            
+         }
+      }
+   }
+
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -55,7 +306,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
             
             <div className="flex flex-col px-12 mt-12 gap-12">
                <div className="flex flex-col w-fit gap-4">
-                  <div className="text-white text-head-4">Yalla 3</div>
+                  <div className="text-white text-head-4">{product.name}</div>
                   <div className="flex flex-col">
                      <div className="flex flex-col relative border border-white">
                         <img className="max-w-[270px]" src={imgSrc} alt="" />
@@ -73,30 +324,55 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                      <div className="flex lg:w-1/2 gap-6">
                         <div className="flex flex-col gap-2 flex-1">
                            <div className="text-darkone font-semibold text-size-4">Product Name</div>
+
                            <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                              <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="Yalla 3" />
+                              <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" 
+                              value={product.name}
+                              onChange={(e) => updateProduct({ name: e.target.value })} /> 
                            </div>
+
+                           {product.name_error !== "" && (
+                              <span style={{ color: "red" }}>{product.name_error}</span>
+                           )}
                         </div>
                         <div className="flex flex-col gap-2 flex-1">
                            <div className="text-darkone font-semibold text-size-4">Product Price</div>
                            <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                              <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="AED 5" />
+                              <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                              value={product.price}
+                              onChange={(e) => updateProduct({ price: e.target.value })} />
                            </div>
+
+                           {product.price_error !== "" && (
+                              <span style={{ color: "red" }}>{product.price_error}</span>
+                           )}
+
                         </div>
                      </div>
                      <input type="file" className="opacity-0 absolute top-0 left-0 w-0 h-0" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
                      <div className="flex flex-col gap-2 flex-1">
                         <div className="text-darkone font-semibold text-size-4">Introduction</div>
-                        <textarea className="text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none">
-                           A numerical game where participants select three numbers from 0 to 9 and predict the outcome of a draw. Three play options: 
-                           OPTION STRAIGHT, OPTION RUMBLE, and OPTION CHANCE.
+                        <textarea className="text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none" onChange={(e) => updateRecord({ introduction: e.target.value })}>
+                           {record.introduction}
                         </textarea>
+
+                        {record.introduction_error !== "" && (
+                           <span style={{ color: "red" }}>{record.introduction_error}</span>
+                        )}
+                        
                      </div>
                      <div className="flex flex-col gap-2 flex-1">
                         <div className="text-darkone font-semibold text-size-4">How to participate</div>
                         <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                           <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="Purchase the product (e.g., pencil) to get a free ticket." />
+                           <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" 
+                           value={record.how_to_participate}
+                           onChange={(e) => updateRecord({ how_to_participate: e.target.value })} />
                         </div>
+
+                        {record.how_to_participate_error !== "" && (
+                           <span style={{ color: "red" }}>{record.how_to_participate_error}</span>
+                        )}
+
                      </div>
                      <div className="flex flex-col lg:flex-row w-full gap-4">
                         <div className="flex flex-col gap-6 w-full">
@@ -106,22 +382,40 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                  <div className="flex flex-col gap-2 lg:w-[50%]">
                                     <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">Option Straight</div>
                                     <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="Exact order win, prize:" />
+                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                       value={record.option_straight_text}
+                                       onChange={(e) => updateRecord({ option_straight_text: e.target.value })} />
                                     </div>
+
+                                    {record.option_straight_text_error !== "" && (
+                                       <span style={{ color: "red" }}>{record.option_straight_text_error}</span>
+                                    )}
                                  </div>
                                  <div className="flex items-start text-darkone">
                                     <div className="flex flex-col gap-2 justify-center items-center">
                                        <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
                                        <div className="border border-lighttwo text-size-3 rounded">
-                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="5" />
+                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                          value={product.price}
+                                          onChange={(e) => updateProduct({ price: e.target.value })} />
                                        </div>
+
+                                       {product.price_error !== "" && (
+                                          <span style={{ color: "red" }}>{product.price_error}</span>
+                                       )}
                                     </div>
                                     <div className="mx-4 text-head-7">*</div>
                                     <div className="flex flex-col gap-2 items-center">
                                        <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
                                        <div className="border border-lighttwo text-size-3 rounded">
-                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="750" />
+                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                          value={record.option_straight_win_price}
+                                          onChange={(e) => updateRecord({ option_straight_win_price: e.target.value })} />
                                        </div>
+
+                                       {record.option_straight_win_price_error !== "" && (
+                                          <span style={{ color: "red" }}>{record.option_straight_win_price_error}</span>
+                                       )}
                                     </div>
                                  </div>
                               </div>
@@ -129,22 +423,41 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                  <div className="flex flex-col gap-2 lg:w-[50%]">
                                     <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">Option Rumble</div>
                                     <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="Any order win, prize:" />
+                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                       value={record.option_rumble_text}
+                                       onChange={(e) => updateRecord({ option_rumble_text: e.target.value })} />
                                     </div>
+
+                                    {record.option_rumble_text_error !== "" && (
+                                       <span style={{ color: "red" }}>{record.option_rumble_text_error}</span>
+                                    )}
                                  </div>
                                  <div className="flex items-start text-darkone">
                                     <div className="flex flex-col gap-2 justify-center items-center">
                                        <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
                                        <div className="border border-lighttwo text-size-3 rounded">
-                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="5" />
+                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                          value={product.price}
+                                          onChange={(e) => updateProduct({ price: e.target.value })} />
                                        </div>
+
+                                       {product.price_error !== "" && (
+                                          <span style={{ color: "red" }}>{product.price_error}</span>
+                                       )}
+
                                     </div>
                                     <div className="mx-4 text-head-7">*</div>
                                     <div className="flex flex-col gap-2 items-center">
                                        <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
                                        <div className="border border-lighttwo text-size-3 rounded">
-                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="750" />
+                                          <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                          value={record.option_rumble_win_price}
+                                          onChange={(e) => updateRecord({ option_rumble_win_price: e.target.value })} />
                                        </div>
+
+                                       {record.option_rumble_win_price_error !== "" && (
+                                          <span style={{ color: "red" }}>{record.option_rumble_win_price_error}</span>
+                                       )}
                                     </div>
                                  </div>
                               </div>
@@ -152,8 +465,14 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                  <div className="flex flex-col gap-2">
                                     <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">Option Chance</div>
                                     <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="Exact order from right to left win with partial matches" />
+                                       <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                       value={record.option_chance_text}
+                                       onChange={(e) => updateRecord({ option_chance_text: e.target.value })} />
                                     </div>
+
+                                    {record.option_chance_text_error !== "" && (
+                                       <span style={{ color: "red" }}>{record.option_chance_text_error}</span>
+                                    )}
                                  </div>
                                  <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                                     <div className="flex flex-col gap-2 w-fit">
@@ -162,15 +481,28 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                           <div className="flex flex-col gap-2 justify-center items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="5" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={product.price}
+                                                onChange={(e) => updateProduct({ price: e.target.value })} />
                                              </div>
+
+                                             {product.price_error !== "" && (
+                                                <span style={{ color: "red" }}>{product.price_error}</span>
+                                             )}
+
                                           </div>
                                           <div className="mx-4 text-head-7">*</div>
                                           <div className="flex flex-col gap-2 items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="750" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={record.option_chance_3_correct_win_price}
+                                                onChange={(e) => updateRecord({ option_chance_3_correct_win_price: e.target.value })} />
                                              </div>
+
+                                             {record.option_chance_3_correct_win_price_error !== "" && (
+                                                <span style={{ color: "red" }}>{record.option_chance_3_correct_win_price_error}</span>
+                                             )}
                                           </div>
                                        </div>
                                     </div>
@@ -180,15 +512,27 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                           <div className="flex flex-col gap-2 justify-center items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="5" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={product.price}
+                                                onChange={(e) => updateProduct({ price: e.target.value })} />
                                              </div>
+
+                                             {product.price_error !== "" && (
+                                                <span style={{ color: "red" }}>{product.price_error}</span>
+                                             )}
                                           </div>
                                           <div className="mx-4 text-head-7">*</div>
                                           <div className="flex flex-col gap-2 items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="750" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={record.option_chance_2_correct_win_price}
+                                                onChange={(e) => updateRecord({ option_chance_2_correct_win_price: e.target.value })} />
                                              </div>
+
+                                             {record.option_chance_2_correct_win_price_error !== "" && (
+                                                <span style={{ color: "red" }}>{record.option_chance_2_correct_win_price_error}</span>
+                                             )}
                                           </div>
                                        </div>
                                     </div>
@@ -198,17 +542,36 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                           <div className="flex flex-col gap-2 justify-center items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="5" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={product.price}
+                                                onChange={(e) => updateProduct({ price: e.target.value })} />
                                              </div>
+
+                                             {product.price_error !== "" && (
+                                                <span style={{ color: "red" }}>{product.price_error}</span>
+                                             )}
+
                                           </div>
                                           <div className="mx-4 text-head-7">*</div>
                                           <div className="flex flex-col gap-2 items-center">
                                              <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
                                              <div className="border border-lighttwo text-size-3 rounded">
-                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" value="750" />
+                                                <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                value={record.option_chance_1_correct_win_price}
+                                                onChange={(e) => updateRecord({ option_chance_1_correct_win_price: e.target.value })} />
                                              </div>
+
+                                             {record.option_chance_1_correct_win_price_error !== "" && (
+                                                <span style={{ color: "red" }}>{record.option_chance_1_correct_win_price_error}</span>
+                                             )}
                                           </div>
                                        </div>
+
+                                       
+
+                                       <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={onSubmit}>
+                                       Save
+                                       </button>
                                     </div>
                                     {/* for yall 4 and yalla 6 add another box below */}
                                  </div>
