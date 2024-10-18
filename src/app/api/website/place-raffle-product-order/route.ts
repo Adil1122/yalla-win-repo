@@ -7,6 +7,8 @@ import Invoice from "@/models/InvoiceModel";
 import mongoose from "mongoose";
 import Basket from "@/models/BasketModel";
 import Wallet from "@/models/WalletModel";
+import User from "@/models/UserModel";
+import Prize from "@/models/PrizeModel";
 export async function POST(request: NextRequest) {
 
   try {
@@ -15,6 +17,8 @@ export async function POST(request: NextRequest) {
         invoice,
         draws
     } = await request.json();
+
+    let user = await User.findOne({_id: invoice.user_id}).select(['_id', 'city', 'country'])
 
     let invoiceDocument = {
         //product_id: product_id, 
@@ -27,7 +31,9 @@ export async function POST(request: NextRequest) {
         //quantity: quantity
         cart_product_details: JSON.stringify(invoice.product_details),
         draws: JSON.stringify(draws),
-        invoice_type: 'prize'
+        invoice_type: 'prize',
+        user_city: user.city,
+        user_country: user.country
     }
 
     let query = { user_id: new mongoose.Types.ObjectId(invoice.user_id + '') };

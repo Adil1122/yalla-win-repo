@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Machine from "@/models/MachineModel";
+import { getStartEndDates } from "@/libs/common";
 
 export async function GET(request: Request) {
     try {
@@ -11,11 +12,15 @@ export async function GET(request: Request) {
         var search_by = searchparams.get('search_by') + '';
         var search = searchparams.get('search') + '';
 
-        var daily_start_date = new Date().toISOString().slice(0, 10)
-        var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-        var end_date = tomorrowDate.toISOString().slice(0, 10);
-        var weekly_start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        var monthly_start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        var daily_dates = getStartEndDates('daily')
+        var daily_start_date = daily_dates.start_date
+        var end_date = daily_dates.end_date
+
+        var weekly_dates = getStartEndDates('weekly')
+        var weekly_start_date = weekly_dates.start_date
+
+        var monthly_dates = getStartEndDates('monthly')
+        var monthly_start_date = monthly_dates.start_date
 
         var search_json = search_by === 'countries' ? 
         {country: { $regex: '.*' + search + '.*', $options: 'i' }} 

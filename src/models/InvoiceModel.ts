@@ -15,7 +15,10 @@ const invoiceSchema = new Schema (
         quantity: {type: Number, required: false},
         cart_product_details: {type: String, required: false},
         draws: {type: String, required: false},
-        invoice_type: {type: String, required: false}
+        invoice_type: {type: String, required: false},
+        platform: {type: String, required: false},
+        user_city: {type: String, required: false},
+        user_country: {type: String, required: false},
     },
     {
         timestamps: true

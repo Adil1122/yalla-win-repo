@@ -6,6 +6,7 @@ import User from "@/models/UserModel";
 import connectMongoDB from "@/libs/mongoosdb";
 import Invoice from "@/models/InvoiceModel";
 import { put } from '@vercel/blob';
+import { getStartEndDates } from "@/libs/common";
 
 export async function POST(request: Request) {
     
@@ -202,17 +203,9 @@ export async function GET(request: Request) {
 
       console.log('user_type: ', user_type)
 
-      var start_date = new Date().toISOString().slice(0, 10)
-      var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-      var end_date = tomorrowDate.toISOString().slice(0, 10);
-
-      if(schedule === 'weekly') {
-          start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      }
-
-      if(schedule === 'monthly') {
-          start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      }
+      var dates = getStartEndDates(schedule)
+      var start_date = dates.start_date
+      var end_date = dates.end_date
 
       var search_json = search_by === 'countries' ? 
       {country: { $regex: '.*' + search + '.*', $options: 'i' }} 

@@ -6,6 +6,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 import Invoice from "@/models/InvoiceModel";
 import Ticket from "@/models/TicketModel";
 import Draw from "@/models/DrawModel";
+import User from "@/models/UserModel";
 export async function POST(request: NextRequest) {
 
   try {
@@ -26,6 +27,8 @@ export async function POST(request: NextRequest) {
         {draw_type: 'game'}
     ).sort({'draw_date': -1}).limit(1);
 
+    let user = await User.findOne({_id: user_id}).select(['_id', 'city', 'country'])
+
     if(draw && draw.length > 0) {
 
         let draw_id = draw[0]._id.toString();
@@ -39,7 +42,9 @@ export async function POST(request: NextRequest) {
             vat: vat, 
             total_amount: total_amount, 
             invoice_status: invoice_status,
-            invoice_type: 'game'
+            invoice_type: 'game',
+            user_city: user.city,
+            user_country: user.country
         }
 
         let invoiceResult = await Invoice.create(invoiceDocument);
