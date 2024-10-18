@@ -7,6 +7,7 @@ import Modal from '@/components/modal'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { SwitchComponent } from '@/components/SwitchComponent'
 import { get } from 'http'
+import { formatDate } from '@/libs/common'
 
 type Tab = 'games' | 'products'
 type WinnerType = 'shop' | 'app' | 'web'
@@ -16,17 +17,107 @@ export default function AdminWinnerHistory() {
    const [activeTab, setActiveTab] = useState<Tab>('games')
    const [activeTabTwo, setActiveTabTwo] = useState<WinnerType>('shop')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+   const [currentWinners, setCurrentWinners] = useState<any>([])
+   const [deleteId, setDeleteId] = useState<string>('')
+   const [winners, setWinners] = useState<any>([])
+   
+   const [currentPage, setCurrentPage] = useState(1)
+   const [totalPages, setTotalPages] = useState(0)
+   const itemsPerPage = 5
+
+   useEffect(() => {
+      getWinners()
+   }, [])
+   
+   useEffect(() => {
+      let filteredWinners = winners.filter((winner: any) => {
+         if (activeTab === 'games') {
+            return winner.game_id
+         } else if (activeTab === 'products') {
+            return !winner.game_id
+         }
+      })
+      
+      filteredWinners = filteredWinners.filter((winner: any) => {
+         if (activeTabTwo === 'shop') {
+            return winner.platform_type == 'shop'
+         } else if (activeTabTwo === 'app') {
+            return winner.platform_type == 'app'
+         } else if (activeTabTwo === 'web') {
+            return winner.platform_type == 'web'
+         }
+      })
+
+      const totalPagess = Math.ceil(filteredWinners.length / itemsPerPage)
+      const currentWinners = filteredWinners.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+      setCurrentPage(currentPage != 1 ? currentPage : 1)
+      setCurrentWinners(currentWinners)
+      setTotalPages(totalPagess)
+   }, [winners, currentPage, activeTabTwo, activeTab])
+
+   const handlePrevious = () => {
+      if (currentPage > 1) setCurrentPage(currentPage - 1)
+   }
+   
+   const handleNext = () => {
+      if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+   }
+
+   const getWinners = async() => {
+      try {
+         
+         let response = await fetch('/api/admin/winners-management/history', {
+            method: 'GET',
+         })
+         const content = await response.json()
+
+         if(!response.ok) {
+            console.log('There is some error fetching data from api')
+         } else {
+            setWinners(content.winners)
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+      setCurrentPage(1)
    }
    
    const handleTabTwoChange = (type: WinnerType) => {
       setActiveTabTwo(type)
+      setCurrentPage(1)
    }
 
-   const handleDelete = () => {
+   const handleDelete = (id: string) => {
       setModalIsOpen(true)
+      setCurrentPage(1)
+      setDeleteId(id)
+   }
+
+   const handleDeleteConfirmed = async () => {
+      if (deleteId != '') {
+         try {
+         
+            let response = await fetch(`/api/admin/winners-management/history?id=${deleteId}` , {
+               method: 'DELETE',
+            })
+            const content = await response.json()
+   
+            if(!response.ok) {
+               console.log('There is some error fetching data from api')
+            } else {
+               getWinners()
+            }
+
+            setModalIsOpen(false)
+         } catch (error) {
+            console.log(error)
+         }
+      }
    }
 
    return (
@@ -79,40 +170,38 @@ export default function AdminWinnerHistory() {
 
             <div className="flex flex-col mt-12 px-12">
                {activeTab == 'games' && (
-                  <table className="w-full">
+                  <table className="w-full table-fixed border-collapse">
                      <thead>
                         <tr className="bg-white">
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Game</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Ticket No</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Announced Date</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                           <th scope="col" className="w-[12%] text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
+                           <th scope="col" className="w-[18%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
+                           <th scope="col" className="w-[18%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
+                           <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Game</th>
+                           <th scope="col" className="w-[5%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Ticket No</th>
+                           <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
+                           <th scope="col" className="w-[10%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Announced Date</th>
+                           <th scope="col" className="w-[8%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                     <tr>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">MR ABC</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">7488382382</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">91821829012</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Yalla 3</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Straight</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">89283928392</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Cap</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1 July, 2024</td>
-                        <td>
-                           <div className="flex items-center justify-center gap-2">
-                              <button type="button" onClick={handleDelete} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
-                                 <FontAwesomeIcon size="lg" icon={faTrashAlt} />
-                              </button>
-                           </div>
-                        </td>
-                     </tr>
+                        {currentWinners.map((winner: any, index: number) => (
+                           <tr key={index}>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.user_name}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0]._id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0].user_id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.game_name}<br />{winner.TicketDetails[0] ? winner.TicketDetails[0].ticket_type : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails[0] ? winner.TicketDetails[0].ticket_number : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails[0] ? winner.ProductDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
+                              <td>
+                                 <div className="flex items-center justify-center gap-2">
+                                    <button type="button" onClick={() => {handleDelete(winner._id)}} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
+                                       <FontAwesomeIcon size="lg" icon={faTrashAlt} />
+                                    </button>
+                                 </div>
+                              </td>
+                           </tr>
+                        ))}
                      </tbody>
                   </table>
                )}
@@ -121,36 +210,39 @@ export default function AdminWinnerHistory() {
                   <table className="w-full">
                      <thead>
                         <tr className="bg-white">
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Announced Date</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">QR ID</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
+                           <th scope="col" className="w-[15%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Announced Date</th>
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                     <tr>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">MR ABC</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">7488382382</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">91821829012</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">IPhone</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Cap</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">1 July, 2024</td>
-                     </tr>
+                        {currentWinners.map((winner: any, index: number) => (
+                           <tr key={index}>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.user_name}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0].user_id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0]._id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails[0] ? winner.ProductDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.PrizeDetails[0] ? winner.PrizeDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
+                           </tr>
+                        ))}
                      </tbody>
                   </table>
                )}
+
                <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                  <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}onClick={handlePrevious}>
                      <FontAwesomeIcon size="1x" icon={faChevronLeft} />
                   </div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">1</div>
-                  <div className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer">2</div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">3</div>
-                  <div className="px-4 py-2 flex items-center justify-center cursor-pointer">
+                  {[...Array(totalPages)].map((_, index) => (
+                     <div key={index} className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === index + 1 ? 'text-black bg-white' : ''}`} onClick={() => setCurrentPage(index + 1)}>
+                        {index + 1}
+                     </div>
+                  ))}
+                  <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`} onClick={handleNext}>
                      <FontAwesomeIcon size="1x" icon={faChevronRight} />
                   </div>
                </div>
@@ -162,7 +254,7 @@ export default function AdminWinnerHistory() {
                <div className="text-darkone text-size-4">Are you sure you want to delete this record?</div>
                <div className="flex items-center gap-6 mt-3">
                   <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
-                  <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Delete</button>
+                  <button onClick={handleDeleteConfirmed} className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Delete</button>
                </div>
             </div>
          </Modal>

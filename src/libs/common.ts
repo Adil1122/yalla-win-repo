@@ -25,6 +25,21 @@ export default function getDaysHoursMinsSecs(date1: any, date2: any) {
     }
 }
 
+export function formatDate(dateString: string): string {
+   const date = new Date(dateString);
+   const options: Intl.DateTimeFormatOptions = {
+     year: 'numeric',
+     month: '2-digit',
+     day: '2-digit',
+     hour: 'numeric',
+     minute: '2-digit',
+     hour12: true,
+   };
+ 
+   const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
+   return formattedDate.replace(',', ''); // Remove the comma for formatting
+}
+
 export function formatISODate(date: any) {
     //const date = new Date(isoString);
 

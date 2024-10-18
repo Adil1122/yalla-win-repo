@@ -35,7 +35,7 @@ const Modal = forwardRef((props, ref) => {
       { action: actions["Action.024"], name: "out_5" },
       { action: actions["Action.025"], name: "out_6" },
    ]
-   const ballAnimations = Array.from({ length: 25 }, (_, i) => actions[`ball_1st_anim_${i}`])
+   const ballAnimations = Array.from({ length: 26 }, (_, i) => actions[`ball_1st_anim_${i}`])
    const targetPosition = new Vector3(-2, 0, 1)
 
    // Expose startAnimation method to parent component
