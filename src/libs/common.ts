@@ -78,4 +78,69 @@ export function formatISODate(date: any) {
     //return `${monthName} ${day}, ${year} ${hours}:${formattedMinutes} ${ampm}`;
 }
 
+export function getGraphResult(records: any, start_date: any, end_date: any, schedule: any) {
+    var data_sales = [];
+    for(var i = 0; i < records.length; i++) {
+        data_sales.push({
+            user_id: records[i].user_id,
+            date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
+            amount: records[i].total_amount
+        })
+    }
+
+    var dates: any = getDaysArray(start_date, end_date)
+
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var data: any = [];
+
+    for(var i = 0; i < dates.length; i++) {
+        var day_name: any = i + 1
+        if(schedule === 'weekly') {
+            day_name = weekday[new Date(dates[i]).getDay()].toUpperCase().substring(0, 3)
+        }
+
+        data.push({
+            sales: 0,
+            day: day_name
+        })
+    }
+
+    for(var i = 0; i < dates.length; i++) {
+        for(var j = 0; j < data_sales.length; j++) {
+            if(data_sales[j].date === dates[i]) {
+                data[i].sales += data_sales[j].amount
+            }
+        }
+    }
+    return data;
+}
+
+export function getStartEndDates(schedule: any) {
+    
+    var start_date = new Date().toISOString().slice(0, 10)
+    var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+    var end_date = tomorrowDate.toISOString().slice(0, 10);
+
+    if(schedule === 'weekly') {
+        start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    }
+
+    if(schedule === 'monthly') {
+        start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    }
+
+    return {
+        start_date,
+        end_date
+    }
+}
+
+const getDaysArray = function(start: any, end: any) {
+    const arr = [];
+    for(const dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
+        arr.push(new Date(dt).toISOString().slice(0, 10));
+    }
+    return arr;
+};
+
 

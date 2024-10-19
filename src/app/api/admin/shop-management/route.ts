@@ -4,6 +4,7 @@ import Shop from "@/models/ShopModel";
 import User from "@/models/UserModel";
 import Machine from "@/models/MachineModel";
 import Invoice from "@/models/InvoiceModel";
+import { getStartEndDates } from "@/libs/common";
 
 export async function POST(request: Request) {
     try {
@@ -191,17 +192,9 @@ export async function GET(request: Request) {
         var search_by = searchparams.get('search_by') + '';
         var search = searchparams.get('search') + '';
 
-        var start_date = new Date().toISOString().slice(0, 10)
-        var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-        var end_date = tomorrowDate.toISOString().slice(0, 10);
-
-        if(schedule === 'weekly') {
-            start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        }
-
-        if(schedule === 'monthly') {
-            start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        }
+        var dates = getStartEndDates(schedule)
+        var start_date = dates.start_date
+        var end_date = dates.end_date
 
         var search_json = search_by === 'countries' ? 
         {country: { $regex: '.*' + search + '.*', $options: 'i' }} 

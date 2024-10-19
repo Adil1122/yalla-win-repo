@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
@@ -10,32 +10,66 @@ import GoogleMap from '@/components/GoogleMap'
 import { CountryCitySearch } from '@/components/CountryCitySearch'
 
 type Tab = 'app' | 'web' | 'merchant'
-type TabTwo = 'games' | 'products' | 'coupons'
+type TabTwo = 'game' | 'prize' | 'coupon'
 
 export default function AdminDashboard() {
 
    const [activeTab, setActiveTab] = useState<Tab>('app')
-   const [activeTabTwo, setActiveTabTwo] = useState<TabTwo>('games')
+   const [activeTabTwo, setActiveTabTwo] = useState<TabTwo>('game')
    const [selectedItem, setSelectedItem] = useState<{ id: number; name: string } | null>(null)
    const [searchType, setSearchType] = useState<'cities' | 'countries'>('cities')
+   var invoice_type = 'prize'
+   var platform = 'app'
+   var schedule = 'weekly'
 
    const handleTabChange = (tab: Tab) => {
+      invoice_type = activeTabTwo
+      platform = tab
       setActiveTab(tab)
+      getGraphData()
    }
    
    const handleTabTwoChange = (tab: TabTwo) => {
+      invoice_type = tab
+      platform = activeTab
       setActiveTabTwo(tab)
+      getGraphData()
    }
 
-   const dataset = [
-      { sales: 12, day: 'MON' },
+   const [dataset, setDataSet] = useState([
+      /*{ sales: 12, day: 'MON' },
       { sales: 34, day: 'TUE' },
       { sales: 28, day: 'WED' },
       { sales: 6, day: 'THU' },
       { sales: 2, day: 'FRI' },
       { sales: 22, day: 'SAT' },
-      { sales: 16, day: 'SUN' },
-   ]
+      { sales: 16, day: 'SUN' },*/
+   ])
+
+   useEffect(() => {
+      getGraphData()
+   }, [selectedItem])
+
+   async function getGraphData() {
+      try {
+         var selected_name = selectedItem !== null ? selectedItem.name : ''
+         let response = await fetch('/api/admin/dashboard?invoice_type=' + invoice_type + '&schedule=' + schedule + '&platform=' + platform + '&search_by=' + searchType + '&search=' + selected_name, {
+            method: 'GET',
+         });
+         var content = await response.json()
+
+         if(!response.ok) {
+
+         } else {
+            console.log('content: ', content)
+            var data = content.graph_result
+            setDataSet(data)
+         }
+
+      } catch (error) {
+         
+      }
+   }
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 flex-grow h-full">
@@ -77,9 +111,9 @@ export default function AdminDashboard() {
             <div className="flex flex-col mt-12">
                <div className="flex flex-col gap-4 lg:flex-row w-full">
                   <div className="flex items-center w-full gap-12 text-white font-bold text-size-4">
-                     <div className={`cursor-pointer ${activeTabTwo === 'games' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('games')}>Games</div>
-                     <div className={`cursor-pointer ${activeTabTwo === 'products' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('products')}>Products</div>
-                     <div className={`cursor-pointer ${activeTabTwo === 'coupons' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('coupons')}>Coupons</div>
+                     <div className={`cursor-pointer ${activeTabTwo === 'game' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('game')}>Games</div>
+                     <div className={`cursor-pointer ${activeTabTwo === 'prize' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('prize')}>Products</div>
+                     <div className={`cursor-pointer ${activeTabTwo === 'coupon' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('coupon')}>Coupons</div>
                   </div>
                   <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white cursor-pointer">
                      <div className="capitalize font-medium text-size-2 whitespace-nowrap">View Details</div>
@@ -108,7 +142,7 @@ export default function AdminDashboard() {
                </div>
                {activeTab == 'app' && (
                   <>
-                     {activeTabTwo == 'games' && (
+                     {activeTabTwo == 'game' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 mt-12 lg:mt-16 w-full gap-16 mx-auto">
                            <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
                               <div className="font-bold text-white text-head-3">Total Sales</div>
@@ -140,11 +174,11 @@ export default function AdminDashboard() {
                            </div>
                         </div>
                      )}
-                     {activeTabTwo == 'products' && (
+                     {activeTabTwo == 'prize' && (
                         <></>
                      )}
                      
-                     {activeTabTwo == 'coupons' && (
+                     {activeTabTwo == 'coupon' && (
                         <></>
                      )}
                   </>
@@ -156,7 +190,7 @@ export default function AdminDashboard() {
                
                {activeTab == 'merchant' && (
                   <>
-                     {activeTabTwo == 'games' && (
+                     {activeTabTwo == 'game' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 mt-12 lg:mt-16 w-full gap-16 mx-auto">
                            <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
                               <div className="font-bold text-white text-head-3">Total Sales</div>
@@ -192,11 +226,11 @@ export default function AdminDashboard() {
                            </div>
                         </div>
                      )}
-                     {activeTabTwo == 'products' && (
+                     {activeTabTwo == 'prize' && (
                         <></>
                      )}
                      
-                     {activeTabTwo == 'coupons' && (
+                     {activeTabTwo == 'coupon' && (
                         <></>
                      )}
                   </>
