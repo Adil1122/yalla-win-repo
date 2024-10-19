@@ -19,55 +19,53 @@ export default function AdminWinnerHistory() {
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [currentWinners, setCurrentWinners] = useState<any>([])
    const [deleteId, setDeleteId] = useState<string>('')
-   const [winners, setWinners] = useState<any>([])
-   
    const [currentPage, setCurrentPage] = useState(1)
-   const [totalPages, setTotalPages] = useState(0)
-   const itemsPerPage = 5
+   const [recordsPerPage, setRecordsPerPages] = useState(1)
+   const [pages, setPages] = useState<any>([])
+   const [showPages, setShowPages] = useState<any>([])
+   const [winnersCount, setWinnersCount] = useState([0, 0, 0, 0, 0, 0])
+   
+   let skip : number = 0
+
+   const getTotalRecords = async() => {
+      try {
+         let response = await fetch('/api/admin/winners-management/history', {
+            method: 'OPTIONS',
+         })
+
+         var content = await response.json()
+
+         if(!response.ok) {
+
+         } else {
+            setWinnersCount([
+               content.shop_game_winners_count,
+               content.shop_prize_winners_count,
+               content.app_game_winners_count,
+               content.app_prize_winners_count,
+               content.web_game_winners_count,
+               content.web_prize_winners_count
+            ])
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
 
    useEffect(() => {
-      getWinners()
+
+      getTotalRecords()
    }, [])
    
    useEffect(() => {
-      let filteredWinners = winners.filter((winner: any) => {
-         if (activeTab === 'games') {
-            return winner.game_id
-         } else if (activeTab === 'products') {
-            return !winner.game_id
-         }
-      })
-      
-      filteredWinners = filteredWinners.filter((winner: any) => {
-         if (activeTabTwo === 'shop') {
-            return winner.platform_type == 'shop'
-         } else if (activeTabTwo === 'app') {
-            return winner.platform_type == 'app'
-         } else if (activeTabTwo === 'web') {
-            return winner.platform_type == 'web'
-         }
-      })
 
-      const totalPagess = Math.ceil(filteredWinners.length / itemsPerPage)
-      const currentWinners = filteredWinners.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-
-      setCurrentPage(currentPage != 1 ? currentPage : 1)
-      setCurrentWinners(currentWinners)
-      setTotalPages(totalPagess)
-   }, [winners, currentPage, activeTabTwo, activeTab])
-
-   const handlePrevious = () => {
-      if (currentPage > 1) setCurrentPage(currentPage - 1)
-   }
-   
-   const handleNext = () => {
-      if (currentPage < totalPages) setCurrentPage(currentPage + 1)
-   }
+      setPagination(1)
+   }, [activeTab, activeTabTwo, winnersCount])
 
    const getWinners = async() => {
       try {
          
-         let response = await fetch('/api/admin/winners-management/history', {
+         let response = await fetch(`/api/admin/winners-management/history?winner_type=${activeTabTwo}&winner_sub_type=${activeTab}&skip=${skip}&limit=${recordsPerPage}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -75,11 +73,55 @@ export default function AdminWinnerHistory() {
          if(!response.ok) {
             console.log('There is some error fetching data from api')
          } else {
-            setWinners(content.winners)
+            setCurrentWinners(content.winners)
          }
       } catch (error) {
          console.log(error)
       }
+   }
+
+   const setPagination = (current_page: number) => {
+
+      let pagess : any = []
+      let showPagess : any = []
+      let totPages = 0
+
+      if (activeTab == 'games' && activeTabTwo == 'shop') {
+         totPages = winnersCount[0]  // shopGameWinnersCount
+      } else if (activeTab == 'products' && activeTabTwo == 'shop') {
+         totPages = winnersCount[1]  // shopPrizeWinnersCount
+      } else if (activeTab == 'games' && activeTabTwo == 'app') {
+         totPages = winnersCount[2]  // appGameWinnersCount
+      } else if (activeTab == 'products' && activeTabTwo == 'app') {
+         totPages = winnersCount[3]  // appPrizeWinnersCount
+      } else if (activeTab == 'games' && activeTabTwo == 'web') {
+         totPages = winnersCount[4]  // webGameWinnersCount
+      } else if (activeTab == 'products' && activeTabTwo == 'web') {
+         totPages = winnersCount[5]  // webPrizeWinnersCount
+      }
+  
+      if(current_page > pages.length) {
+         current_page = pages.length
+      }
+
+      if(current_page < 1) {
+         current_page = 1
+      }
+
+      skip = recordsPerPage * (current_page - 1)
+
+      getWinners()
+      setCurrentPage(current_page)
+      
+      for(var i = 1; i <= Math.ceil(totPages / recordsPerPage); i++) {
+         pagess.push(i)
+         if(i === current_page || i === (current_page + 1) || i === (current_page - 1) || i === (current_page + 2) || i === (current_page - 2)) {
+            showPagess.push(i)
+         }
+      }
+      
+      setPages(pagess)
+      setShowPages(showPagess)
    }
 
    const handleTabChange = (tab: Tab) => {
@@ -110,7 +152,7 @@ export default function AdminWinnerHistory() {
             if(!response.ok) {
                console.log('There is some error fetching data from api')
             } else {
-               getWinners()
+               getTotalRecords()
             }
 
             setModalIsOpen(false)
@@ -187,11 +229,11 @@ export default function AdminWinnerHistory() {
                         {currentWinners.map((winner: any, index: number) => (
                            <tr key={index}>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.user_name}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0]._id : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0].user_id : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.game_name}<br />{winner.TicketDetails[0] ? winner.TicketDetails[0].ticket_type : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails[0] ? winner.TicketDetails[0].ticket_number : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails[0] ? winner.ProductDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0]._id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0].user_id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.game_name}<br />{winner.TicketDetails ? winner.TicketDetails[0].ticket_type : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails ? winner.TicketDetails[0].ticket_number : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails ? winner.ProductDetails[0].name : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
@@ -222,10 +264,10 @@ export default function AdminWinnerHistory() {
                         {currentWinners.map((winner: any, index: number) => (
                            <tr key={index}>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.user_name}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0].user_id : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice[0] ? winner.WinnerInvoice[0]._id : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails[0] ? winner.ProductDetails[0].name : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.PrizeDetails[0] ? winner.PrizeDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0].user_id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0]._id : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails ? winner.ProductDetails[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.PrizeDetails ? winner.PrizeDetails[0].name : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
                            </tr>
                         ))}
@@ -234,17 +276,24 @@ export default function AdminWinnerHistory() {
                )}
 
                <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-                  <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === 1 && 'cursor-not-allowed opacity-50'}`}onClick={handlePrevious}>
-                     <FontAwesomeIcon size="1x" icon={faChevronLeft} />
-                  </div>
-                  {[...Array(totalPages)].map((_, index) => (
-                     <div key={index} className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === index + 1 ? 'text-black bg-white' : ''}`} onClick={() => setCurrentPage(index + 1)}>
-                        {index + 1}
+                  {pages.length > 0 && (
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
+                        <FontAwesomeIcon size="1x" icon={faChevronLeft} />
                      </div>
+                  )}
+                  {pages.map((page: any) => (
+                     showPages.includes(page) && (
+                        page === currentPage ?
+                        <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                        :
+                        <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                     ) 
                   ))}
-                  <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === totalPages && 'cursor-not-allowed opacity-50'}`} onClick={handleNext}>
-                     <FontAwesomeIcon size="1x" icon={faChevronRight} />
-                  </div>
+                  {pages.length > 0 && (
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
+                        <FontAwesomeIcon size="1x" icon={faChevronRight} />
+                     </div>
+                  )}
                </div>
             </div>
          </div>
