@@ -4,49 +4,68 @@ import Invoice from "@/models/InvoiceModel";
 import { getGraphResult, getStartEndDates } from "@/libs/common";
 
 export async function GET(request: Request) {
-    try {
-        await connectMongoDB();
-        var url = new URL(request.url);
-        var searchparams = new URLSearchParams(url.searchParams);
-        var platform: any = searchparams.get('platform') + '';
-        var invoice_type: any = searchparams.get('invoice_type') + '';
-        var schedule: any = searchparams.get('schedule') + '';
-        var search_by = searchparams.get('search_by') + '';
-        var search = searchparams.get('search') + '';
+   try {
+      await connectMongoDB();
+      var url = new URL(request.url);
+      var searchparams = new URLSearchParams(url.searchParams);
+      var platform: any = searchparams.get('platform') + '';
+      var invoice_type: any = searchparams.get('invoice_type') + '';
+      var schedule: any = searchparams.get('schedule') + '';
+      var search_by = searchparams.get('search_by') + '';
+      var search = searchparams.get('search') + '';
 
-        var dates = getStartEndDates(schedule)
-        var start_date = dates.start_date
-        var end_date = dates.end_date
+      var dates = getStartEndDates(schedule)
+      var start_date = dates.start_date
+      var end_date = dates.end_date
 
-        var search_json = search_by === 'countries' ? 
-        {user_country: { $regex: '.*' + search + '.*', $options: 'i' }} 
-        :
-        {user_city: { $regex: '.*' + search + '.*', $options: 'i' }}
+      let search_json = {};
+      if (search_by === 'countries') {
+         search_json = { user_country: { $regex: '.*' + search + '.*', $options: 'i' } };
+      } else if (search_by === 'cities') {
+         search_json = { user_city: { $regex: '.*' + search + '.*', $options: 'i' } };
+      }
 
-        const records = await Invoice
-        .find({
-            $and:[ 
-                {
-                    createdAt: {
-                        $gte : new Date(start_date), 
-                        $lt: new Date(end_date)
-                    }
-                }, 
-                {invoice_type: invoice_type},
-                {platform: platform},
-                search_json
-            ]
-        }).sort({'createdAt': -1}).select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date']);
+      let platformCondition = {};
+      if (platform !== null && platform !== 'null') {
+         platformCondition = { platform: platform };
+      }
 
-        return NextResponse.json({
-            messge: "Query success ....",
-            graph_result: getGraphResult(records, start_date, end_date, schedule)
-        }, {status: 200});
+      // Initialize the query conditions
+      let queryConditions: any[] = [
+         {
+            createdAt: {
+               $gte: new Date(start_date), 
+               $lt: new Date(end_date)
+            }
+         },
+         { invoice_type: invoice_type }
+      ];
 
-    } catch (error) {
-        return NextResponse.json({
-            messge: "Query error ....",
-            error: JSON.stringify(error),
-        }, {status: 500});
-    }
+      if (Object.keys(search_json).length > 0) {
+         queryConditions.push(search_json);
+      }
+
+      if (Object.keys(platformCondition).length > 0) {
+         queryConditions.push(platformCondition);
+      }
+
+      const records = await Invoice
+         .find({
+            $and: queryConditions
+         })
+         .sort({ 'createdAt': -1 })
+         .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date']);
+
+
+      return NextResponse.json({
+         messge: "Query success ....",
+         graph_result: getGraphResult(records, start_date, end_date, schedule)
+      }, {status: 200});
+
+   } catch (error) {
+      return NextResponse.json({
+         messge: "Query error ....",
+         error: JSON.stringify(error),
+      }, {status: 500});
+   }
 }

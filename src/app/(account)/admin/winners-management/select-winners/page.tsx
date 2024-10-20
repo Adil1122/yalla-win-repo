@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { faChevronDown, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
@@ -8,35 +8,81 @@ import IBarChart from '@/components/dashboard/IBarChart'
 import Modal from '@/components/modal'
 import { useRouter } from "next/navigation"
 
-type WinnerType = 'games' | 'products'
+type WinnerType = 'game' | 'prize'
 
 export default function AdminSelectWinners() {
 
-  const router = useRouter()
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
-   const [newWInnerType, setNewWinnerType] = useState<WinnerType>('games')
-   const dataset = [
-      { sales: 12, day: 'MON' },
-      { sales: 34, day: 'TUE' },
-      { sales: 28, day: 'WED' },
-      { sales: 6, day: 'THU' },
-      { sales: 2, day: 'FRI' },
-      { sales: 22, day: 'SAT' },
-      { sales: 16, day: 'SUN' },
-   ]
+   const [newWInnerType, setNewWinnerType] = useState<WinnerType>('game')
+   const [dataset, setDataset] = useState<any>([])
+   const [allGames, setAllGames] = useState<any>([])
+   const [allProducts, setAllProducts] = useState<any>([])
+   const schedule = 'weekly'
 
    const handleAnnouneWinner = (action: WinnerType) => {
       setNewWinnerType(action)
       setModalIsOpen(true)
    }
 
+   const handleChangeWinnerType = (type: WinnerType) => {
+      setNewWinnerType(type)
+   }
+
+   useEffect(() => {
+      
+      getGraphData()
+   }, [newWInnerType])
+
+   const getGraphData = async () => {
+      try {
+         let response = await fetch(`/api/admin/dashboard?invoice_type=${newWInnerType}&schedule=${schedule}`, {
+            method: 'GET',
+         })
+         
+         var content = await response.json()
+
+         if(!response.ok) {
+
+         } else {
+            var data = content.graph_result
+            setDataset(data)
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const getAllGamesProducts = async() => {
+      try {
+         let response = await fetch('/api/admin/winners-management/select-winners', {
+            method: 'OPTIONS',
+         })
+
+         var content = await response.json()
+
+         if(!response.ok) {
+
+         } else {
+            setAllGames(content.allGames)
+            setAllProducts(content.allProducts)
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   useEffect(() => {
+
+      getAllGamesProducts()
+   }, [])
+
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 flex-grow h-full">
          <div className="flex flex-col w-full h-full">
             <div className="flex flex-col gap-4 lg:flex-row">
                <div className="flex flex-col lg:flex-row items-center border lg:border-[3px] border-white">
-                  <div className="flex items-center justify-center bg-white text-darkone whitespace-nowrap w-full lg:w-fit px-16 py-4 font-medium text-size-2 h-full cursor-pointer">Raffle Games</div>
-                  <div className="flex items-center justify-center text-white whitespace-nowrap w-full lg:w-fit px-16 py-4 font-medium text-size-2 h-full cursor-pointer">Raffle Products</div>
+                  <div onClick={() => handleChangeWinnerType('game')} className={`flex items-center justify-center whitespace-nowrap w-full lg:w-fit px-16 py-4 font-medium text-size-2 h-full ${newWInnerType === 'game' ? 'bg-white text-darkone' : 'bg-none text-white cursor-pointer'}`}>Raffle Games</div>
+                  <div onClick={() => handleChangeWinnerType('prize')} className={`flex items-center justify-center whitespace-nowrap w-full lg:w-fit px-16 py-4 font-medium text-size-2 h-full ${newWInnerType === 'prize' ? 'bg-white text-darkone' : 'bg-none text-white cursor-pointer'}`}>Raffle Products</div>
                </div>
                <div className="lg:ml-auto w-full lg:w-fit">
                   <Menu>
@@ -50,10 +96,10 @@ export default function AdminSelectWinners() {
                      </MenuButton>
                      <MenuItems anchor="bottom" className="w-[230px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-8">
                         <MenuItem>
-                           <div onClick={() => handleAnnouneWinner('games')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Raffle Games</div>
+                           <div onClick={() => handleAnnouneWinner('game')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Raffle Games</div>
                         </MenuItem>
                         <MenuItem>
-                           <div onClick={() => handleAnnouneWinner('products')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Raffle Products</div>
+                           <div onClick={() => handleAnnouneWinner('prize')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Raffle Products</div>
                         </MenuItem>
                      </MenuItems>
                   </Menu>
@@ -84,36 +130,39 @@ export default function AdminSelectWinners() {
                   </div>
                </div>
                <form action="/admin/winners-management/search-results" method="get">
-
                   <div className="flex flex-col gap-10">
                      <div className="flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Expected Amount</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="AED 20" name="amount" />
+                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="20" name="amount" />
                            </div>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
-                           {newWInnerType == 'games' && (
+                           {newWInnerType == 'game' && (
                               <div className="flex flex-col gap-4">
                                  <div className="text-darkone text-size-4">Choose Game</div>
                                  <div className="text-darkone text-size-2 border border-lightone rounded">
-                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="game">
-                                       <option value="">Game one</option>
-                                       <option value="">Game two</option>
-                                       <option value="">Game three</option>
+                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="game_id">
+                                       {allGames.map((game: any, index: number) => (
+                                          <option key={index} value={game._id}>
+                                             {game.name}
+                                          </option>
+                                       ))}
                                     </select>
                                  </div>
                               </div>
                            )}
-                           {newWInnerType == 'products' && (
+                           {newWInnerType == 'prize' && (
                               <div className="flex flex-col gap-4">
                                  <div className="text-darkone text-size-4">Choose Product</div>
                                  <div className="text-darkone text-size-2 border border-lightone rounded">
-                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="product">
-                                       <option value="">Product one</option>
-                                       <option value="">Product two</option>
-                                       <option value="">Product three</option>
+                                    <select className="h-[40px] bg-transparent border-0 focus:outline-none focus:ring-0 w-full" name="product_id">
+                                       {allProducts.map((product: any, index: number) => (
+                                          <option key={index} value={product._id}>
+                                             {product.name}
+                                          </option>
+                                       ))}
                                     </select>
                                  </div>
                               </div>
@@ -121,7 +170,7 @@ export default function AdminSelectWinners() {
                            <div className="flex flex-col gap-4">
                               <div className="text-darkone text-size-4">People %</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
-                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="people-percent" />
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="people_percent" />
                               </div>
                            </div>
                         </div>
@@ -129,20 +178,20 @@ export default function AdminSelectWinners() {
                            <div className="flex flex-col gap-4">
                               <div className="text-darkone text-size-4">Country</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
-                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="country" />
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="user_country" />
                               </div>
                            </div>
                            <div className="flex flex-col gap-4">
                               <div className="text-darkone text-size-4">City</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
-                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="city" />
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="user_city" />
                               </div>
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Area</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="area" />
+                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="user_area" />
                            </div>
                         </div>
                         <div className="flex items-center ml-auto gap-6">

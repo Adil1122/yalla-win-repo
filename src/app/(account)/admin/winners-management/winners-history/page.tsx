@@ -20,7 +20,7 @@ export default function AdminWinnerHistory() {
    const [currentWinners, setCurrentWinners] = useState<any>([])
    const [deleteId, setDeleteId] = useState<string>('')
    const [currentPage, setCurrentPage] = useState(1)
-   const [recordsPerPage, setRecordsPerPages] = useState(1)
+   const [recordsPerPage, setRecordsPerPages] = useState(5)
    const [pages, setPages] = useState<any>([])
    const [showPages, setShowPages] = useState<any>([])
    const [winnersCount, setWinnersCount] = useState([0, 0, 0, 0, 0, 0])
