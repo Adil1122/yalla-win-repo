@@ -20,7 +20,7 @@ export default function AdminDashboard() {
    const [searchType, setSearchType] = useState<'cities' | 'countries'>('cities')
    var invoice_type = 'prize'
    var platform = 'app'
-   var schedule = 'weekly'
+   var schedule = 'monthly'
 
    const handleTabChange = (tab: Tab) => {
       invoice_type = activeTabTwo
@@ -46,6 +46,12 @@ export default function AdminDashboard() {
       { sales: 16, day: 'SUN' },*/
    ])
 
+   const [orders_dataset, setOrdersDataSet] = useState([])
+
+   const [total_user, setTotalUsers] = useState(0)
+
+   const [total_sales, setTotalSales] = useState(0)
+
    useEffect(() => {
       getGraphData()
    }, [selectedItem])
@@ -62,8 +68,15 @@ export default function AdminDashboard() {
 
          } else {
             console.log('content: ', content)
-            var data = content.graph_result
+            var data = content.graph_result.data
+            var orders_data = content.graph_result.orders_data
+            var total_sales = content.graph_result.total_sales
+            var total_users = content.graph_result.total_users
             setDataSet(data)
+            setOrdersDataSet(orders_data)
+            setTotalSales(total_sales)
+            setTotalUsers(total_users)
+
          }
 
       } catch (error) {
@@ -140,9 +153,11 @@ export default function AdminDashboard() {
                      </Menu>
                   </div>
                </div>
-               {activeTab == 'app' && (
+               {
+               //activeTab == 'app' && (
                   <>
-                     {activeTabTwo == 'game' && (
+                     {
+                     //activeTabTwo == 'game' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 mt-12 lg:mt-16 w-full gap-16 mx-auto">
                            <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
                               <div className="font-bold text-white text-head-3">Total Sales</div>
@@ -157,7 +172,7 @@ export default function AdminDashboard() {
                            </div>
                            <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
                               <div className="font-bold text-white text-head-3">Total Orders</div>
-                              <IBarChart dataset={dataset}
+                              <IBarChart dataset={orders_dataset}
                                  xAxisDataKey="day"
                                  yAxisLabel=""
                                  seriesDataKey="sales"
@@ -166,14 +181,21 @@ export default function AdminDashboard() {
                            </div>
                            <div className="bg-white w-full lg:px-12 py-6 gap-12 flex flex-col">
                               <div className="text-darkone text-head-3">Total Users</div>
-                              <div className="bg-gradient-to-r from-themeone to-themetwo w-fit px-16 py-4 text-head-1 font-medium mx-auto rounded-lg text-white">123</div>
+                              <div className="bg-gradient-to-r from-themeone to-themetwo w-fit px-16 py-4 text-head-1 font-medium mx-auto rounded-lg text-white">{total_user}</div>
                            </div>
                            <div className="bg-white w-full lg:px-12 py-6 gap-12 flex flex-col">
                               <div className="text-darkone text-head-3">Sales Amount</div>
-                              <div className="bg-gradient-to-r from-themeone to-themetwo w-fit px-16 py-4 text-head-1 font-medium mx-auto rounded-lg text-white">AED 123</div>
+                              <div className="bg-gradient-to-r from-themeone to-themetwo w-fit px-16 py-4 text-head-1 font-medium mx-auto rounded-lg text-white">AED {total_sales}</div>
                            </div>
+
+                           <div className="flex flex-col gap-3">
+                              <div className="text-white font-bold text-size-4">Locate Machines</div>
+                              <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="350px" />
+                           </div>
+
                         </div>
-                     )}
+                     //)
+                     }
                      {activeTabTwo == 'prize' && (
                         <></>
                      )}
@@ -182,13 +204,15 @@ export default function AdminDashboard() {
                         <></>
                      )}
                   </>
-               )}
+               //)
+               }
 
                {activeTab == 'web' && (
                   <></>
                )}
                
-               {activeTab == 'merchant' && (
+               {
+               /*activeTab == 'merchant' && (
                   <>
                      {activeTabTwo == 'game' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 mt-12 lg:mt-16 w-full gap-16 mx-auto">
@@ -234,7 +258,8 @@ export default function AdminDashboard() {
                         <></>
                      )}
                   </>
-               )}
+               )*/
+               }
             </div>
          </div>
       </section>

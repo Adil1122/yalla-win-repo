@@ -80,18 +80,28 @@ export function formatISODate(date: any) {
 
 export function getGraphResult(records: any, start_date: any, end_date: any, schedule: any) {
     var data_sales = [];
+    var user_ids: any = [];
+    var total_sales: any = 0
     for(var i = 0; i < records.length; i++) {
         data_sales.push({
             user_id: records[i].user_id,
             date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
             amount: records[i].total_amount
         })
+
+        var user_id = records[i].user_id.toString()
+
+        if(user_ids.indexOf(user_id) === -1) {
+            user_ids.push(user_id)
+        }
+        total_sales += records[i].total_amount
     }
 
     var dates: any = getDaysArray(start_date, end_date)
 
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     var data: any = [];
+    var orders_data: any = [];
 
     for(var i = 0; i < dates.length; i++) {
         var day_name: any = i + 1
@@ -103,16 +113,27 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
             sales: 0,
             day: day_name
         })
+
+        orders_data.push({
+            sales: 0,
+            day: day_name
+        })
     }
 
     for(var i = 0; i < dates.length; i++) {
         for(var j = 0; j < data_sales.length; j++) {
             if(data_sales[j].date === dates[i]) {
                 data[i].sales += data_sales[j].amount
+                orders_data[i].sales++
             }
         }
     }
-    return data;
+    return {
+        data: data,
+        orders_data: orders_data,
+        total_users: user_ids.length,
+        total_sales: total_sales
+    };
 }
 
 export function getStartEndDates(schedule: any) {
