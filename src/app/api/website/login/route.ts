@@ -42,7 +42,7 @@ export async function POST(request: any) {
               }, {status: 201});
             }
 
-            if(user.role === 'merchant' && (platform !== 'mobile' || (user.mac !== '' && user.mac !== mac))) {
+            /*if(user.role === 'merchant' && (platform !== 'mobile' || (user.mac !== '' && user.mac !== mac))) {
               return NextResponse.json({
                 message: "Merchant can only login via registered device.",
               }, {status: 201});
@@ -56,7 +56,7 @@ export async function POST(request: any) {
                 },
               };
               var macUpdated = await User.updateOne(query, updates);
-            }
+            }*/
 
             /*var user_initial_coords = user.initial_coords;
             var distance = getDistance(user_initial_coords.lat, user_initial_coords.long, initial_coords.lat, initial_coords.long, 'K');
