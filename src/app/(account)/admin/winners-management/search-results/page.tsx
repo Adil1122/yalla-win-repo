@@ -192,7 +192,7 @@ export default function AdminWinnersSearchResult() {
                   </thead>
                   <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                      {searchResults.map((result: any, index: number) => (
-                        <tr>
+                        <tr key={index}>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? `${result.UserDetails[0].first_name} ${result.UserDetails[0].last_name}` : ''}</td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{result.InvoiceDetails._id}</td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{game !== '' ? result.GameDetails.name : result.ProductDetails.name}</td>
