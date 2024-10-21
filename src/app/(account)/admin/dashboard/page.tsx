@@ -20,7 +20,7 @@ export default function AdminDashboard() {
    const [searchType, setSearchType] = useState<'cities' | 'countries'>('cities')
    var invoice_type = 'prize'
    var platform = 'app'
-   var schedule = 'monthly'
+   var schedule = 'weekly'
 
    const handleTabChange = (tab: Tab) => {
       invoice_type = activeTabTwo
@@ -36,20 +36,9 @@ export default function AdminDashboard() {
       getGraphData()
    }
 
-   const [dataset, setDataSet] = useState([
-      /*{ sales: 12, day: 'MON' },
-      { sales: 34, day: 'TUE' },
-      { sales: 28, day: 'WED' },
-      { sales: 6, day: 'THU' },
-      { sales: 2, day: 'FRI' },
-      { sales: 22, day: 'SAT' },
-      { sales: 16, day: 'SUN' },*/
-   ])
-
+   const [dataset, setDataSet] = useState([])
    const [orders_dataset, setOrdersDataSet] = useState([])
-
    const [total_user, setTotalUsers] = useState(0)
-
    const [total_sales, setTotalSales] = useState(0)
 
    useEffect(() => {
@@ -67,7 +56,7 @@ export default function AdminDashboard() {
          if(!response.ok) {
 
          } else {
-            console.log('content: ', content)
+            //console.log('content: ', content)
             var data = content.graph_result.data
             var orders_data = content.graph_result.orders_data
             var total_sales = content.graph_result.total_sales
