@@ -44,7 +44,7 @@ export default function AdminSelectWinners() {
          if(!response.ok) {
 
          } else {
-            var data = content.graph_result
+            var data = content.graph_result.data
             setDataset(data)
          }
       } catch (error) {
@@ -110,14 +110,16 @@ export default function AdminSelectWinners() {
                   <div>Total Sales Amount:</div>
                   <div>AED 12343</div>
                </div>
-               <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
-                  <IBarChart dataset={dataset}
-                     xAxisDataKey="day"
-                     yAxisLabel=""
-                     seriesDataKey="sales"
-                     height={350}
-                  />
-               </div>
+               {dataset && dataset.length && (
+                  <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
+                     <IBarChart dataset={dataset}
+                        xAxisDataKey="day"
+                        yAxisLabel=""
+                        seriesDataKey="sales"
+                        height={350}
+                     />
+                  </div>
+               )}
             </div>
          </div>
 
