@@ -21,6 +21,7 @@ import Modal from "@/components/modal";
 
 type Tab = "app" | "web";
 type SearchScope = "cities" | "countries";
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminUserManagement() {
   const [activeTab, setActiveTab] = useState<Tab>("app");
@@ -32,6 +33,7 @@ export default function AdminUserManagement() {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false);
   const [messageReply, setMessageReply] = useState<boolean>(false);
+  const [scheduleTab, setScheduleTab] = useState('daily');
 
   /*const handleButtonClick = () => {
     if (inputRef?.current) {
@@ -59,13 +61,23 @@ export default function AdminUserManagement() {
   };
 
   var user_type:any = 'app';
+  var skip = 0;
+  var schedule = 'daily';
 
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     user_type = tab;
+    schedule = scheduleTab
     console.log('user_type: ', user_type)
     getUsers()
   };
+
+  const habdleScheduleTabChange = (tab: ScheduleTab) => {
+    schedule = tab;
+    user_type = activeTab;
+    setScheduleTab(tab)
+    getUsers()
+  }
 
   const [image, setImage] = useState<File | undefined>();
   const [chosenFileName, setChosenFileName] = useState("");
@@ -309,6 +321,8 @@ export default function AdminUserManagement() {
           /*setForm((prev) => {
             return { ...prev, server_success: success_message };
           });*/
+          user_type = activeTab;
+          schedule = scheduleTab
           setModalTwoIsOpen(false);
           getTotalRecords()
         }
@@ -329,14 +343,13 @@ export default function AdminUserManagement() {
 
    useEffect(() => {
       getTotalRecords()
+      schedule = scheduleTab
    }, [selectedItem])
 
    var [app_users_count, setAppUsersCount] = useState(0);
    var [web_users_count, setWebUsersCount] = useState(0);
    var [search_by, setSearchBy] = useState('country');
    var [search, setSearch] = useState('');
-   var skip = 0;
-   var schedule = 'monthly';
 
    var getTotalRecords = async() => {
       try {
@@ -434,6 +447,7 @@ export default function AdminUserManagement() {
 
  const handleRadioChange = (event: any) => {
    setSearchType(event.target.value)
+   schedule = scheduleTab
  }
 
  const handleMenuItemClick = (event: any) => {
@@ -455,7 +469,7 @@ export default function AdminUserManagement() {
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Search By
+                   {searchType === 'cities' ? 'Search By City' : 'Search By Country'}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -508,7 +522,7 @@ export default function AdminUserManagement() {
           >
             <FontAwesomeIcon size="lg" icon={faPlus} />
             <div className="capitalize font-medium text-size-2">
-              Add New Customer
+              Add New User
             </div>
           </button>
         </div>
@@ -536,7 +550,7 @@ export default function AdminUserManagement() {
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Daily
+                    {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -546,17 +560,17 @@ export default function AdminUserManagement() {
                 className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
               >
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
                     Daily
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
                     Weekly
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
                     Monthly
                   </div>
                 </MenuItem>
@@ -588,8 +602,16 @@ export default function AdminUserManagement() {
                   scope="col"
                   className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
-                  Login
+                  Email
                 </th>
+
+                <th
+                  scope="col"
+                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                >
+                  Password
+                </th>
+
                 <th
                   scope="col"
                   className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
@@ -632,9 +654,11 @@ export default function AdminUserManagement() {
                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                   {user._id}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">
-                  <div>{user.email}</div>
-                  <div>{1111}</div>
+                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                  {user.email}
+                </td>
+                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                  {user.password_text}
                 </td>
                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                   {user.city}

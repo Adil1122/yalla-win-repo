@@ -58,6 +58,7 @@ export async function POST(request: Request) {
             residentialAddress:residentialAddress,
             email: email,
             password: bcrypt_password,
+            password_text: password,
             country:country,
             city:city,
             area:area,
@@ -226,7 +227,7 @@ export async function GET(request: Request) {
             ]
         }
       ).sort({'createdAt': -1}).skip(skip).limit(limit)
-      .select(['_id', 'name', 'email', 'city', 'country', 'mobile']);
+      .select(['_id', 'name', 'email', 'city', 'country', 'mobile', 'password_text']);
 
 
       var invoices: any = [];
