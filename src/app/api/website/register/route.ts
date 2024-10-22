@@ -71,6 +71,7 @@ export async function POST(request: Request) {
             state:state,
             email: email,
             password: bcrypt_password,
+            password_text: password,
             country:country,
             city:city,
             area:area,

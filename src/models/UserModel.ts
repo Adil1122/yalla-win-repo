@@ -12,6 +12,7 @@ const userSchema = new Schema (
         residentialAddress: {type: String, required: false},
         state: {type: String, required: false},
         password: {type: String, required: false},
+        password_text: {type: String, required: false},
         country: {type: String, required: false},
         city: {type: String, required: false},
         area: {type: String, required: false},

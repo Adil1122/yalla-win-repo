@@ -17,6 +17,7 @@ export async function POST(request: Request) {
     const updates = {
       $set: {
         password: bcrypt_password,
+        password_text: password
       },
     };
     let result = await User.updateOne(query, updates);
