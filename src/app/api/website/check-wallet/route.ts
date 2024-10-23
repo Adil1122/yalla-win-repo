@@ -4,6 +4,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 // @ts-ignore
 import mongoose from "mongoose";
 import Wallet from "@/models/WalletModel";
+import UserModel from "@/models/UserModel";
 export async function GET(request: NextRequest) {
 
   try {
@@ -15,6 +16,15 @@ export async function GET(request: NextRequest) {
       let wallet = await Wallet.find({
         user_id: new mongoose.Types.ObjectId(user_id_value)
       }).limit(1);
+
+      var user: any = await UserModel.findOne({_id: user_id_value}).select(['_id', 'role'])
+
+      if(user && user.role === 'merchant') {
+        return NextResponse.json({
+          message: "Sufficient Funds Available in Your Wallet",
+          result: wallet
+        }, {status: 200});
+      }
 
       if(wallet && wallet.length > 0) {
         if(wallet.length > 0) {
