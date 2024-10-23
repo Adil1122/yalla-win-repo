@@ -220,7 +220,7 @@ type InvoiceTab = 'invoice' | 'ticket'
                            item.productInBasket.length > 0 && (
                            <div key={item._id} className="flex flex-row justify-between">
                               <div key={item._id + item.productInBasket[0]._id}>{item.productInBasket[0].name}</div>
-                              <div key={item.productInBasket[0]._id + item._id} className="">{item.productInBasket[0].price}</div>
+                              <div key={item.productInBasket[0]._id + item._id} className="">{item.quantity * item.productInBasket[0].price}</div>
                            </div>
                            )
                         ))
