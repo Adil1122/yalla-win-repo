@@ -53,7 +53,7 @@ export default function AdminWinnersSearchResult() {
             item = `product_id=${product}`
          }
 
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -113,7 +113,7 @@ export default function AdminWinnersSearchResult() {
       }
 
       try {
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}`, {
             method: 'OPTIONS',
          })
 
