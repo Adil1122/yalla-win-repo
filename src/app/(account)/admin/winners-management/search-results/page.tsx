@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Modal from '@/components/modal'
 
 export default function AdminWinnersSearchResult() {
@@ -12,7 +12,7 @@ export default function AdminWinnersSearchResult() {
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
    const [searchResults, setSearchResults] = useState<any>([])
-   const queryParams = new URLSearchParams(window.location.search)
+   const queryParams = useSearchParams()
    const [amount, game, product, peoplePercent, country, city, area] = [
       queryParams.get('amount') || '',
       queryParams.get('game_id') || '',
