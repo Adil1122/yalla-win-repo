@@ -23,11 +23,22 @@ export default function DashboardSideBar() {
    }
 
    useEffect(() => {
-      if(isUser) {
-         setUserMenuSelected()
+      if(localStorage.getItem('yalla_logged_in_user') !== null) {
+         if(isUser) {
+            var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+            if(user.role === 'merchant') {
+               router.push('/');
+            } else {
+               setUserMenuSelected()
+            }
+            
+         } else {
+            setAdminMenuSelected()
+         } 
       } else {
-         setAdminMenuSelected()
-      }  
+         router.push('/');
+      }
+       
    }, [])
 
    function setUserMenuSelected() {
