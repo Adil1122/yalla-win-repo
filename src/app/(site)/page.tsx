@@ -32,9 +32,12 @@ export default function Home() {
       yalla_3_top_winner: [],
       yalla_4_top_winner: [],
       yalla_6_top_winner: [],
+      home_page_banners: [],
       todayWinners: 0,
       previousWinners: 0
     });
+
+    var [start, setStart] = useState(0);
    
    useEffect(() => {
 
@@ -73,9 +76,12 @@ export default function Home() {
          })
       }
 
-      getSections(); 
+      if(start === 0) {
+         setStart(1);
+         getSections();
+      }
       
-   }, [])
+   }, [section.home_page_banners])
 
    const getSections = async () => {
       try {
@@ -114,7 +120,8 @@ export default function Home() {
                      yalla_4_top_winner: Array.from(content.yalla_4_top_winner),
                      yalla_6_top_winner: Array.from(content.yalla_6_top_winner),
                      todayWinners: content.todayWinners,
-                     previousWinners: content.previousWinners
+                     previousWinners: content.previousWinners,
+                     home_page_banners: Array.from(content.home_page_banners)
                   } };
                 });
                 localStorage.setItem('yalla_search', '')
@@ -182,15 +189,13 @@ export default function Home() {
                <div className="relative">
                   <div ref={swiperMainRef} className="swiper-custom">
                      <div className="swiper-wrapper">
-                        <div className="swiper-slide">
-                           <div className={`relative bg-[url("/assets/home-slider/slider-img.svg")] h-[320px] lg:h-[500px] bg-center bg-cover bg-no-repeat rounded-3xl lg:rounded-standard`}></div>
+                     { 
+                        section.home_page_banners.map((banner: any) => (
+                        <div className="swiper-slide" key={banner._id}>
+                           <div className={`relative h-[320px] lg:h-[500px] bg-center bg-cover bg-no-repeat rounded-3xl lg:rounded-standard`} style={{backgroundImage: `url(${banner.file_url})`}}></div>
                         </div>
-                        <div className="swiper-slide">
-                           <div className={`relative bg-[url("/assets/home-slider/slider-img.svg")] h-[320px] lg:h-[500px] bg-center bg-cover bg-no-repeat rounded-3xl lg:rounded-standard`}></div> 
-                        </div>
-                        <div className="swiper-slide">
-                           <div className={`relative bg-[url("/assets/home-slider/slider-img.svg")] h-[320px] lg:h-[500px] bg-center bg-cover bg-no-repeat rounded-3xl lg:rounded-standard`}></div>
-                        </div>
+                        ))
+                     }
                      </div>
                      <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between px-4 z-20">
                         <div className="flex items-center justify-center rounded-full h-[35px] w-[35px] cursor-pointer swiper-button-prev">

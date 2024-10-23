@@ -6,6 +6,7 @@ import Draw from "@/models/DrawModel";
 import Winner from "@/models/WinnerModel";
 import Game from "@/models/GameModel";
 import mongoose from "mongoose";
+import Update from "@/models/UpdateModel";
 
 export async function GET(request: any) {
 
@@ -321,6 +322,8 @@ export async function GET(request: any) {
                 } 
             }).countDocuments(); 
 
+        const home_page_banners: any = await Update.find({type: 'desktop-banners'});  
+
 
             
         return NextResponse.json({
@@ -337,7 +340,8 @@ export async function GET(request: any) {
             todayWinners: todayWinners,
             previousWinners: previousWinners,
             game_draws: game_draws,
-            prize_draws: prize_draws
+            prize_draws: prize_draws,
+            home_page_banners: home_page_banners
             }, {status: 200});
 
     } catch (error) {
