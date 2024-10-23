@@ -6,6 +6,7 @@ type InvoiceTab = 'invoice' | 'ticket'
 import QRCode from "react-qr-code";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import Link from 'next/link';
 
 const Cart = ({ params } : {params: { id: string; }}) => {
 
@@ -60,9 +61,12 @@ const Cart = ({ params } : {params: { id: string; }}) => {
 
           <div className="flex flex-col flex-grow">
               <div className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
-                  <div className="cursor-pointer">
-                  <FontAwesomeIcon size="xl" icon={faArrowLeft} />
-                  </div>
+                    {
+                        invoice.length > 0 &&
+                        <Link href={"/admin/shop-management/view/" + invoice[0].user_id}>
+                            <FontAwesomeIcon size="xl" icon={faArrowLeft} />
+                        </Link>
+                    }
                   <div className="cursor-pointer text-head-3 font-medium">View Details</div>
               </div>
           </div>
