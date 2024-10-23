@@ -23,8 +23,11 @@ export default function DashboardSideBar() {
    }
 
    useEffect(() => {
-      if(isUser)
-      setUserMenuSelected()
+      if(isUser) {
+         setUserMenuSelected()
+      } else {
+         setAdminMenuSelected()
+      }  
    }, [])
 
    function setUserMenuSelected() {
@@ -113,6 +116,99 @@ export default function DashboardSideBar() {
       });
    }
 
+   function setAdminMenuSelected() {
+      var menu = adminMenu;
+      var index = 0;
+      var sub_index = 0;
+      if(pathname === '/admin/dashboard') {
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/user-management') {
+         index = 1;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/game-product-management') {
+         index = 2;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/upcoming-draws') {
+         index = 3;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/merchant-management') {
+         index = 4;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/shop-management') {
+         index = 5;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/machine-management') {
+         index = 6;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/coupon-management/available-coupons') {
+         index = 7;
+         sub_index = 0;
+         menu[index].active = true;
+         menu[index].children[sub_index].active = true;
+      }
+      if(pathname === '/admin/coupon-management/purchase-history') {
+         index = 7;
+         sub_index = 1;
+         menu[index].active = true;
+         menu[index].children[sub_index].active = true;
+      }
+      if(pathname === '/admin/updates') {
+         index = 8;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+      if(pathname === '/admin/winners-management/select-winners') {
+         index = 9;
+         sub_index = 0;
+         menu[index].active = true;
+         menu[index].children[sub_index].active = true;
+      }
+      if(pathname === '/admin/winners-management/winners-history') {
+         index = 9;
+         sub_index = 1;
+         menu[index].active = true;
+         menu[index].children[sub_index].active = true;
+      }
+      if(pathname === '/admin/winners-management/results') {
+         index = 9;
+         sub_index = 2;
+         menu[index].active = true;
+         menu[index].children[sub_index].active = true;
+      }
+      if(pathname === '/admin/notifications') {
+         index = 10;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+
+      for (var i = 0; i < adminMenu.length; i++) {
+         if(i !== index) {
+            menu[i].active = false;
+            if(menu[i].children.length > 0) {
+               for(var j = 0; j < menu[i].children.length; j++) {
+                  menu[i].children[j].active = false;
+               }
+            } 
+         } 
+      }
+      setAdminMenu((prev) => {
+         return [...prev];
+      });
+   }
+
    function menuItemClicked(item: any, index: any) {
       if(isAdmin) {
          adminMenuItemClicked(item, index)
@@ -184,7 +280,7 @@ export default function DashboardSideBar() {
       {name : 'Dashboard', active: false, href: '/admin/dashboard', icon: 'dashboard', children: []},
       {name : 'User Management', active: false, href: '/admin/user-management', icon: 'user', children: []},
       {name : 'Game/Product Management', active: false, href: '/admin/game-product-management', icon: 'game', children: []},
-      {name : 'Upcoming Draws', active: true, href: '/admin/upcoming-draws', icon: 'up-draws', children: []},
+      {name : 'Upcoming Draws', active: false, href: '/admin/upcoming-draws', icon: 'up-draws', children: []},
       {name : 'Merchant Management', active: false, href: '/admin/merchant-management', icon: 'users', children: []},
       {name : 'Shop Management', active: false, href: '/admin/shop-management', icon: 'shop', children: []},
       {name : 'Machine Management', active: false, href: '/admin/machine-management', icon: 'machine', children: []},
