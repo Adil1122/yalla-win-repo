@@ -23,6 +23,7 @@ import { machine } from "os";
 import { formatISODate } from "@/libs/common";
 
 type SearchScope = "cities" | "countries";
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminMerchantManagement() {
   const [selectedItem, setSelectedItem] = useState<{
@@ -57,6 +58,25 @@ export default function AdminMerchantManagement() {
     }
     setModalThreeIsOpen(true);
   };
+
+  var schedule = 'daily'
+  var skip = 0;
+  const [scheduleTab, setScheduleTab] = useState('daily');
+
+  const habdleScheduleTabChange = (tab: ScheduleTab) => {
+    schedule = tab;
+    setScheduleTab(tab)
+    getMerchantCounts()
+  }
+
+  const handleRadioChange = (event: any) => {
+    setSearchType(event.target.value)
+    schedule = scheduleTab
+  }
+
+  const handleMenuItemClick = (event: any) => {
+    event.stopPropagation()
+  }
 
   var [id, setId] = useState("");
 
@@ -365,8 +385,6 @@ export default function AdminMerchantManagement() {
 
   var [shops, setShops] = useState<any>([])
   var [invoices, setInvoices] = useState<any>([])
-  var [schedule, setSchedule] = useState('monthly')
-  var skip = 0;
 
   var getMerchants = async() => {
     try {
@@ -460,11 +478,11 @@ export default function AdminMerchantManagement() {
             />
           </div>
           <div className="w-full lg:w-fit">
-            <Menu>
+          <Menu>
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Search By
+                   {searchType === 'cities' ? 'Search By City' : 'Search By Country'}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -476,26 +494,35 @@ export default function AdminMerchantManagement() {
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
-                      checked
+                      id="countries-input"
+                      checked={searchType === 'countries'}
+                      value="countries"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={handleMenuItemClick}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="countries-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       Country
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
+                      id="cities-input"
+                      checked={searchType === 'cities'}
+                      value="cities"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={(event) => {event.stopPropagation()}}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="cities-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       City
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
               </MenuItems>
@@ -506,7 +533,7 @@ export default function AdminMerchantManagement() {
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Daily
+                  {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -516,17 +543,17 @@ export default function AdminMerchantManagement() {
                 className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
               >
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
                     Daily
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
                     Weekly
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
                     Monthly
                   </div>
                 </MenuItem>
@@ -614,8 +641,8 @@ export default function AdminMerchantManagement() {
                   {merchant.eid}
                 </td>
                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
-                {machines.map((machine: any) => (
-                  machine.merchant_id === merchant._id &&
+                {machines.map((machine: any, index: any) => (
+                  machine.merchant_id === merchant._id && index === 0 &&
                   machine.machine_id
                 ))}
                 </td>

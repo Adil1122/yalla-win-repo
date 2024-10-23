@@ -7,9 +7,11 @@ import Modal from '@/components/modal'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { SwitchComponent } from '@/components/SwitchComponent'
 import { get } from 'http'
+import Link from 'next/link'
 
 type Tab = 'games' | 'products' | 'sales' | 'transaction'
 type InvoiceTab = 'invoice' | 'ticket'
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminViewShopDetails({ params } : {params: { id: string; }}) {
 
@@ -52,6 +54,8 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
    //var [invoices_details, setInvoicesDetails] = useState<any>([]);
    var limit = 5;
    var skip = 0;
+   var schedule = 'daily'
+   const [scheduleTab, setScheduleTab] = useState('daily');
 
 
    var getTotalRecords = async() => {
@@ -76,7 +80,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    var getRecords = async() => {
         try {
-           let response = await fetch('/api/admin/shop-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=' + search_str, {
+           let response = await fetch('/api/admin/shop-management/view?count=0&type=' + active_tab + '&skip=' + skip + '&limit=' + limit + '&id=' + params.id + '&search=' + search_str + '&schedule=' + schedule, {
               method: 'GET',
            });
            var content = await response.json();
@@ -310,6 +314,12 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
 
    }
 
+   const habdleScheduleTabChange = (tab: ScheduleTab) => {
+      schedule = tab;
+      setScheduleTab(tab)
+      getTotalRecords()
+    }
+
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -333,25 +343,36 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                            value={search} onChange={(e) => changeSearch(e.target.value)} />
                         </div>
                      </div>
-                     <div className="w-full lg:w-fit">
+                     <div className="w-full lg:w-fit" style={{display: 'none'}}>
                         <Menu>
-                           <MenuButton className="w-full">
-                              <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                                 <div className="capitalize font-medium text-size-2">Daily</div>
-                                 <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                        <MenuButton className="w-full">
+                           <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                              <div className="capitalize font-medium text-size-2">
+                              {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                               </div>
-                           </MenuButton>
-                           <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
-                              <MenuItem>
-                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Daily</div>
-                              </MenuItem>
-                              <MenuItem>
-                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Weekly</div>
-                              </MenuItem>
-                              <MenuItem>
-                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Monthly</div>
-                              </MenuItem>
-                           </MenuItems>
+                              <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                           </div>
+                        </MenuButton>
+                        <MenuItems
+                           anchor="bottom"
+                           className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                        >
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
+                              Daily
+                              </div>
+                           </MenuItem>
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
+                              Weekly
+                              </div>
+                           </MenuItem>
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
+                              Monthly
+                              </div>
+                           </MenuItem>
+                        </MenuItems>
                         </Menu>
                      </div>
                   </div>
@@ -395,9 +416,13 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
-                                       Invoice
-                                    </button>
+                                 <Link
+                                    href={"/admin/shop-management/game-invoice/" + rec._id}
+                                    className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2"
+                                 >
+                                    Invoice
+                                 </Link>
+                                    
                                  </div>
                               </td>
                            </tr>
@@ -436,9 +461,12 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
-                                       Invoice
-                                    </button>
+                                 <Link
+                                    href={"/admin/shop-management/prize-invoice/" + rec._id}
+                                    className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2"
+                                 >
+                                    Invoice
+                                 </Link>
                                  </div>
                               </td>
                            </tr>

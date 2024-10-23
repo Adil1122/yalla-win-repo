@@ -23,6 +23,7 @@ import { SwitchComponent } from "@/components/SwitchComponent";
 import { formatISODate } from "@/libs/common";
 
 type SearchScope = "cities" | "countries";
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminShopManagement() {
   const [selectedItem, setSelectedItem] = useState<{
@@ -46,9 +47,28 @@ export default function AdminShopManagement() {
     setModalIsOpen(true);
   };
 
+  var schedule = 'daily'
+  var skip = 0;
+  const [scheduleTab, setScheduleTab] = useState('daily');
+
+  const handleRadioChange = (event: any) => {
+    setSearchType(event.target.value)
+    schedule = scheduleTab
+  }
+
+  const handleMenuItemClick = (event: any) => {
+    event.stopPropagation()
+  }
+
   const handleDelete = (id: string | number) => {
     setModalTwoIsOpen(true);
   };
+
+  const habdleScheduleTabChange = (tab: ScheduleTab) => {
+    schedule = tab;
+    setScheduleTab(tab)
+    getShopCounts()
+  }
 
   var [id, setId] = useState("");
 
@@ -226,6 +246,7 @@ export default function AdminShopManagement() {
   var [monthly_shop_counts, setMonthlyShopCounts] = useState<any>([])
 
   useEffect(() => {
+    schedule = scheduleTab;
     getShopCounts()
     getDropdownsData('merchants', '')
   }, [selectedItem])
@@ -287,8 +308,6 @@ export default function AdminShopManagement() {
 
   var [shops, setShops] = useState<any>([])
   var [invoices, setInvoices] = useState<any>([])
-  var [schedule, setSchedule] = useState('monthly')
-  var skip = 0;
 
   var getShops = async() => {
     try {
@@ -366,11 +385,11 @@ export default function AdminShopManagement() {
             />
           </div>
           <div className="w-full lg:w-fit">
-            <Menu>
+          <Menu>
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Search By
+                   {searchType === 'cities' ? 'Search By City' : 'Search By Country'}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -382,37 +401,46 @@ export default function AdminShopManagement() {
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
-                      checked
+                      id="countries-input"
+                      checked={searchType === 'countries'}
+                      value="countries"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={handleMenuItemClick}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="countries-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       Country
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
                 <MenuItem>
                   <div className="flex gap-2 items-center">
                     <input
+                      id="cities-input"
+                      checked={searchType === 'cities'}
+                      value="cities"
                       name="search-radio"
                       type="radio"
                       className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                      onClick={(event) => {event.stopPropagation()}}
+                      onChange={handleRadioChange}
                     />
-                    <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                    <label htmlFor="cities-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
                       City
-                    </div>
+                    </label>
                   </div>
                 </MenuItem>
               </MenuItems>
             </Menu>
           </div>
           <div className="w-full lg:w-fit">
-            <Menu>
+          <Menu>
               <MenuButton className="w-full">
                 <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
                   <div className="capitalize font-medium text-size-2">
-                    Daily
+                  {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                   </div>
                   <FontAwesomeIcon size="lg" icon={faChevronDown} />
                 </div>
@@ -422,17 +450,17 @@ export default function AdminShopManagement() {
                 className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
               >
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
                     Daily
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
                     Weekly
                   </div>
                 </MenuItem>
                 <MenuItem>
-                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">
+                  <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
                     Monthly
                   </div>
                 </MenuItem>
@@ -529,7 +557,7 @@ export default function AdminShopManagement() {
                 <td>
                   <div className="flex items-center justify-center gap-2">
                     <Link
-                      href="shop-management/view/12"
+                      href={"shop-management/view/" + shop._id}
                       className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
                     >
                       <FontAwesomeIcon size="lg" icon={faEye} />
