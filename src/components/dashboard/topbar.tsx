@@ -12,6 +12,7 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '../AuthContext'
 import { useRouter } from 'next/navigation'
 import Modal from '../modal'
+import getDaysHoursMinsSecs from '@/libs/common';
 
 export default function DashboardTopBar() {
    
@@ -33,11 +34,16 @@ export default function DashboardTopBar() {
    useEffect(() => {
       // Check if user is logged in when component mounts
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
-         var userObject = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
-         setLoggedInUser({
-            name: userObject.name,
-            image: userObject.image,
-         });
+         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+         var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
+         if(parseFloat(time_diff.minutes) >= 60) {
+            logout()
+         } else {
+            setLoggedInUser({
+               name: user.name,
+               image: user.image,
+            });
+         }
       } else {
          router.push('/');
       } 

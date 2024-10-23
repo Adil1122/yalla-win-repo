@@ -24,8 +24,8 @@ export default function DashboardSideBar() {
 
    useEffect(() => {
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
+         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
          if(isUser) {
-            var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
             if(user.role === 'merchant') {
                router.push('/');
             } else {
