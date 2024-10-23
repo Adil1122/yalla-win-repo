@@ -11,6 +11,7 @@ import { Shop, ShopSearch } from '@/components/ShopSearch'
 import { formatISODate } from '@/libs/common'
 
 type SearchScope = 'cities' | 'countries'
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminMachineManagement() {
 
@@ -207,7 +208,12 @@ export default function AdminMachineManagement() {
   var [weekly_machine_counts, setWeeklyMachineCounts] = useState<any>([])
   var [monthly_machine_counts, setMonthlyMachineCounts] = useState<any>([])
 
+  var schedule = 'daily'
+  var skip = 0;
+  const [scheduleTab, setScheduleTab] = useState('daily');
+
   useEffect(() => {
+    schedule = scheduleTab
     getMachineCounts()
     getDropdownsData('merchants', '')
   }, [selectedItem])
@@ -326,6 +332,7 @@ export default function AdminMachineManagement() {
         current_page = pages.length
     }
     skip = recordsPerPage * (current_page - 1);
+    schedule = scheduleTab
     getMachines()
     setCurrentPage(current_page);
   }
@@ -381,9 +388,20 @@ async function changeLocked() {
    }
 }
 
+const handleRadioChange = (event: any) => {
+   setSearchType(event.target.value)
+   schedule = scheduleTab
+ }
 
+ const handleMenuItemClick = (event: any) => {
+   event.stopPropagation()
+ }
 
-
+ const habdleScheduleTabChange = (tab: ScheduleTab) => {
+   schedule = tab;
+   setScheduleTab(tab)
+   getMachineCounts()
+ }
 
    return ( 
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 ">
@@ -393,49 +411,87 @@ async function changeLocked() {
                   <CountryCitySearch searchIn={searchType} onSelectItem={setSelectedItem} />
                </div>
                <div className="w-full lg:w-fit">
-                  <Menu>
-                     <MenuButton className="w-full">
-                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                           <div className="capitalize font-medium text-size-2">Search By</div>
-                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+               <Menu>
+                  <MenuButton className="w-full">
+                     <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                        <div className="capitalize font-medium text-size-2">
+                        {searchType === 'cities' ? 'Search By City' : 'Search By Country'}
                         </div>
-                     </MenuButton>
-                     <MenuItems anchor="bottom" className="w-[140px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
-                        <MenuItem>
-                           <div className="flex gap-2 items-center">
-                              <input checked name="search-radio" type="radio" className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0" />
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Country</div>
-                           </div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="flex gap-2 items-center">
-                              <input name="search-radio" type="radio" className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0" />
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">City</div>
-                           </div>
-                        </MenuItem>
-                     </MenuItems>
-                  </Menu>
+                        <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                     </div>
+                  </MenuButton>
+                  <MenuItems
+                     anchor="bottom"
+                     className="w-[140px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                  >
+                     <MenuItem>
+                        <div className="flex gap-2 items-center">
+                        <input
+                           id="countries-input"
+                           checked={searchType === 'countries'}
+                           value="countries"
+                           name="search-radio"
+                           type="radio"
+                           className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                           onClick={handleMenuItemClick}
+                           onChange={handleRadioChange}
+                        />
+                        <label htmlFor="countries-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
+                           Country
+                        </label>
+                        </div>
+                     </MenuItem>
+                     <MenuItem>
+                        <div className="flex gap-2 items-center">
+                        <input
+                           id="cities-input"
+                           checked={searchType === 'cities'}
+                           value="cities"
+                           name="search-radio"
+                           type="radio"
+                           className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                           onClick={(event) => {event.stopPropagation()}}
+                           onChange={handleRadioChange}
+                        />
+                        <label htmlFor="cities-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
+                           City
+                        </label>
+                        </div>
+                     </MenuItem>
+                  </MenuItems>
+               </Menu>
                </div>
                <div className="w-full lg:w-fit">
-                  <Menu>
-                     <MenuButton className="w-full">
-                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                           <div className="capitalize font-medium text-size-2">Daily</div>
-                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+               <Menu>
+                  <MenuButton className="w-full">
+                     <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                        <div className="capitalize font-medium text-size-2">
+                        {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                         </div>
-                     </MenuButton>
-                     <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Daily</div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Weekly</div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Monthly</div>
-                        </MenuItem>
-                     </MenuItems>
-                  </Menu>
+                        <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                     </div>
+                  </MenuButton>
+                  <MenuItems
+                     anchor="bottom"
+                     className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                  >
+                     <MenuItem>
+                        <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
+                        Daily
+                        </div>
+                     </MenuItem>
+                     <MenuItem>
+                        <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
+                        Weekly
+                        </div>
+                     </MenuItem>
+                     <MenuItem>
+                        <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
+                        Monthly
+                        </div>
+                     </MenuItem>
+                  </MenuItems>
+               </Menu>
                </div>
                <button type="button" onClick={() => openCreatePopup()}  className="flex items-center border gap-3 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                   <FontAwesomeIcon size="lg" icon={faPlus} />
