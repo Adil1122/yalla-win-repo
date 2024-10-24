@@ -93,7 +93,7 @@ export default function Header() {
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
          var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
          var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
-         if(parseFloat(time_diff.minutes) >= 60) {
+         if(parseFloat(time_diff.minutes) >= 300) {
             logout()
          }
 

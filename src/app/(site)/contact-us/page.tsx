@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react'
-import {APIProvider, Map} from '@vis.gl/react-google-maps'
+//import {APIProvider, Map} from '@vis.gl/react-google-maps'
 import Link from 'next/link'
+import GoogleMap from '@/components/GoogleMap'
 
 export default function ContactPage() {
    
@@ -53,7 +54,7 @@ export default function ContactPage() {
                   </div>
                </div>
                <div className="lg:w-[45%] lg:h-auto flex rounded-standard flex-col gap-8 w-0 h-0">
-                  <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}>
+                  {/*<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}>
                      <Map
                         style={{width: '100%', height: '350px', borderRadius: '10px'}}
                         defaultCenter={{lat: 48.8575, lng: 2.3514}}
@@ -61,7 +62,8 @@ export default function ContactPage() {
                         gestureHandling={'greedy'}
                         disableDefaultUI={true}
                      />
-                  </APIProvider>
+                  </APIProvider>*/}
+                  <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="400px" />
                </div>
             </div>
             <div className="flex flex-col lg:flex-row lg:gap-12 mt-2">
@@ -79,7 +81,7 @@ export default function ContactPage() {
                   <button className="text-center text-themeone font-medium py-3 bg-white rounded-standard">Submit</button>
                </div>
                <div className="flex lg:hidden rounded-standard flex-col gap-8 mt-10">
-                  <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}>
+                  {/*<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}>
                      <Map
                         style={{width: '100%', height: '350px', borderRadius: '10px'}}
                         defaultCenter={{lat: 48.8575, lng: 2.3514}}
@@ -87,7 +89,9 @@ export default function ContactPage() {
                         gestureHandling={'greedy'}
                         disableDefaultUI={true}
                      />
-                  </APIProvider>
+                  </APIProvider>*/}
+                  <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="400px" />
+                  
                </div>
                <div className="flex flex-col gap-4 w-full w-full lg:w-[45%] lg:text-size-4 text-size-2">
                   <div className="flex flex-col gap-3">
