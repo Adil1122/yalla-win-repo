@@ -42,10 +42,24 @@ export async function POST(request: any) {
               }, {status: 201});
             }
 
-            if(user.role === 'merchant' && (platform !== 'mobile' || (user.mac !== '' && user.mac !== mac))) {
-              return NextResponse.json({
-                message: "Merchant can only login via registered device.",
-              }, {status: 201});
+            if(user.role === 'merchant') {
+
+              if(platform !== 'mobile') {
+                return NextResponse.json({
+                  message: "You must login via Merchant App.",
+                }, {status: 201});
+              }
+
+              if(user.mac !== '') {
+                
+                if(user.mac !== mac) {
+                  return NextResponse.json({
+                    message: "Merchant can only login via registered device.",
+                    details: 'Role: ' + user.role + ', Given Platform: ' + platform + ', User Mac: ' + user.mac + ', Given Mac: ' + mac
+                  }, {status: 201});
+                }
+              }
+
             }
 
             if(user.role === 'merchant' && platform === 'mobile' && user.mac === '') {
