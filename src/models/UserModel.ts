@@ -30,7 +30,8 @@ const userSchema = new Schema (
         eid: {type: String, required: false},
         profit_percentage: {type: Number, required: false},
         registeration_date: {type: Date, required: false},
-        user_type: {type: String, required: false}
+        user_type: {type: String, required: false},
+        initial_coords: {type: Object, require: false}
     },
     {
         timestamps: true
