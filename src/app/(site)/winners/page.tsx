@@ -231,7 +231,7 @@ export default function WinnersPage() {
                         <div className="swiper-wrapper">
                         { 
                            winner_videos.map((video: any) => (
-                           <div className="swiper-slide">
+                           <div key={video._id} className="swiper-slide">
                               <VideoCard video={video} />
                            </div>
                            ))
