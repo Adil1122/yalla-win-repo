@@ -478,32 +478,32 @@ export default function AdminCouponsPurchaseHistory() {
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Coupon Code</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase Time</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Coupon Code</th> 
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant Name</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase Time</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                         {
                            coupons.map((coupon: any, index: any) => (
                            <tr key={coupon._id}>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{index + 1}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.coupon_code}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{index + 1}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.coupon_code}</td>
                               {
                                  activeTab == 'shop' ?
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.shopInCoupon.length > 0 ? coupon.shopInCoupon[0].name : ''}</td>
+                                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.shopInCoupon.length > 0 ? coupon.shopInCoupon[0].name : ''}</td>
                                  :
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.userInCoupon.length > 0 ? coupon.userInCoupon[0].name : ''}</td>
+                                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.userInCoupon.length > 0 ? coupon.userInCoupon[0].name : ''}</td>
                               }
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.merchantInCoupon.length > 0 ? coupon.merchantInCoupon[0].name : ''}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {coupon.price}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.date_only}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{coupon.active === 1 ? 'Active' : 'In Active'}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.merchantInCoupon.length > 0 ? coupon.merchantInCoupon[0].name : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {coupon.price}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.date_only}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.active === 1 ? 'Active' : 'In Active'}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => openEditPopup(coupon._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
@@ -562,25 +562,25 @@ export default function AdminCouponsPurchaseHistory() {
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Coupon Code</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Username</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Expiration</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase Time</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Coupon Code</th> 
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Username</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Expiration</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase Time</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
+                              <th scope="col" className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                            <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">3728d73823dd</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">abc</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 1234</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024 - 09:00AM</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Active</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">123</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">3728d73823dd</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">abc</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED 1234</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024 - 09:00AM</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">Active</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => handleCouponActionClick('edit')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

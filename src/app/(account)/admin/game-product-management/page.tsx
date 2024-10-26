@@ -545,22 +545,21 @@ export default function AdminGameProdManagement() {
                            <tr className="bg-white">
                            {
                               activeTabTwo == 'games' ? (
-                                 <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Game</th>
+                                 <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Game</th>
                               )
                               :
                               (
                                  <>
-                                 <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Prize</th>
-                                 <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Prize Image</th>
+                                 <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Prize</th>
                                  </>
                               )
                            }
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Starting Price</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Starting Price</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
@@ -570,23 +569,20 @@ export default function AdminGameProdManagement() {
                            <tr key={product._id}>
                               {
                               activeTabTwo == 'games' ? (
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.gameInProduct.length > 0 ? product.gameInProduct[0].name : ''}</td>
+                                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.gameInProduct.length > 0 ? product.gameInProduct[0].name : ''}</td>
                               ) : (
                                  <>
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.prizeInProduct.length > 0 ? product.prizeInProduct[0].name : ''}</td>
-                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">
-                                    <img className="max-w-[60px] mx-auto" src={product.prizeInProduct.length > 0 ? product.prizeInProduct[0].image : ''} alt="No Image Found" />
-                                 </td>
+                                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.prizeInProduct.length > 0 ? product.prizeInProduct[0].name : ''}<img className="max-w-[60px] mx-auto" src={product.prizeInProduct.length > 0 ? product.prizeInProduct[0].image : ''} alt="No Image Found" /></td>
                                  </>
                               )}
 
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.name}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.name}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-left">
                                  <img className="max-w-[60px] mx-auto" src={product.image} alt="" />
                               </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {product.price}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.status}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{product.date}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {product.price}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.status}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.date}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => openEditPopup(product._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
@@ -649,31 +645,31 @@ export default function AdminGameProdManagement() {
                      <table className="w-full">
                         <thead>
                            <tr className="bg-white">
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product Image</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize Image</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">ID</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product Image</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Prize Image</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                            <tr>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">123</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">pen</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">123</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">pen</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-left">
                                  <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
                               </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">iPhone</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">iPhone</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                                  <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
                               </td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED 1234</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Active</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED 1234</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">Active</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">12 Aug, 2024</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => handleProductActionClick()} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

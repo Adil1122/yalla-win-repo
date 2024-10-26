@@ -484,43 +484,43 @@ export default function AdminShopManagement() {
               <tr className="bg-white">
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl"
                 >
                   Name
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Merchant Name
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Merchant ID
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Location
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Total Sales
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Reg Date
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
+                  className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
                 >
                   Action
                 </th>
@@ -531,19 +531,19 @@ export default function AdminShopManagement() {
             { 
               shops.map((shop: any) => (
               <tr key={shop._id}>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.name}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.merchantWithShop[0].name}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.merchantWithShop[0].merchant_id}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.location}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                 { 
                   invoices.map((invoice: any) => (
                     invoice._id === shop.merchant_id &&
@@ -551,7 +551,7 @@ export default function AdminShopManagement() {
                   ))
                 }
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.registeration_date}
                 </td>
                 <td>

@@ -310,6 +310,18 @@ export default function DashboardSideBar() {
 
    const menu = isAdmin ? adminMenu : (isUser ? userMenu : [])
 
+   const toggleChildActive = (child: any) => {
+      adminMenu.map((item: any) => {
+         if(item.children) {
+            item.children.map((itemChild: any) => {
+               itemChild.active = false
+            })
+         }
+      })
+
+      child.active = true
+   }
+
    return (
       <div className="flex flex-col flex-grow h-full max-h-screen overflow-y-auto">
          <div className="flex items-center justify-center my-5 lg:my-9">
@@ -341,12 +353,12 @@ export default function DashboardSideBar() {
                      <div key={childIndex} className="flex flex-col">
                         <div className={`flex items-center ${childIndex === 0 ? "pb-5" : "py-5" } px-8 gap-6 ${childIndex !== item.children.length - 1 ? "border-b border-lighttwo" : ""}`}>
                            <div className="w-[25px]"></div>
-                           <div className="flex items-center gap-4 font-medium text-sm lg:text-size-1 xl:text-size-2">
-                              <div className={`w-[5px] h-[5px] rounded-full ${child.active ? "bg-themeone" : "bg-black"}`}></div>
-                              <Link href={child.href} className={`${child.active ? "text-themeone" : "text-darkone"}`}>
+                           <Link href={child.href} onClick={() => {toggleChildActive(child)}} className={`${child.active ? "text-themeone" : "text-darkone"} flex items-center`}>
+                              <div className="flex items-center gap-4 font-medium text-sm lg:text-size-1 xl:text-size-2">
+                                 <div className={`w-[5px] h-[5px] rounded-full ${child.active ? "bg-themeone" : "bg-black"}`}></div>
                                  {child.name}
-                              </Link>
-                           </div>
+                              </div>
+                           </Link>
                         </div>
                         {/* Sub-Children start */}
                         {child.children?.length && child.active === true && (

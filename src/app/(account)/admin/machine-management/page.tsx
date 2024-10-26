@@ -504,25 +504,25 @@ const handleRadioChange = (event: any) => {
                <table className="w-full">
                   <thead>
                      <tr className="bg-white">
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Machine ID</th> 
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th> 
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Location</th>
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Last Activity</th>
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Machine ID</th> 
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th> 
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Merchant ID</th>
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Location</th>
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Last Activity</th>
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
+                        <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                   { 
                      machines.map((machine: any, index: number) => (
                         <tr key={index}>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.machine_id}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.machineWithShop[0].name}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.merchant_id}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.location}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.updatedAt}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{machine.status}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.machine_id}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.machineWithShop[0].name}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.merchant_id}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.location}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.updatedAt}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.status}</td>
                            <td>
                               <div className="flex items-center justify-center gap-2">
                                  <Link href="machine-management/map/12" className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

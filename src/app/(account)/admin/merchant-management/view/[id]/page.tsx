@@ -145,20 +145,20 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   <table className="w-full">
                      <thead>
                         <tr className="bg-white">
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Shop ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th> 
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Profit %</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Reg Date</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Shop ID</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Shop Name</th> 
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Profit %</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Reg Date</th>
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
                      {
                         records.map((rec: any) => (
                         <tr key={rec._id}>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.name}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">20%</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.name}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">20%</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
                         </tr>
                         ))
                      }
@@ -171,10 +171,10 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   <table className="w-full">
                      <thead>
                         <tr className="bg-white">
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Message ID</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Title</th> 
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date Sent</th>
-                           <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl">Message ID</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Title</th> 
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date Sent</th>
+                           <th scope="col" className="w-[25%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
@@ -182,9 +182,9 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                      {
                         records.map((rec: any) => (
                         <tr key={rec._id}>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.contents}</td>
-                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.contents}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
                            <td>
                               <div className="flex items-center justify-center gap-2">
                                  <button type="button" onClick={() => handleMessageActionClick('view')} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

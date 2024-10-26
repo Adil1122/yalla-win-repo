@@ -588,57 +588,57 @@ export default function AdminUserManagement() {
               <tr className="bg-white">
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Name
                 </th>
-                <th
+                {/* <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Registeration
-                </th>
+                </th> */}
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Email
                 </th>
 
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Password
                 </th>
 
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   City
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Country
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Phone Number
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Last Order
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
                 >
                   Action
                 </th>
@@ -648,28 +648,28 @@ export default function AdminUserManagement() {
             {
               users.map((user: any) => (
               <tr key={user._id}>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.name}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                {/* <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user._id}
-                </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                </td> */}
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.email}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.password_text}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.city}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.country}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {user.mobile}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                 {
                   invoices.map((invoice: any, index: any) => (
                     invoice.user_id === user._id && (

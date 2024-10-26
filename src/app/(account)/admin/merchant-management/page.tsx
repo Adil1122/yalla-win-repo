@@ -596,49 +596,49 @@ export default function AdminMerchantManagement() {
               <tr className="bg-white">
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tl rounded-bl"
                 >
                   ID
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Name
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   eID
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Machine No
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Address
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Email
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone"
                 >
                   Phone No
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
+                  className="w-[12%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br"
                 >
                   Action
                 </th>
@@ -650,16 +650,16 @@ export default function AdminMerchantManagement() {
               merchants.map((merchant: any, index: any) => (
               merchant.role === 'merchant' &&  
               <tr key={merchant._id} className="h-[70px]">
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {index + 1}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {merchant.name}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {merchant.eid}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                 {
                   /*machines.map((machine: any, index: any) => (
                     machine.merchant_id === merchant._id && index === 0 &&
@@ -670,13 +670,13 @@ export default function AdminMerchantManagement() {
                 
                 }
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {merchant.area}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {merchant.email}
                 </td>
-                <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {merchant.mobile}
                 </td>
                 <td>
