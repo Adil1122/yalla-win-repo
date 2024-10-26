@@ -273,7 +273,7 @@ const getFilteredResults = (records: any, gameId: string, productId: string, max
             parsed.forEach((item: any) => {
                if (item.product_id == productId) {
 
-                  const winningAmount = item.prize_amount ? item.prize_amount : 0
+                  const winningAmount = item.prize_price ? item.prize_price : 0
                   record.ProductDetails = { name: item.product_name }
                   record.winning_amount = [winningAmount]
 
