@@ -112,6 +112,10 @@ type InvoiceTab = 'invoice' | 'ticket'
             product_price: result[i].productInBasket[0].price,
             total_amount: result[i].quantity * result[i].productInBasket[0].price,
 
+            prize_id: result[i].prizeInBasket[0]._id,
+            prize_name: result[i].prizeInBasket[0].name,
+            prize_image: result[i].prizeInBasket[0].image,
+            prize_price: result[i].prizeInBasket[0].price,
          })
        }
 

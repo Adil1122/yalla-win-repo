@@ -4,6 +4,7 @@ import mongoose, {Schema} from "mongoose";
 const basketSchema = new Schema (
     {
         product_id: {type: mongoose.Types.ObjectId, ref: 'Product', required: true},
+        prize_id: {type: mongoose.Types.ObjectId, ref: 'Prize', required: true},
         user_id: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
         quantity: {type: Number, required: true}
     },

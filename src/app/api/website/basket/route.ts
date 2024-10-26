@@ -4,6 +4,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 import Basket from "@/models/BasketModel";
 import mongoose from "mongoose";
 import Draw from "@/models/DrawModel";
+import Product from "@/models/ProductModel";
 
 export async function GET(request: NextRequest) {
 
@@ -24,7 +25,15 @@ export async function GET(request: NextRequest) {
                           foreignField: "_id",
                           as: "productInBasket",
                       },
-                  }
+                  },
+                  {
+                    $lookup: {
+                        from: "prizes",
+                        localField: "prize_id",
+                        foreignField: "_id",
+                        as: "prizeInBasket",
+                    },
+                }
               ]).sort({'createdAt': -1}).limit(100);
 
               if(products_in_basket && products_in_basket.length > 0) {
@@ -71,10 +80,14 @@ export async function POST(request: NextRequest) {
         quantity
     } = await request.json();
 
+    var product = await Product.findOne({_id: product_id}).select(['_id', 'prize_id']);
+
+
     let basketDocument = {
         product_id: product_id, 
         user_id: user_id, 
-        quantity: quantity
+        quantity: quantity,
+        prize_id: product.prize_id
     }
 
     let basket:any = await Basket.find({
@@ -83,6 +96,7 @@ export async function POST(request: NextRequest) {
     }).limit(1);
 
     if(basket && basket.length > 0) {
+      console.log(1)
       var basket_quantity = basket[0].quantity;
       const query = { 
         _id: new mongoose.Types.ObjectId(basket[0]._id + '')
@@ -108,6 +122,8 @@ export async function POST(request: NextRequest) {
       }
 
     } else {
+
+      console.log('basketDocument: ', basketDocument)
 
       let basketResult = await Basket.create(basketDocument);
 
