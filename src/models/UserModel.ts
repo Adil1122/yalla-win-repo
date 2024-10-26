@@ -26,7 +26,7 @@ const userSchema = new Schema (
         role: {type: String, required: false},
         platform: {type: String, required: false},
         shop_id: {type: mongoose.Types.ObjectId, ref: 'Shop', required: false},
-        //machine_id: {type: mongoose.Types.ObjectId, ref: 'Machine', required: false},
+        machine_id: {type: mongoose.Types.ObjectId, ref: 'Machine', required: false},
         eid: {type: String, required: false},
         profit_percentage: {type: Number, required: false},
         registeration_date: {type: Date, required: false},

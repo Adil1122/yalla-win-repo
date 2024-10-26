@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       } catch (error) {
           return NextResponse.json({
             message: "error query ....",
-            error: error
+            error: JSON.stringify(error)
           }, {status: 500});
       }
   }

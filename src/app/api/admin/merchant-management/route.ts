@@ -14,29 +14,52 @@ export async function POST(request: Request) {
         var email:any = data.get('email');
         var mobile:any = data.get('mobile');
         var shop_id:any = data.get('shop_id');
-        //var machine_id:any = data.get('machine_id');
+        var machine_id:any = data.get('machine_id');
         var profit_percentage:any = data.get('profit_percentage');
         var registeration_date:any = data.get('registeration_date');
+        var country:any = data.get('country');
+        var city:any = data.get('city');
+        var area:any = data.get('area');
         let newDocument = {
             name: name,
             eid: eid,
             email: email,
             mobile: mobile,
             shop_id: shop_id,
-            //machine_id: machine_id,
+            machine_id: machine_id,
             profit_percentage: parseFloat(profit_percentage),
             registeration_date: registeration_date,
             role: 'merchant',
-            active: 1
+            active: 1,
+            country: country,
+            city: city,
+            area: area
         }
         //console.log(newDocument)
 
         let result = await User.create(newDocument);
-        console.log(result)
+
+        var shopUpdate = {
+            $set: {
+                merchant_id: result._id
+            }
+        }
+        var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+
+        var machineUpdate = {
+            $set: {
+                merchant_id: result._id
+            }
+        }
+        var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
+
+
 
         return NextResponse.json({
             messge: "Merchant created successfully ....",
-            result: result
+            result: result,
+            shopUpdateResult: shopUpdateResult,
+            machineUpdateResult: machineUpdateResult
         }, {status: 200});
 
     } catch (error) {
@@ -64,27 +87,50 @@ export async function PUT(request: Request) {
             var email:any = data.get('email');
             var mobile:any = data.get('mobile');
             var shop_id:any = data.get('shop_id');
-            //var machine_id:any = data.get('machine_id');
+            var machine_id:any = data.get('machine_id');
             var profit_percentage:any = data.get('profit_percentage');
             var registeration_date:any = data.get('registeration_date');
+            var country:any = data.get('country');
+            var city:any = data.get('city');
+            var area:any = data.get('area');
             let updates = {
                 $set: {
-                name: name,
-                eid: eid,
-                email: email,
-                mobile: mobile,
-                shop_id: shop_id,
-                //machine_id: machine_id,
-                profit_percentage: parseFloat(profit_percentage),
-                registeration_date: registeration_date,
-                role: 'merchant',
-                active: 1
+                    name: name,
+                    eid: eid,
+                    email: email,
+                    mobile: mobile,
+                    shop_id: shop_id,
+                    machine_id: machine_id,
+                    profit_percentage: parseFloat(profit_percentage),
+                    registeration_date: registeration_date,
+                    role: 'merchant',
+                    active: 1,
+                    country: country,
+                    city: city,
+                    area: area
                 }
             }
             var result = await User.updateOne({_id: user._id}, updates);
+
+            var shopUpdate = {
+                $set: {
+                    merchant_id: user._id
+                }
+            }
+            var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+    
+            var machineUpdate = {
+                $set: {
+                    merchant_id: user._id
+                }
+            }
+            var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
+
             return NextResponse.json({
                 messge: "Merchant updated successfully ....",
-                result: result
+                result: result,
+                shopUpdateResult: shopUpdateResult,
+                machineUpdateResult: machineUpdateResult
             }, {status: 200});
         }
 
@@ -195,33 +241,45 @@ export async function GET(request: Request) {
         {city: { $regex: '.*' + search + '.*', $options: 'i' }}
 
         const merchants = await User
-        .find({
-            $and:[ 
+        .aggregate([
+            { $match:
                 {
-                    createdAt: {
-                        $gte : new Date(start_date), 
-                        $lt: new Date(end_date)
-                    }
-                }, 
-                {role: 'merchant'},
-                search_json
-            ]
-        }).sort({'createdAt': -1}).skip(skip).limit(limit).select(['_id', 'eid', 'name', 'area', 'email', 'mobile', 'active', 'role']);
+                    $and: [ 
+                        {
+                            createdAt: {
+                                $gte : new Date(start_date), 
+                                $lt: new Date(end_date)
+                            }
+                        }, 
+                        {role: 'merchant'},
+                        search_json
+                    ]
+                },
+            },
+            {
+                $lookup: {
+                    from: 'machines',
+                    localField: "machine_id",
+                    foreignField: "_id",
+                    as: "merchantWithMachine",
+                }
+            },
+        ]).sort({'createdAt': -1}).skip(skip).limit(limit);
 
         if(merchants && merchants.length > 0) {
-            var merchant_ids = [];
+            /*var merchant_ids = [];
             for(var i = 0; i < merchants.length; i++) {
                 merchant_ids.push(merchants[i]._id);
             }
             console.log(merchant_ids)
 
             const machines = await Machine
-            .find({merchant_id: {$in: merchant_ids}}).select(['_id', 'machine_id', 'merchant_id']);
+            .find({merchant_id: {$in: merchant_ids}}).select(['_id', 'machine_id', 'merchant_id']);*/
             
             return NextResponse.json({
                 messge: "Query success ....",
                 merchants: merchants,
-                machines: machines,
+                machines: [],
             }, {status: 200});
 
         } else {
