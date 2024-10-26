@@ -6,6 +6,7 @@ import Wallet from "@/models/WalletModel";
 import Coupon from "@/models/CouponModel";
 import Transaction from "@/models/TransactionModel";
 import connectMongoDB from "@/libs/mongoosdb";
+import User from "@/models/UserModel";
 export async function POST(request: NextRequest) {
     try {
         await connectMongoDB();
@@ -20,13 +21,41 @@ export async function POST(request: NextRequest) {
             var amount = parseFloat(coupon[0].price);
             let query = { user_id: new mongoose.Types.ObjectId(user_id + '') };
             let walletResult = await Wallet.find(query);
-            if(walletResult && walletResult.length > 0) {
+            var user = await User.findOne({_id: user_id}).select(['_id', 'role'])
 
-                if(coupon[0].active === 0) {
-                    return NextResponse.json({
-                        message: "Coupon is already purchased ....",
-                    }, {status: 500});
+            if(coupon[0].active === 0) {
+                return NextResponse.json({
+                    message: "Coupon is already purchased ....",
+                }, {status: 500});
+            }
+
+            if(user.role === 'merchant') {
+
+                const couponUpdates = {
+                    $set: {
+                        active: 0,
+                        purchased: 1
+                    },
+                };
+                var couponUpdateResult = await Coupon.updateOne({coupon_code: coupon_code}, couponUpdates);
+
+                var transDoc = {
+                    user_id: user_id,
+                    payment_type: 'deposit',
+                    via: 'coupon',
+                    card_details: coupon_code,
+                    amount: amount,
+                    date: new Date(),
+                    closing_balance: 0,
+                    note: 'Amount Added Via Coupon Code'
                 }
+                var TransactionDetails = await Transaction.create(transDoc);
+
+                return NextResponse.json({
+                    message: "Coupon successfully purchased ....",
+                }, {status: 200});
+
+            } else if(walletResult && walletResult.length > 0) {
 
                 const updates = {
                     $set: {
