@@ -29,6 +29,7 @@ export default function DashboardTopBar() {
    var [loggedInUser, setLoggedInUser] = useState({
       name: "",
       image: "",
+      qr_code: ""
    });
 
    useEffect(() => {
@@ -36,12 +37,13 @@ export default function DashboardTopBar() {
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
          var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
          var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
-         if(parseFloat(time_diff.minutes) >= 300) {
+         if(parseFloat(time_diff.days) > 0 || parseFloat(time_diff.hours) >= 5) {
             logout()
          } else {
             setLoggedInUser({
                name: user.name,
                image: user.image,
+               qr_code: user.qr_code
             });
          }
       } else {
@@ -77,16 +79,16 @@ export default function DashboardTopBar() {
                {isUser && (
                   <div className="flex items-center px-1 lg:px-4 py-2 gap-1 lg:gap-2 border border-themeone rounded-lg text-sm lg:text-size-2 cursor-pointer">
                      <div>Account ID :</div>
-                     <div className="text-themeone">12345</div>
+                     <div className="text-themeone">{loggedInUser.qr_code}</div>
                   </div>
                )}
                {isUser && (
-                  <div className="flex items-center px-1 lg:px-4 py-2 gap-1 lg:gap-2 border border-themeone rounded-lg text-sm lg:text-size-2 cursor-pointer">
+                  <Link href={'/user/account/add-credit'} className="flex items-center px-1 lg:px-4 py-2 gap-1 lg:gap-2 border border-themeone rounded-lg text-sm lg:text-size-2 cursor-pointer">
                      <div>Add Credit</div>
                      <div className="text-themeone">
                         <FontAwesomeIcon size="sm" icon={faPlus} />
                      </div>
-                  </div>
+                  </Link>
                )}
                <Menu>
                   <MenuButton className="">

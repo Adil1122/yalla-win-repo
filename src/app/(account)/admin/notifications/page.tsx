@@ -310,6 +310,8 @@ export default function AdminNotifications() {
          current_page = pages.length
       }
       skip = recordsPerPage * (current_page - 1);
+      new_past = activeTabTwo;
+      notification_type = activeTab;
       getNotifications()
       setCurrentPage(current_page);
    }
