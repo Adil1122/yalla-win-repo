@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     let draw = await Draw.find(
         {game_id: game_id},
-        {draw_type: 'game'}
+        {draw_type: 'games'}
     ).sort({'draw_date': -1}).limit(1);
 
     let user = await User.findOne({_id: user_id}).select(['_id', 'city', 'country'])
