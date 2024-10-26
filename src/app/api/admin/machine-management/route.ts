@@ -27,10 +27,28 @@ export async function POST(request: Request) {
             }
     
             let result = await Machine.create(newDocument);
+
+            var shopUpdate = {
+                $set: {
+                    merchant_id: merchant_id,
+                    machine_id: result._id
+                }
+            }
+            var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+    
+            var merchantUpdate = {
+                $set: {
+                    machine_id: result._id,
+                    shop_id: shop_id
+                }
+            }
+            var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
     
             return NextResponse.json({
                 messge: "Machine created successfully ....",
-                result: result
+                result: result,
+                shopUpdateResult: shopUpdateResult,
+                merchantUpdateResult: merchantUpdateResult
             }, {status: 200});
         } else {
             return NextResponse.json({
@@ -41,6 +59,7 @@ export async function POST(request: Request) {
     } catch (error) {
         return NextResponse.json({
             messge: "Machine could not be created ....",
+            error: JSON.stringify(error)
         }, {status: 500});
     }
 }
@@ -81,9 +100,27 @@ export async function PUT(request: Request) {
 
                 let result = await Machine.updateOne({_id: machine._id}, updates);
 
+                var shopUpdate = {
+                    $set: {
+                        merchant_id: merchant_id,
+                        machine_id: machine._id
+                    }
+                }
+                var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+        
+                var merchantUpdate = {
+                    $set: {
+                        machine_id: machine._id,
+                        shop_id: shop_id
+                    }
+                }
+                var merchantUpdateResult = await User.updateOne({_id: machine_id}, merchantUpdate);
+
                 return NextResponse.json({
                     messge: "Machine updated successfully ....",
-                    result: result
+                    result: result,
+                    shopUpdateResult: shopUpdateResult,
+                    merchantUpdateResult: merchantUpdateResult
                 }, {status: 200});
             } else {
                 return NextResponse.json({
@@ -96,6 +133,7 @@ export async function PUT(request: Request) {
     } catch (error) {
         return NextResponse.json({
             messge: "Machine could not be updated ....",
+            error: JSON.stringify(error)
         }, {status: 500});
     }
 }

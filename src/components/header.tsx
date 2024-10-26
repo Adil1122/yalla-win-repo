@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'animate.css'
 import { useAuth } from '@/components/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
+import getDaysHoursMinsSecs from '@/libs/common';
 
 export default function Header() {
    
@@ -90,15 +91,28 @@ export default function Header() {
    useEffect(() => {
       // Check if user is logged in when component mounts
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
-         var userObject = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
-         if(userObject.role === 'admin') {
+         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+         var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
+         if(parseFloat(time_diff.days) > 0 || parseFloat(time_diff.hours) >= 5) {
+            logout()
+         }
+
+         if(user.role === 'admin') {
             setDashboardUrl('/admin/dashboard');
-         } else {
+         } else if(user.role === 'user') {
             setDashboardUrl('/user/dashboard');
+         } else {
+            router.push('/');
          }
          setLoggedIn(true)
       } 
    }, [loggedIn]);
+
+   const logout = () => {
+      setLoggedIn(false);
+      localStorage.removeItem('yalla_logged_in_user');
+      router.push('/');
+   }
    
 
    const handleMouseEnter = (e: any) => e.currentTarget.classList.add(__ANIMATION_CLASS)

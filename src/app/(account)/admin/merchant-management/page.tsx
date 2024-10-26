@@ -48,9 +48,26 @@ export default function AdminMerchantManagement() {
     setModalIsOpen(true);
   };
 
-  const handleDelete = (id: string | number) => {
+  function setIdAndOpenDeletePopup(Id: any) {
+    setId(Id);
     setModalTwoIsOpen(true);
-  };
+ }
+
+ var deleteMerchant = async() => {
+    let response = await fetch('/api/admin/merchant-management?id=' + id, {
+       method: 'DELETE',
+    });
+    var content = await response.json();
+    setId('');
+    setModalTwoIsOpen(false)
+
+    if(!response.ok) {
+
+    } else {
+       schedule = scheduleTab
+       getMerchantCounts();
+    }
+ }
 
   const handleMessageActionClick = (action: "view" | "send") => {
     {
@@ -307,6 +324,7 @@ export default function AdminMerchantManagement() {
           });
           setModalIsOpen(false);
         }
+        getMerchantCounts()
       } catch (error) {
         setForm((prev) => {
           return {
@@ -411,11 +429,11 @@ export default function AdminMerchantManagement() {
   var [currentPage, setCurrentPage] = useState(1);
   var [recordsPerPage, setRecordsPerPages] = useState(5);
 
-  if(schedule === 'daily') {
+  if(scheduleTab === 'daily') {
     totalPages = daily_merchant_counts;
-  } else if(schedule === 'weekly') {
+  } else if(scheduleTab === 'weekly') {
     totalPages = weekly_merchant_counts;
-  } else if(schedule === 'monthly') {
+  } else if(scheduleTab === 'monthly') {
     totalPages = monthly_merchant_counts;
   }
 
@@ -438,6 +456,7 @@ export default function AdminMerchantManagement() {
         current_page = pages.length
     }
     skip = recordsPerPage * (current_page - 1);
+    schedule = scheduleTab
     getMerchants()
     setCurrentPage(current_page);
   }
@@ -641,10 +660,15 @@ export default function AdminMerchantManagement() {
                   {merchant.eid}
                 </td>
                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
-                {machines.map((machine: any, index: any) => (
-                  machine.merchant_id === merchant._id && index === 0 &&
-                  machine.machine_id
-                ))}
+                {
+                  /*machines.map((machine: any, index: any) => (
+                    machine.merchant_id === merchant._id && index === 0 &&
+                    machine.machine_id
+                  ))*/
+                  
+                  merchant.merchantWithMachine.length > 0 ? merchant.merchantWithMachine[0].machine_id : ''
+                
+                }
                 </td>
                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                   {merchant.area}
@@ -685,6 +709,7 @@ export default function AdminMerchantManagement() {
                       type="button"
                       onClick={() => handleMessageActionClick("send")}
                       className="relative text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
+                      style={{display: 'none'}}
                     >
                       <span className="absolute -top-4 -right-1 bg-white rounded-full text-darkone font-semibold text-sm w-[20px] flex items-center justify-center h-[20px]">
                         1
@@ -700,7 +725,7 @@ export default function AdminMerchantManagement() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDelete(merchant._id)}
+                      onClick={() => setIdAndOpenDeletePopup(merchant._id)}
                       className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
                     >
                       <FontAwesomeIcon size="lg" icon={faTrashAlt} />
@@ -973,7 +998,7 @@ export default function AdminMerchantManagement() {
             >
               Cancel
             </button>
-            <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">
+            <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={deleteMerchant}>
               Delete
             </button>
           </div>

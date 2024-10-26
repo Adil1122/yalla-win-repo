@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Winner from "@/models/WinnerModel";
+import UpdateModel from "@/models/UpdateModel";
 
 export async function GET(request: any) {
 
@@ -118,16 +119,14 @@ export async function GET(request: any) {
                 }
             }
         ]).sort({'winning_date': -1}).limit(10);
-
         
-;    
-
-
-            
+        const winner_videos: any = await UpdateModel.find({type: 'winner-videos'})
+        
         return NextResponse.json({
             messge: "query successful ....",
             game_winners: game_winners,
             product_winners: product_winners,
+            winner_videos: winner_videos
             }, {status: 200});
 
     } catch (error) {

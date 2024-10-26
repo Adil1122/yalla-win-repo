@@ -55,6 +55,9 @@ export default function WinnersPage() {
       productPages.push(i);
    }
 
+   const [start, setStart] = useState(0)
+   const [winner_videos, setWinnerVideos] = useState([])
+
    useEffect(() => {
 
       if (swiperMainRef.current) {
@@ -88,8 +91,11 @@ export default function WinnersPage() {
          })
       }
 
-      getWinners();
-   }, [])
+      if(start === 0) {
+         setStart(1)
+         getWinners();
+      }
+   }, [winner_videos])
 
    var min = 0;
    var max = 500;
@@ -122,8 +128,10 @@ export default function WinnersPage() {
             } else {
                var gameWinners: any = Array.from(content.game_winners);
                var productWinners: any = Array.from(content.product_winners);
+               var winner_videos: any = Array.from(content.winner_videos);
                setGameWinners(gameWinners);
                setProductWinners(productWinners);
+               setWinnerVideos(winner_videos)
             }
          
       } catch (error) {
@@ -221,10 +229,14 @@ export default function WinnersPage() {
                   <div className="relative w-full">
                      <div ref={swiperMainRef} className="swiper-custom">
                         <div className="swiper-wrapper">
-                           <div className="swiper-slide">
-                              <VideoCard />
+                        { 
+                           winner_videos.map((video: any) => (
+                           <div key={video._id} className="swiper-slide">
+                              <VideoCard video={video} />
                            </div>
-                           <div className="swiper-slide">
+                           ))
+                        }
+                           {/*<div className="swiper-slide">
                               <VideoCard /> 
                            </div>
                            <div className="swiper-slide">
@@ -238,7 +250,7 @@ export default function WinnersPage() {
                            </div>
                            <div className="swiper-slide">
                               <VideoCard />
-                           </div>
+                           </div>*/}
                         </div>
                      </div>
                   </div>

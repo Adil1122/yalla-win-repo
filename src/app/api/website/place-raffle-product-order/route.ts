@@ -8,7 +8,6 @@ import mongoose from "mongoose";
 import Basket from "@/models/BasketModel";
 import Wallet from "@/models/WalletModel";
 import User from "@/models/UserModel";
-import Prize from "@/models/PrizeModel";
 export async function POST(request: NextRequest) {
 
   try {
@@ -18,7 +17,7 @@ export async function POST(request: NextRequest) {
         draws
     } = await request.json();
 
-    let user = await User.findOne({_id: invoice.user_id}).select(['_id', 'city', 'country'])
+    let user = await User.findOne({_id: invoice.user_id}).select(['_id', 'city', 'country', 'role'])
 
     let invoiceDocument = {
         //product_id: product_id, 
@@ -38,9 +37,10 @@ export async function POST(request: NextRequest) {
 
     let query = { user_id: new mongoose.Types.ObjectId(invoice.user_id + '') };
     let walletResult = await Wallet.find(query);
-    if(walletResult && walletResult.length > 0) {
 
-        if(walletResult[0].amount < invoice.total_amount) {
+    if((walletResult && walletResult.length) > 0 || (user && user.role === 'merchant')) {
+
+        if(user && user.role !== 'merchant' && walletResult[0].amount < invoice.total_amount) {
             return NextResponse.json({
                 message: "Insufficient funds available in your wallet ....",
             }, {status: 500});
@@ -54,18 +54,20 @@ export async function POST(request: NextRequest) {
             let deleteResult = await Basket.deleteMany(query);
 
             if(deleteResult) {
-                
-                const updates = {
-                    $set: {
-                        amount: walletResult[0].amount - invoice.total_amount,
-                    },
-                };
-                let walletUpdateResult = await Wallet.updateMany(query, updates);
-                if(!walletUpdateResult) {
-                    return NextResponse.json({
-                        message: "User wallet could not be updated ....",
-                        invoiceResult: invoiceResult
-                    }, {status: 500});
+
+                if(user && user.role !== 'merchant') {
+                    const updates = {
+                        $set: {
+                            amount: walletResult[0].amount - invoice.total_amount,
+                        },
+                    };
+                    let walletUpdateResult = await Wallet.updateMany(query, updates);
+                    if(!walletUpdateResult) {
+                        return NextResponse.json({
+                            message: "User wallet could not be updated ....",
+                            invoiceResult: invoiceResult
+                        }, {status: 500});
+                    }
                 }
 
                 return NextResponse.json({

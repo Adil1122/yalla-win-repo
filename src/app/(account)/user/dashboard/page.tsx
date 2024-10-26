@@ -87,33 +87,26 @@ export default function UserDashboard() {
          const content = await response.json();
          console.log(content)
          if(!response.ok) {
-
          } else {
             console.log(content.wallet)
 
             if(content.wallet !== null) {
-               //setWalletAmount(content.wallet.amount);
+
                var updatedAt = formatISODate(new Date(content.wallet.updatedAt));
                setWallet({
                   amount: content.wallet.amount,
                   last_updated: updatedAt.fomattedDate
                })
             }
-            //var current_date: any = new Date().toISOString();
-            if(content.yalla_3_draw.length > 0 && content.yalla_4_draw.length > 0 && content.yalla_6_draw.length > 0 && content.prize_draws.length > 0) {
-               //var yalla_3_times = getDaysHoursMinsSecs(current_date, content.yalla_3_draw[0].draw_date)
-               /*console.log('times: ', content.yalla_3_draw[0].draw_date)
-               console.log('times: ', current_date)
-               var yalla_3_times = getDaysHoursMinsSecs(new Date(), new Date(content.yalla_3_draw[0].draw_date))
-               console.log('yalla_3_times: ', yalla_3_times)*/
+            
+            if(content.yalla_3_draw.length > 0 || content.yalla_4_draw.length > 0 || content.yalla_6_draw.length > 0 || content.prize_draws.length > 0) {
 
-               var yalla_3_date = new Date(content.yalla_3_draw[0].draw_date);
-               var yalla_4_date = new Date(content.yalla_4_draw[0].draw_date);
-               var yalla_6_date = new Date(content.yalla_6_draw[0].draw_date);
-               //setAllFormattedDates(yalla_3_date, yalla_4_date, yalla_6_date);
+               var yalla_3_date = content.yalla_3_draw.length > 0 ? new Date(content.yalla_3_draw[0].draw_date) : new Date();
+               var yalla_4_date = content.yalla_4_draw.length > 0 ? new Date(content.yalla_4_draw[0].draw_date) : new Date();
+               var yalla_6_date = content.yalla_6_draw.length > 0 ? new Date(content.yalla_6_draw[0].draw_date) : new Date();
 
-               setTimings(yalla_3_date, yalla_4_date, yalla_6_date, content.prize_draws)
-               const interval = setInterval(() => setTimings(yalla_3_date, yalla_4_date, yalla_6_date, content.prize_draws), 1000)
+               setTimings(yalla_3_date, yalla_4_date, yalla_6_date, content.prize_draws.length > 0 ? content.prize_draws : [])
+               const interval = setInterval(() => setTimings(yalla_3_date, yalla_4_date, yalla_6_date, content.prize_draws.length > 0 ? content.prize_draws : []), 1000)
                return () => {
                   clearInterval(interval);
                }

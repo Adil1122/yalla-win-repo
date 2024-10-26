@@ -9,11 +9,11 @@ import connectMongoDB from "@/libs/mongoosdb";
 
 export async function POST(request: any) {
 
-    try {
+    try { 
 
         await connectMongoDB();
         //let {email, password, initial_coords} = await request.json();
-        let {email, password, platform, mac} = await request.json();
+        let {email, password, platform, mac, initial_coords} = await request.json();
         let user = await User.findOne({email});
         if(user) {
 
@@ -42,10 +42,24 @@ export async function POST(request: any) {
               }, {status: 201});
             }
 
-            /*if(user.role === 'merchant' && (platform !== 'mobile' || (user.mac !== '' && user.mac !== mac))) {
-              return NextResponse.json({
-                message: "Merchant can only login via registered device.",
-              }, {status: 201});
+            if(user.role === 'merchant') {
+
+              if(platform !== 'mobile') {
+                return NextResponse.json({
+                  message: "You must login via Merchant App.",
+                }, {status: 201});
+              }
+
+              if(user.mac !== '') {
+                
+                if(user.mac !== mac) {
+                  return NextResponse.json({
+                    message: "Merchant can only login via registered device.",
+                    details: 'Role: ' + user.role + ', Given Platform: ' + platform + ', User Mac: ' + user.mac + ', Given Mac: ' + mac
+                  }, {status: 201});
+                }
+              }
+
             }
 
             if(user.role === 'merchant' && platform === 'mobile' && user.mac === '') {
@@ -55,8 +69,16 @@ export async function POST(request: any) {
                   mac: mac,
                 },
               };
-              var macUpdated = await User.updateOne(query, updates);
-            }*/
+              await User.updateOne(query, updates);
+            }
+
+            const query = { _id: user._id };
+            const updates = {
+              $set: {
+                initial_coords: initial_coords,
+              },
+            };
+            await User.updateOne(query, updates);
 
             /*var user_initial_coords = user.initial_coords;
             var distance = getDistance(user_initial_coords.lat, user_initial_coords.long, initial_coords.lat, initial_coords.long, 'K');

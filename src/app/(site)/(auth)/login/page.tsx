@@ -91,7 +91,9 @@ export default function LoginPage() {
             }
          } else {
             if(response.status === 200) {
-               localStorage.setItem('yalla_logged_in_user', JSON.stringify(content.user));
+               var user = content.user
+               user['loginTime'] = new Date()
+               localStorage.setItem('yalla_logged_in_user', JSON.stringify(content.user))
                setLoggedIn(true);
                router.push('/');
             } else {
