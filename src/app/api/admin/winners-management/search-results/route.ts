@@ -21,17 +21,21 @@ export async function GET(request: Request) {
       const productId = searchparams.get('product_id') + ''
       const skip : number = parseInt(searchparams.get('skip') || '0')   
       const limit : number = parseInt(searchparams.get('limit') || '5')
+      const platformType : string = searchparams.get('platform_type') + ''
       const percent = parseInt(searchparams.get('people_percent') + '')
+      const gameType : string = searchparams.get('game_type') + ''
    
       await connectMongoDB()
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea)
-      const records = gameId && gameId !== '' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
-      const filteredTickets = getFilteredTickets(records, parseInt(estimatedAmount), percent, userCountry, userCity, userArea)
-      const finalTickets = filteredTickets.slice(skip, skip + limit)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType)
+      const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
+      const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
+      const finalResults = filteredResults.slice(skip, skip + limit)
 
       return NextResponse.json({
          messge: "query successful ....",
-         tickets: finalTickets
+         items: finalResults,
+         total_count: filteredResults.length,
+         total_sum: totalExpectedAmount,
       }, {status: 200})
 
    } catch (error) {
@@ -53,17 +57,21 @@ export async function OPTIONS(request: Request) {
       const estimatedAmount = searchparams.get('amount') + ''
       const gameId = searchparams.get('game_id') + ''
       const productId = searchparams.get('product_id') + ''
+      const skip : number = parseInt(searchparams.get('skip') || '0')   
+      const limit : number = parseInt(searchparams.get('limit') || '5')
+      const platformType : string = searchparams.get('platform_type') + ''
       const percent = parseInt(searchparams.get('people_percent') + '')
+      const gameType : string = searchparams.get('game_type') + ''
    
       await connectMongoDB()
-
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea)
-      const records = gameId && gameId !== '' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
-      const filteredTickets = getFilteredTickets(records, parseInt(estimatedAmount), percent, userCountry, userCity, userArea)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType)
+      const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
+      const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
 
       return NextResponse.json({
          messge: "query successful ....",
-         count: filteredTickets.length
+         count: filteredResults.length,
+         sum: totalExpectedAmount,
       }, {status: 200})
 
    } catch (error) {
@@ -75,7 +83,7 @@ export async function OPTIONS(request: Request) {
    
 }
 
-const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string) => {
+const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string, platformType: string) => {
 
    let result : any = []
    if (gameId && gameId !== '' && gameId !== 'null') {
@@ -115,10 +123,10 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
          },
          {
             $lookup: {
-            from: "users",
-            localField: "InvoiceDetails.user_id",
-            foreignField: "_id",
-            as: "UserDetails",
+               from: "users",
+               localField: "InvoiceDetails.user_id",
+               foreignField: "_id",
+               as: "UserDetails",
             },
          },
          {
@@ -131,12 +139,14 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                foreignField: "_id",
                as: "GameDetails",
             },
-         }, {
+         }, 
+         {
             $unwind: "$GameDetails",
          },
          {
             $match: {
-               "InvoiceDetails.game_id": new mongoose.Types.ObjectId(gameId)
+               "InvoiceDetails.game_id": new mongoose.Types.ObjectId(gameId),
+               ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
             }
          },
          {
@@ -156,42 +166,43 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                "RuleDetails.option_chance_3_correct_win_price": 1,
                "RuleDetails.option_chance_2_correct_win_price": 1,
                "RuleDetails.option_chance_1_correct_win_price": 1,
+               "RuleDetails.three_numbers_win_price": 1,
+               "RuleDetails.four_numbers_win_price": 1,
+               "RuleDetails.five_numbers_win_price": 1,
+               "RuleDetails.six_numbers_win_price": 1,
                ...(gameId && gameId !== '' ? { "GameDetails.name": 1 } : {}),
             }
          }
       ]
    } else if (productId && productId != '' && productId != 'null') {
-      
+
       result = [
          {
             $lookup: {
-               from: "products",
-               localField: "product_id",
-               foreignField: "_id",
-               as: "ProductDetails",
+               from: "users",              
+               localField: "user_id",       
+               foreignField: "_id",          
+               as: "UserDetails"             
             }
          },
          {
-            $unwind: "$ProductDetails",
-         },
-         {
             $match: {
-               "product_id": new mongoose.Types.ObjectId(productId),
-               ...(userCity && userCity != '' ? { "UserDetails.city": { $regex: new RegExp(userCity, 'i') } } : {}),
-               ...(userCountry && userCountry != '' ? { "UserDetails.country": { $regex: new RegExp(userCountry, 'i') } } : {}),
-               ...(userArea && userArea != '' ? { "UserDetails.area": { $regex: userArea, $options: 'i' } } : {}),
+               invoice_type: "prize",
+               ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
             }
          },
          {
             $project: {
                _id: 1,
+               invoice_type: 1,
                invoice_number: 1,
+               user_id: 1,
                "UserDetails.first_name": 1,
                "UserDetails.last_name": 1,
                "UserDetails.city": 1,
                "UserDetails.country": 1,
                "UserDetails.area": 1,
-               "InvoiceDetails._id": 1
+               cart_product_details: 1       
             }
          }
       ]
@@ -200,42 +211,79 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
    return result
 }
 
-const getFilteredTickets = (tickets: any, maxWinningAmount: number, percent: number, userCountry: string, userCity: string, userArea: string) => {
+const getFilteredResults = (records: any, gameId: string, productId: string, maxWinningAmount: number, percent: number, userCountry: string, userCity: string, userArea: string, gameType: string) => {
 
-   let filteredTickets: any = []
+   let filteredResults: any = []
+   let totalExpectedAmount = 0
 
-   tickets.forEach((ticket: any) => {
-      const ticketType = ticket.ticket_type
-      const productPrice = parseInt(ticket.RuleDetails?.product_price) || 0
-      
+   records.forEach((record: any) => {
+      const ticketType = record.ticket_type
+      const productPrice = parseInt(record.RuleDetails?.product_price) || 0
+      let isValidTicket = false
+
       let expectedAmounts: number[] = []
 
-      if (ticketType === 'Straight') {
-         const straightWinPrice = parseInt(ticket.RuleDetails?.option_straight_win_price) || 0
-         const expectedAmount = productPrice * straightWinPrice
-         expectedAmounts.push(expectedAmount)
-      } else if (ticketType === 'Rumble') {
-         const rumbleWinPrice = parseInt(ticket.RuleDetails?.option_rumble_win_price) || 0
-         const expectedAmount = productPrice * rumbleWinPrice
-         expectedAmounts.push(expectedAmount)
-      } else if (ticketType === 'Chance') {
-         const chance3Correct = parseInt(ticket.RuleDetails?.option_chance_3_correct_win_price) || 0
-         const chance2Correct = parseInt(ticket.RuleDetails?.option_chance_2_correct_win_price) || 0
-         const chance1Correct = parseInt(ticket.RuleDetails?.option_chance_1_correct_win_price) || 0
+      if (gameId && gameId !== '' && gameId !== 'null') {
 
-         expectedAmounts.push(
-            productPrice * chance3Correct,
-            productPrice * chance2Correct,
-            productPrice * chance1Correct
-         )
-      }
+         if (ticketType === 'Straight') {
+            const straightWinPrice = parseInt(record.RuleDetails?.option_straight_win_price) || 0
+            const expectedAmount = productPrice * straightWinPrice
+            expectedAmounts.push(expectedAmount)
+         } else if (ticketType === 'Rumble') {
+            const rumbleWinPrice = parseInt(record.RuleDetails?.option_rumble_win_price) || 0
+            const expectedAmount = productPrice * rumbleWinPrice
+            expectedAmounts.push(expectedAmount)
+         } else if (ticketType === 'Chance') {
+            const chance3Correct = parseInt(record.RuleDetails?.option_chance_3_correct_win_price) || 0
+            const chance2Correct = parseInt(record.RuleDetails?.option_chance_2_correct_win_price) || 0
+            const chance1Correct = parseInt(record.RuleDetails?.option_chance_1_correct_win_price) || 0
+   
+            expectedAmounts.push(
+               productPrice * chance3Correct,
+               productPrice * chance2Correct,
+               productPrice * chance1Correct
+            )
+         } else if (ticketType == null) {
+            const chance6Correct = parseInt(record.RuleDetails?.six_numbers_win_price) || 0
+            const chance5Correct = parseInt(record.RuleDetails?.five_numbers_win_price) || 0
+            const chance4Correct = parseInt(record.RuleDetails?.four_numbers_win_price) || 0
+            const chance3Correct = parseInt(record.RuleDetails?.three_numbers_win_price) || 0
+   
+            expectedAmounts.push(
+               productPrice * chance6Correct,
+               productPrice * chance5Correct,
+               productPrice * chance4Correct,
+               productPrice * chance3Correct
+            )
+         }
+   
+         isValidTicket = expectedAmounts.length ? expectedAmounts.some(amount => amount <= maxWinningAmount) : false
+         isValidTicket = gameType && gameType != '' && gameType != 'null' && ticketType.toLowerCase() != gameType ? false : isValidTicket
 
-      const isValidTicket = expectedAmounts.length ? expectedAmounts.every(amount => amount <= maxWinningAmount) : false
+         if (isValidTicket) {
+            filteredResults.push(record)
+            totalExpectedAmount += expectedAmounts.reduce((sum, amount) => sum + amount, 0)
+            record.winning_amount = expectedAmounts
+         }
+      } else if (productId && productId !== '' && productId !== 'null') {
 
-      if (isValidTicket) {
-         filteredTickets.push(ticket)
+         if(record.cart_product_details) {
+            
+            const parsed = JSON.parse(record.cart_product_details)
+            parsed.forEach((item: any) => {
+               if (item.product_id == productId) {
+
+                  const winningAmount = item.prize_amount ? item.prize_amount : 0
+                  record.ProductDetails = { name: item.product_name }
+                  record.winning_amount = [winningAmount]
+
+                  filteredResults.push(record)
+                  totalExpectedAmount += winningAmount
+               }
+            })
+         }
       }
    })
 
-   return filteredTickets
+   return { filteredResults, totalExpectedAmount }
 }

@@ -14,6 +14,7 @@ export default function AdminSelectWinners() {
 
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [newWInnerType, setNewWinnerType] = useState<WinnerType>('game')
+   const [estimatedAmount, setEstimatedAmount] = useState<number>(100)
    const [dataset, setDataset] = useState<any>([])
    const [allGames, setAllGames] = useState<any>([])
    const [allProducts, setAllProducts] = useState<any>([])
@@ -137,7 +138,7 @@ export default function AdminSelectWinners() {
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Expected Amount</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="20" name="amount" />
+                              <input required className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="number" placeholder="20" name="amount" value={estimatedAmount} onChange={(e) => setEstimatedAmount(parseInt(e.target.value))} />
                            </div>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">

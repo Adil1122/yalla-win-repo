@@ -1,16 +1,22 @@
 'use client'
 
 import React, { Suspense, useEffect, useState } from 'react'
-import { faArrowLeft, faChevronLeft, faChevronRight, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faChevronDown, faChevronLeft, faChevronRight, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Modal from '@/components/modal'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
-function AdminWinnersSearchResult() {
+type Tab = 'all' | 'app' | 'web' | 'shop'
+type GameType = '' | 'straight' | 'rumble' | 'chance'
+
+function AdminWinnersVerifyResult() {
    
+   const [activeTab, setActiveTab] = useState<Tab>('all')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
+   const [totalWinningAmount, setTotalWinningAmount] = useState<number>(0)
    const [searchResults, setSearchResults] = useState<any>([])
    const queryParams = useSearchParams()
    const [amount, game, product, peoplePercent, country, city, area] = [
@@ -29,18 +35,18 @@ function AdminWinnersSearchResult() {
    const [currentPage, setCurrentPage] = useState(1)
    const [resultsCount, setResultsCount] = useState(0)
    const [isLoading, setIsLoading] = useState<boolean>(false)
+   const [isBusy, setIsBusy] = useState<boolean>(false)
+   const [gameType, setGameType] = useState<GameType>('')
    const [ticketNumber, setTicketNumber] = useState<string>('')
    const [announceDate, setAnnounceDate] = useState<string>('')
-   const [isBusy, setIsBusy] = useState<boolean>(false)
-   const queryString = new URLSearchParams({
-      amount,
-      game_id: game,
-      product_id: product,
-      people_percent: peoplePercent,
-      country,
-      city,
-      area,
-    }).toString()
+
+   const handleTabChange = (tab: Tab) => {
+      setActiveTab(tab)
+   }
+
+   const handleGameTypeChange = (type: GameType) => {
+      setGameType(type)
+   }
 
    let skip : number = 0
 
@@ -65,7 +71,7 @@ function AdminWinnersSearchResult() {
             item = `product_id=${product}`
          }
 
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}&platform_type=${activeTab}&game_type=${gameType}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -75,7 +81,8 @@ function AdminWinnersSearchResult() {
          } else {
             
             setSearchResults(content.items)
-            console.log(content.items)
+            setResultsCount(content.total_count)
+            setTotalWinningAmount(content.total_sum)
          }
       } catch (error) {
          console.log(error)
@@ -125,7 +132,7 @@ function AdminWinnersSearchResult() {
       }
 
       try {
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}&platform_type=all&game_type=`, {
             method: 'OPTIONS',
          })
 
@@ -135,6 +142,7 @@ function AdminWinnersSearchResult() {
 
          } else {
             setResultsCount(content.count)
+            setTotalWinningAmount(content.sum)
          }
       } catch (error) {
          console.log(error)
@@ -160,7 +168,7 @@ function AdminWinnersSearchResult() {
                   inputValue: itemId,
                   inputData: ticketNumber,
                   maxWinAmount: amount,
-                  dateAnnounced: announceDate
+                  dateAnnounced: announceDate,
                })
             })
    
@@ -169,6 +177,7 @@ function AdminWinnersSearchResult() {
             if(!response.ok) {
                console.log('error in winner announcement api')
             } else {
+
                if (content.data && content.data.length) {
                   router.push('/admin/winners-management/winners-history')
                } else {
@@ -197,7 +206,7 @@ function AdminWinnersSearchResult() {
    useEffect(() => {
       
       setPagination(1)
-   }, [resultsCount])
+   }, [resultsCount, activeTab, gameType])
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -206,7 +215,7 @@ function AdminWinnersSearchResult() {
                <div className="cursor-pointer">
                   <FontAwesomeIcon size="xl" icon={faArrowLeft} />
                </div>
-               <div className="cursor-pointer text-head-3 font-medium">Search Results</div>
+               <div className="cursor-pointer text-head-3 font-medium">Verify Results</div>
             </div>
             <div className="px-12 mt-12 w-full">
                <div className="flex flex-row items-center gap-3 w-full">
@@ -219,12 +228,6 @@ function AdminWinnersSearchResult() {
                      </div>
                   </div>
                   <div className="w-full flex gap-3 lg:ml-auto lg:w-fit">
-                     <Link href={`/admin/winners-management/verify-results/?${queryString}`} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
-                        Verify Results
-                     </Link>
-                     <button type="button" onClick={handleSelectRandom} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
-                        Select Random Number
-                     </button>
                      <button type="button" onClick={handleEnterTicketNumber}  className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                         {game !== '' && (
                            <div className="capitalize font-medium text-size-2 whitespace-nowrap">Enter Ticket Number</div>
@@ -237,12 +240,56 @@ function AdminWinnersSearchResult() {
                </div>
             </div>
 
+            <div className="mx-12 mt-12 flex items-center w-full lg:max-w-[60%] border-[2px] border-white text-white font-bold text-size-4">
+               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'all' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('all')}>All</div>
+               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'app' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('app')}>App</div>
+               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'web' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('web')}>Web</div>
+               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'shop' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('shop')}>Shop</div>
+            </div>
+
+            <div className="w-full px-12 mt-12 flex items-center">
+               <div className="flex items-center gap-4">
+                  <Menu>
+                     <MenuButton className="w-full">
+                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-10 text-white">
+                           <div className="capitalize font-medium text-size-2">{gameType == '' ? 'All' : gameType}</div>
+                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                        </div>
+                     </MenuButton>
+                     <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
+                        <MenuItem>
+                           <div onClick={() => handleGameTypeChange('')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">All</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div onClick={() => handleGameTypeChange('straight')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Straight</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div onClick={() => handleGameTypeChange('rumble')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Rumble</div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div onClick={() => handleGameTypeChange('chance')} className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Chance</div>
+                        </MenuItem>
+                     </MenuItems>
+                  </Menu>
+               </div>
+               <div className="flex flex-col gap-3 ml-auto text-white text-head-1 font-medium">
+                  <div className="flex flex-row items-center gap-1">
+                     <div>No of winners: </div>
+                     <div>{resultsCount}</div>
+                  </div>
+                  <div className="flex flex-row items-center gap-1">
+                     <div>Winning amount: </div>
+                     <div>{totalWinningAmount} AED</div>
+                  </div>
+               </div>
+            </div>
+            
             <div className="flex flex-col mt-12 px-12">
                <table className="w-full">
                   <thead>
                      <tr className="bg-white">
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">User name</th>
-                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Game Name' : 'Product Name'}</th>
+                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Game' : 'Product Name'}</th>
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Winning Amount</th>
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Ticket No' : 'QR Code'}</th>
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Country</th>
@@ -264,12 +311,12 @@ function AdminWinnersSearchResult() {
                      ))}
                      {searchResults.length == 0 && !isLoading && (
                         <tr>
-                           <td colSpan={7} className="text-center py-4 text-darkone font-medium">No results found</td>
+                           <td colSpan={8} className="text-center py-4 text-darkone font-medium">No results found</td>
                         </tr>
                      )}
                      {searchResults.length == 0 && isLoading && (
                         <tr>
-                           <td colSpan={7} className="text-center py-4 text-darkone font-medium">Loading data. Please wait...</td>
+                           <td colSpan={8} className="text-center py-4 text-darkone font-medium">Loading data. Please wait...</td>
                         </tr>
                      )}
                   </tbody>
@@ -338,10 +385,10 @@ function AdminWinnersSearchResult() {
    )
 }
 
-export default function SearchResultsPage () {
+export default function VerifyResultsPage () {
    return (
       <Suspense>
-         <AdminWinnersSearchResult />
+         <AdminWinnersVerifyResult />
       </Suspense>
    )
 }

@@ -74,6 +74,7 @@ export default function AdminWinnerHistory() {
             console.log('There is some error fetching data from api')
          } else {
             setCurrentWinners(content.winners)
+            console.log(content.winners)
          }
       } catch (error) {
          console.log(error)
@@ -231,7 +232,7 @@ export default function AdminWinnerHistory() {
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.user_name}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0]._id : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0].user_id : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.game_name}<br />{winner.TicketDetails ? winner.TicketDetails[0].ticket_type : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.GameDetails ? winner.GameDetails[0].name : ''}<br />{winner.TicketDetails ? winner.TicketDetails[0].ticket_type : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails ? winner.TicketDetails[0].ticket_number : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails ? winner.ProductDetails[0].name : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
