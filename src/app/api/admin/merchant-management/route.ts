@@ -41,14 +41,16 @@ export async function POST(request: Request) {
 
         var shopUpdate = {
             $set: {
-                merchant_id: result._id
+                merchant_id: result._id,
+                machine_id: machine_id
             }
         }
         var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
 
         var machineUpdate = {
             $set: {
-                merchant_id: result._id
+                merchant_id: result._id,
+                shop_id: shop_id
             }
         }
         var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);

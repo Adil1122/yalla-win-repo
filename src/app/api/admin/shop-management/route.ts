@@ -29,10 +29,28 @@ export async function POST(request: Request) {
             }
     
             let result = await Shop.create(newDocument);
+
+            var merchantUpdate = {
+                $set: {
+                    shop_id: result._id,
+                    machine_id: machine_id
+                }
+            }
+            var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
+    
+            var machineUpdate = {
+                $set: {
+                    merchant_id: merchant_id,
+                    shop_id: result._id
+                }
+            }
+            var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
     
             return NextResponse.json({
                 messge: "Shop created successfully ....",
-                result: result
+                result: result,
+                merchantUpdateResult: merchantUpdateResult,
+                machineUpdateResult: machineUpdateResult
             }, {status: 200});
         } else {
             return NextResponse.json({
@@ -82,11 +100,28 @@ export async function PUT(request: Request) {
                 }
 
                 let result = await Shop.updateOne({_id: shop._id}, updates);
-                console.log(result)
+                
+                var merchantUpdate = {
+                    $set: {
+                        shop_id: shop._id,
+                        machine_id: machine_id
+                    }
+                }
+                var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
+        
+                var machineUpdate = {
+                    $set: {
+                        merchant_id: merchant_id,
+                        shop_id: shop._id
+                    }
+                }
+                var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
 
                 return NextResponse.json({
                     messge: "Shop updated successfully ....",
-                    result: result
+                    result: result,
+                    merchantUpdateResult: merchantUpdateResult,
+                    machineUpdateResult: machineUpdateResult
                 }, {status: 200});
 
             } else {

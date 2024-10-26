@@ -129,22 +129,22 @@ export default function AdminMachineManagement() {
 
       // Validation logic
       if (form.machine_id === '') {
-         err['machine_id_error'] = 'machine_id is Required';
+         err['machine_id_error'] = 'Machine ID is Required';
          is_error = true;
       }
 
       if (form.shop_id === '') {
-         err['shop_id_error'] = 'Content is Required';
+         err['shop_id_error'] = 'Shop is Required';
          is_error = true;
       }
 
       if (form.merchant_id === '') {
-         err['merchant_id_error'] = 'merchant_id is Required';
+         err['merchant_id_error'] = 'Merchant is Required';
          is_error = true;
       }
 
       if (form.location === '') {
-         err['location_error'] = 'location is Required';
+         err['location_error'] = 'Location is Required';
          is_error = true;
       }
 
@@ -192,6 +192,7 @@ export default function AdminMachineManagement() {
                });
             }
             setModalIsOpen(false)
+            schedule = scheduleTab
             getMachineCounts()
          } catch (error) {
             setForm((prev) => {
@@ -305,11 +306,11 @@ export default function AdminMachineManagement() {
   var [currentPage, setCurrentPage] = useState(1);
   var [recordsPerPage, setRecordsPerPages] = useState(5);
 
-  if(schedule === 'daily') {
+  if(scheduleTab === 'daily') {
     totalPages = daily_machine_counts;
-  } else if(schedule === 'weekly') {
+  } else if(scheduleTab === 'weekly') {
     totalPages = weekly_machine_counts;
-  } else if(schedule === 'monthly') {
+  } else if(scheduleTab === 'monthly') {
     totalPages = monthly_machine_counts;
   }
 
@@ -368,6 +369,7 @@ var deleteMachine = async() => {
    if(!response.ok) {
 
    } else {
+      schedule = scheduleTab
       getMachineCounts();
    }
 }
@@ -616,6 +618,13 @@ const handleRadioChange = (event: any) => {
                            }
                         </select>
                      </div>
+
+                     {
+                        form.merchant_id_error !== '' && (
+                           <span style={{color: "red"}}>{form.merchant_id_error}</span>
+                        )
+                     }
+
                   </div>
 
                   <div className="flex flex-col gap-4">
@@ -633,6 +642,13 @@ const handleRadioChange = (event: any) => {
                           }
                       </select>
                      </div>
+
+                     {
+                        form.shop_id_error !== '' && (
+                           <span style={{color: "red"}}>{form.shop_id_error}</span>
+                        )
+                     }
+
                   </div>
 
                   <div className="flex flex-col gap-4">
