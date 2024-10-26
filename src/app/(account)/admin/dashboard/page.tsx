@@ -5,26 +5,28 @@ import { faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import IBarChart from '@/components/dashboard/IBarChart'
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 import GoogleMap from '@/components/GoogleMap'
 import { CountryCitySearch } from '@/components/CountryCitySearch'
 
 type Tab = 'app' | 'web' | 'merchant'
 type TabTwo = 'game' | 'prize' | 'coupon'
+type ScheduleTab = "daily" | "weekly" | "monthly"
 
 export default function AdminDashboard() {
 
    const [activeTab, setActiveTab] = useState<Tab>('app')
    const [activeTabTwo, setActiveTabTwo] = useState<TabTwo>('game')
    const [selectedItem, setSelectedItem] = useState<{ id: number; name: string } | null>(null)
-   const [searchType, setSearchType] = useState<'cities' | 'countries'>('cities')
+   const [searchType, setSearchType] = useState<'cities' | 'countries'>('countries')
    var invoice_type = 'prize'
    var platform = 'app'
-   var schedule = 'weekly'
+   var schedule = 'daily'
+   const [scheduleTab, setScheduleTab] = useState('daily');
 
    const handleTabChange = (tab: Tab) => {
       invoice_type = activeTabTwo
       platform = tab
+      schedule = scheduleTab
       setActiveTab(tab)
       getGraphData()
    }
@@ -32,6 +34,7 @@ export default function AdminDashboard() {
    const handleTabTwoChange = (tab: TabTwo) => {
       invoice_type = tab
       platform = activeTab
+      schedule = scheduleTab
       setActiveTabTwo(tab)
       getGraphData()
    }
@@ -42,6 +45,9 @@ export default function AdminDashboard() {
    const [total_sales, setTotalSales] = useState(0)
 
    useEffect(() => {
+      schedule = scheduleTab
+      invoice_type = activeTabTwo
+      platform = activeTab
       getGraphData()
    }, [selectedItem])
 
@@ -73,6 +79,25 @@ export default function AdminDashboard() {
       }
    }
 
+   const handleRadioChange = (event: any) => {
+      setSearchType(event.target.value)
+      schedule = scheduleTab
+      invoice_type = activeTabTwo
+      platform = activeTab
+    }
+   
+    const handleMenuItemClick = (event: any) => {
+      event.stopPropagation()
+    }
+   
+    const habdleScheduleTabChange = (tab: ScheduleTab) => {
+      schedule = tab;
+      invoice_type = activeTabTwo
+      platform = activeTab
+      setScheduleTab(tab)
+      getGraphData()
+    }
+
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20 flex-grow h-full">
          <div className="flex flex-col w-full h-full lg:w-[85%]">
@@ -81,28 +106,56 @@ export default function AdminDashboard() {
                   <CountryCitySearch searchIn={searchType} onSelectItem={setSelectedItem} />
                </div>
                <div className="w-full lg:w-fit">
-                  <Menu>
-                     <MenuButton className="w-full">
-                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                           <div className="capitalize font-medium text-size-2">Search By</div>
-                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+
+               <Menu>
+                  <MenuButton className="w-full">
+                     <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                        <div className="capitalize font-medium text-size-2">
+                        {searchType === 'cities' ? 'Search By City' : 'Search By Country'}
                         </div>
-                     </MenuButton>
-                     <MenuItems anchor="bottom" className="w-[140px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
-                        <MenuItem>
-                           <div className="flex gap-2 items-center">
-                              <input checked name="search-radio" type="radio" className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0" />
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Country</div>
-                           </div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="flex gap-2 items-center">
-                              <input name="search-radio" type="radio" className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0" />
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">City</div>
-                           </div>
-                        </MenuItem>
-                     </MenuItems>
-                  </Menu>
+                        <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                     </div>
+                  </MenuButton>
+                  <MenuItems
+                     anchor="bottom"
+                     className="w-[140px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                  >
+                     <MenuItem>
+                        <div className="flex gap-2 items-center">
+                        <input
+                           id="countries-input"
+                           checked={searchType === 'countries'}
+                           value="countries"
+                           name="search-radio"
+                           type="radio"
+                           className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                           onClick={handleMenuItemClick}
+                           onChange={handleRadioChange}
+                        />
+                        <label htmlFor="countries-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
+                           Country
+                        </label>
+                        </div>
+                     </MenuItem>
+                     <MenuItem>
+                        <div className="flex gap-2 items-center">
+                        <input
+                           id="cities-input"
+                           checked={searchType === 'cities'}
+                           value="cities"
+                           name="search-radio"
+                           type="radio"
+                           className="h-5 w-5 text-themeone focus:text-themeone focus:ring-0"
+                           onClick={(event) => {event.stopPropagation()}}
+                           onChange={handleRadioChange}
+                        />
+                        <label htmlFor="cities-input" className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={handleMenuItemClick}>
+                           City
+                        </label>
+                        </div>
+                     </MenuItem>
+                  </MenuItems>
+               </Menu>
                </div>
             </div>
             <div className="flex mt-16 items-center w-full gap-12 bg-light-background-three backdrop-blur-64 py-4 px-10 border-[2px] border-bg-light-background-three text-white font-bold text-size-4">
@@ -117,29 +170,40 @@ export default function AdminDashboard() {
                      <div className={`cursor-pointer ${activeTabTwo === 'prize' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('prize')}>Products</div>
                      <div className={`cursor-pointer ${activeTabTwo === 'coupon' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('coupon')}>Coupons</div>
                   </div>
-                  <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white cursor-pointer">
+                  <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white cursor-pointer" style={{display: 'none'}}>
                      <div className="capitalize font-medium text-size-2 whitespace-nowrap">View Details</div>
                   </div>
                   <div className="w-full lg:w-fit">
-                     <Menu>
-                        <MenuButton className="w-full">
-                           <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                              <div className="capitalize font-medium text-size-2">Daily</div>
-                              <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                  <Menu>
+                     <MenuButton className="w-full">
+                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                           <div className="capitalize font-medium text-size-2">
+                           {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
                            </div>
-                        </MenuButton>
-                        <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
-                           <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Daily</div>
-                           </MenuItem>
-                           <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Weekly</div>
-                           </MenuItem>
-                           <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Monthly</div>
-                           </MenuItem>
-                        </MenuItems>
-                     </Menu>
+                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                        </div>
+                     </MenuButton>
+                     <MenuItems
+                        anchor="bottom"
+                        className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                     >
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
+                           Daily
+                           </div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
+                           Weekly
+                           </div>
+                        </MenuItem>
+                        <MenuItem>
+                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
+                           Monthly
+                           </div>
+                        </MenuItem>
+                     </MenuItems>
+                  </Menu>
                   </div>
                </div>
                {
