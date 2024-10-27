@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
     await connectMongoDB();
     let {
         invoice,
-        draws
+        draws,
+        platform
     } = await request.json();
 
     let user = await User.findOne({_id: invoice.user_id}).select(['_id', 'city', 'country', 'role'])
@@ -32,7 +33,8 @@ export async function POST(request: NextRequest) {
         draws: JSON.stringify(draws),
         invoice_type: 'prize',
         user_city: user.city,
-        user_country: user.country
+        user_country: user.country,
+        platform: platform
     }
 
     let query = { user_id: new mongoose.Types.ObjectId(invoice.user_id + '') };

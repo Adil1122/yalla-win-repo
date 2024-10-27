@@ -182,7 +182,8 @@ interface CheckoutWithFreeGameProps {
                         vat: product.vat,
                         total_amount: total_amount,
                         invoice_status: 'in-progress',
-                        ticket_details: ticket_details
+                        ticket_details: ticket_details,
+                        platform: 'web'
                      }
 
                      console.log('before free game')

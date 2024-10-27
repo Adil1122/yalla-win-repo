@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
         vat, 
         total_amount, 
         invoice_status,
-        ticket_details
+        ticket_details,
+        platform
     } = await request.json();
 
     let draw = await Draw.find(
@@ -44,7 +45,8 @@ export async function POST(request: NextRequest) {
             invoice_status: invoice_status,
             invoice_type: 'game',
             user_city: user.city,
-            user_country: user.country
+            user_country: user.country,
+            platform: platform
         }
 
         let invoiceResult = await Invoice.create(invoiceDocument);

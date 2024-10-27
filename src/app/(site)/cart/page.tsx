@@ -151,7 +151,8 @@ type InvoiceTab = 'invoice' | 'ticket'
                 },
                 body: JSON.stringify({
                      invoice: invoice,
-                     draws: draws
+                     draws: draws,
+                     platform: 'web'
                   })
                 });
                 const content = await response.json();

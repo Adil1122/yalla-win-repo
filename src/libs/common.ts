@@ -78,64 +78,6 @@ export function formatISODate(date: any) {
     //return `${monthName} ${day}, ${year} ${hours}:${formattedMinutes} ${ampm}`;
 }
 
-export function getGraphResult(records: any, start_date: any, end_date: any, schedule: any) {
-    var data_sales = [];
-    var user_ids: any = [];
-    var total_sales: any = 0
-    for(var i = 0; i < records.length; i++) {
-        data_sales.push({
-            user_id: records[i].user_id,
-            date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
-            amount: records[i].total_amount
-        })
-
-        var user_id = records[i].user_id.toString()
-
-        if(user_ids.indexOf(user_id) === -1) {
-            user_ids.push(user_id)
-        }
-        total_sales += records[i].total_amount
-    }
-
-    var dates: any = getDaysArray(start_date, end_date)
-
-    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    var data: any = [];
-    var orders_data: any = [];
-
-    for(var i = 0; i < dates.length; i++) {
-        var day_name: any = i + 1
-        if(schedule === 'weekly') {
-            day_name = weekday[new Date(dates[i]).getDay()].toUpperCase().substring(0, 3)
-        }
-
-        data.push({
-            sales: 0,
-            day: day_name
-        })
-
-        orders_data.push({
-            sales: 0,
-            day: day_name
-        })
-    }
-
-    for(var i = 0; i < dates.length; i++) {
-        for(var j = 0; j < data_sales.length; j++) {
-            if(data_sales[j].date === dates[i]) {
-                data[i].sales += data_sales[j].amount
-                orders_data[i].sales++
-            }
-        }
-    }
-    return {
-        data: data,
-        orders_data: orders_data,
-        total_users: user_ids.length,
-        total_sales: total_sales
-    };
-}
-
 export function getStartEndDates(schedule: any) {
     
     var start_date = new Date().toISOString().slice(0, 10)
@@ -156,6 +98,171 @@ export function getStartEndDates(schedule: any) {
     }
 }
 
+export function getGraphResult(records: any, start_date: any, end_date: any, schedule: any) {
+    var data_sales = [];
+    var user_ids: any = [];
+    var total_sales: any = 0
+    for(var i = 0; i < records.length; i++) {
+        data_sales.push({
+            user_id: records[i].user_id,
+            date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
+            amount: records[i].total_amount,
+            time: getTime(new Date(records[i].invoice_date))
+        })
+
+        var user_id = records[i].user_id.toString()
+
+        if(user_ids.indexOf(user_id) === -1) {
+            user_ids.push(user_id)
+        }
+        total_sales += records[i].total_amount
+    }
+
+    var dates: any = getDaysArray(start_date, end_date)
+
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var data: any = [];
+    var orders_data: any = [];
+
+    var daily_data = [
+        {
+            "day": "8-10 AM",
+            "sales": 0
+        },
+        {
+            "day": "10-12 AM",
+            "sales": 0
+        },
+        {
+            "day": "12-2 PM",
+            "sales": 0
+        },
+        {
+            "day": "2-4 PM",
+            "sales": 0
+        },
+        {
+            "day": "4-6 PM",
+            "sales": 0
+        },
+        {
+            "day": "6-8 PM",
+            "sales": 0
+        }
+    ]
+    var daily_order_data = daily_data
+    var total_daily_sales: any = 0
+    var daily_user_ids: any = []
+
+
+
+
+    if(schedule === 'daily') {
+        var today = new Date().toISOString().slice(0, 10)
+        for(var i = 0; i < data_sales.length; i++) {
+            if(data_sales[i].date === today) {
+
+                console.log('time: ', data_sales[i].time)
+                var time = data_sales[i].time
+                var time_split = time.split(':')
+                var time_int = parseInt(time_split[0])
+                var time_matched = false;
+
+                if(time.includes('AM')) {
+                    if(time_int >= 8 && time_int < 10) {
+                        daily_data[0].sales += data_sales[i].amount
+                        daily_order_data[0].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
+                    if(time_int >= 10 && time_int < 12) {
+                        daily_data[1].sales += data_sales[i].amount
+                        daily_order_data[1].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+                } else if(time.includes('PM')) {
+
+                    if(time_int >= 12 && time_int < 2) {
+                        daily_data[2].sales += data_sales[i].amount
+                        daily_order_data[2].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
+                    if(time_int >= 2 && time_int < 4) {
+                        daily_data[3].sales += data_sales[i].amount
+                        daily_order_data[3].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
+                    if(time_int >= 4 && time_int < 6) {
+                        daily_data[4].sales += data_sales[i].amount
+                        daily_order_data[4].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
+                    if(time_int >= 6 && time_int < 8) {
+                        daily_data[5].sales += data_sales[i].amount
+                        daily_order_data[5].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+                    if(time_matched = true) {
+                        var user_id = data_sales[i].user_id.toString()
+                        if(daily_user_ids.indexOf(user_id) === -1) {
+                            daily_user_ids.push(user_id)
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        data = daily_data
+        orders_data = daily_order_data
+        total_sales = total_daily_sales
+        user_ids = daily_user_ids
+    } else {
+
+        for(var i = 0; i < dates.length; i++) {
+            var day_name: any = i + 1
+            if(schedule === 'weekly') {
+                day_name = weekday[new Date(dates[i]).getDay()].toUpperCase().substring(0, 3)
+            }
+    
+            data.push({
+                sales: 0,
+                day: day_name
+            })
+    
+            orders_data.push({
+                sales: 0,
+                day: day_name
+            })
+        }
+    
+        for(var i = 0; i < dates.length; i++) {
+            for(var j = 0; j < data_sales.length; j++) {
+                if(data_sales[j].date === dates[i]) {
+                    data[i].sales += data_sales[j].amount
+                    orders_data[i].sales++
+                }
+            }
+        }
+
+    }
+    return {
+        data: data,
+        orders_data: orders_data,
+        total_users: user_ids.length,
+        total_sales: total_sales
+    };
+}
+
 const getDaysArray = function(start: any, end: any) {
     const arr = [];
     for(const dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
@@ -163,5 +270,9 @@ const getDaysArray = function(start: any, end: any) {
     }
     return arr;
 };
+
+function getTime(date: any) {
+    return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+}
 
 
