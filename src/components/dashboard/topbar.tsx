@@ -111,12 +111,12 @@ export default function DashboardTopBar() {
                            <button type="button" onClick={handleAdminProfile} className="text-xs w-full flex lg:text-size-1 border-b border-gray-100 py-5 px-4 lg:px-8 hover:bg-gray-100">Profile</button>
                         )}
                      </MenuItem>
-                     <MenuItem>
+                     {/*<MenuItem>
                         <Link href="/admin/notifications" className="text-xs lg:text-size-1 border-b border-gray-100 py-5 px-4 lg:px-8 hover:bg-gray-100 whitespace-nowrap">Notifications (3)</Link>
-                     </MenuItem>
+                     </MenuItem>*/}
                      {isUser && (
                         <MenuItem>
-                           <div className="text-xs lg:text-size-1 border-b border-gray-100 py-5 px-4 lg:px-8 cursor-pointer hover:bg-gray-100 whitespace-nowrap">Contact Us</div>
+                           <Link href={"/contact-us"} className="text-xs lg:text-size-1 border-b border-gray-100 py-5 px-4 lg:px-8 cursor-pointer hover:bg-gray-100 whitespace-nowrap">Contact Us</Link>
                         </MenuItem>
                      )}
                      {isAdmin && (
