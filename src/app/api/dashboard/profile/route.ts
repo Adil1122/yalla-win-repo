@@ -6,6 +6,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 //import fs from "fs";
 //import { join } from "path";
 import { put } from '@vercel/blob';
+import Invoice from "@/models/InvoiceModel";
 
 export async function POST(request: Request) {
   try {
@@ -77,6 +78,14 @@ export async function POST(request: Request) {
       newDocument,
       { new: true }  // Return the updated document
     );
+
+    var invoiceUpdates = {
+      $set: {
+        user_city: city,
+        user_country: country
+      }
+    }
+    await Invoice.updateMany({user_id: id}, invoiceUpdates)
 
     /*if (!updatedUser) {
       return NextResponse.json({ message: "Failed to update user." }, { status: 500 });
