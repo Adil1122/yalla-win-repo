@@ -31,6 +31,7 @@ function AdminWinnersSearchResult() {
    const [isLoading, setIsLoading] = useState<boolean>(false)
    const [ticketNumber, setTicketNumber] = useState<string>('')
    const [announceDate, setAnnounceDate] = useState<string>('')
+   const [randomWinner, setRandomWinner] = useState<any>(null)
    const [isBusy, setIsBusy] = useState<boolean>(false)
    const queryString = new URLSearchParams({
       amount,
@@ -189,10 +190,49 @@ function AdminWinnersSearchResult() {
       setAnnounceDate(formattedDate)
    }
 
+   const proceedRandomWinner = async () => {
+      try {
+         let response = await fetch(`/api/admin/winners-management/search-results`, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+               winners: searchResults
+            })
+         })
+
+         var content = await response.json()
+
+         if(!response.ok) {
+
+         } else {
+            setRandomWinner(content.winner)
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    useEffect(() => {
 
       getTotalRecords()
    }, [])
+   
+   useEffect(() => {
+
+      if (randomWinner) {
+
+         if (randomWinner.ticket_number) {
+            setTicketNumber(randomWinner.ticket_number)
+         } else if (randomWinner.invoice_number) {
+            setTicketNumber(randomWinner.invoice_number)
+         }
+   
+         setModalIsOpen(false)
+         setModalTwoIsOpen(true)
+      }
+   }, [randomWinner])
 
    useEffect(() => {
       
@@ -301,7 +341,7 @@ function AdminWinnersSearchResult() {
                <div className="text-darkone text-size-4">Are you sure you want to select random number</div>
                <div className="flex items-center gap-6 mt-3">
                   <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-10 border-[2px] border-lightfive py-2 bg-white w-fit rounded">Cancel</button>
-                  <button onClick={() => {router.push(`/admin/winners-management/select-random-number/${game !== '' ? 'games' : 'products'}`)}} className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Yes</button>
+                  <button onClick={proceedRandomWinner} className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Yes</button>
                </div>
             </div>
          </Modal>

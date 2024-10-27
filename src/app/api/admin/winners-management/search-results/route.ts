@@ -46,6 +46,26 @@ export async function GET(request: Request) {
    }
 }
 
+export async function POST(request: Request) {
+   try {
+   
+      await connectMongoDB()
+      const {winners} = await request.json()
+      const winner = await getRandomWinner(winners)
+
+      return NextResponse.json({
+         messge: "query successful ....",
+         winner: winner
+      }, {status: 200})
+
+   } catch (error) {
+       return NextResponse.json({
+           messge: "query error ....",
+           error: JSON.stringify(error)
+       }, {status: 200})
+   }
+}
+
 export async function OPTIONS(request: Request) {
    try {
 
@@ -286,4 +306,15 @@ const getFilteredResults = (records: any, gameId: string, productId: string, max
    })
 
    return { filteredResults, totalExpectedAmount }
+}
+
+
+const getRandomWinner = async (winners: any) => {
+
+   if (winners.length === 0) {
+      return null
+   }
+
+   const randomIndex = Math.floor(Math.random() * winners.length)
+   return winners[randomIndex]
 }
