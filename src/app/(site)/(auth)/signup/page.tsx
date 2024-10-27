@@ -207,6 +207,7 @@ export default function SignUpPage() {
          formData.append('country_code', form.country_code);
          formData.append('mobile', mobile_value);
          formData.append('notification_type', form.notification_type);
+         formData.append('user_type', 'web');
          if (typeof image !== 'undefined') {
             formData.append('image', image);
          }

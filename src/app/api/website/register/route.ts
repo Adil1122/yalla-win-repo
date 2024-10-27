@@ -45,6 +45,7 @@ export async function POST(request: Request) {
           var mobile = data.get('mobile');
           var notification_type = data.get('notification_type');
           var image:any = data.get('image');
+          var user_type:any = data.get('user_type');
           var image_name = '';
           var blob = null;
           if(image) {
@@ -86,7 +87,8 @@ export async function POST(request: Request) {
             qr_code: qr_code,
             //image: '/uploads/users/' + image_name,
             image: blob ? blob.url : '',
-            role: 'user'
+            role: 'user',
+            user_type: user_type
           };
           
           let result = await User.create(newDocument);

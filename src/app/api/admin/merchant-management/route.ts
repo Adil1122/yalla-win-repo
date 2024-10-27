@@ -33,7 +33,8 @@ export async function POST(request: Request) {
             active: 1,
             country: country,
             city: city,
-            area: area
+            area: area,
+            user_type: 'merchant'
         }
         //console.log(newDocument)
 
@@ -109,7 +110,8 @@ export async function PUT(request: Request) {
                     active: 1,
                     country: country,
                     city: city,
-                    area: area
+                    area: area,
+                    user_type: 'merchant'
                 }
             }
             var result = await User.updateOne({_id: user._id}, updates);
