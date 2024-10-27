@@ -62,12 +62,14 @@ export async function GET(request: any) {
                   }, {status: 200});
             } else {
                 return NextResponse.json({
-                    messge: "winner not found ....",
-                  }, {status: 500});
+                    messge: "winner not found",
+                    winner: []
+                  }, {status: 200});
             }
         } else {
             return NextResponse.json({
-                messge: "winner not found ....",
+                messge: "winner not found",
+                winner: []
               }, {status: 500});
         }
         
