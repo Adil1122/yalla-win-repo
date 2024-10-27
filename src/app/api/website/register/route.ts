@@ -8,6 +8,8 @@ import User from "@/models/UserModel";
 import connectMongoDB from "@/libs/mongoosdb";
 //import { writeFile } from "fs/promises";
 import { put } from '@vercel/blob';
+import createMessage from "@/libs/send_sms";
+import createWhatsAppMessage from "@/libs/send_whatsapp_message";
 
 export async function POST(request: Request) {
     
@@ -91,15 +93,17 @@ export async function POST(request: Request) {
           var otp = Math.floor(Math.random() * 90000) + 10000;
 
           if(notification_type === 'email') {
-            sendMail(email, 'OTP Verification', '', 'Your OTP is <b>' + otp + '</b>');
+            sendMail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp + '</b>');
           }
 
           if(notification_type === 'sms') {
-
+            console.log('sms called')
+            //createMessage('Your OTP for Yalla Win Sign Up ' + otp, mobile)
           }
 
           if(notification_type === 'whatsapp') {
-            
+            console.log('whatsapp called')
+            //createWhatsAppMessage('Your OTP for Yalla Win Sign Up ' + otp, mobile)
           }
 
           return NextResponse.json({

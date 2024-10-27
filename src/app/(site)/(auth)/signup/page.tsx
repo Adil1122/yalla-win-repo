@@ -740,18 +740,22 @@ export default function SignUpPage() {
                      <div>Verification method</div>
                   </div>
                   <div className="flex flex-row flex-1 justify-between">
-                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 lg:w-36 items-center cursor-pointer">
-                        <ChatBubbleLeftEllipsisIcon className="size-10 text-black" />
-                        <div>SMS</div>
-                     </div>
-                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 w-36 items-center cursor-pointer">
+                     
+                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 w-36 items-center cursor-pointer" onClick={(e) => updateForm({ notification_type: 'email' })}>
                         <ChatBubbleLeftEllipsisIcon className="size-10 text-black" />
                         <div>Email</div>
                      </div>
-                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 w-36 items-center cursor-pointer">
+
+                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 lg:w-36 items-center cursor-pointer" onClick={(e) => updateForm({ notification_type: 'sms' })}>
+                        <ChatBubbleLeftEllipsisIcon className="size-10 text-black" />
+                        <div>SMS</div>
+                     </div>
+
+                     <div className="flex flex-col bg-white rounded-lg px-10 py-4 w-36 items-center cursor-pointer" onClick={(e) => updateForm({ notification_type: 'whatsapp' })}>
                         <ChatBubbleLeftEllipsisIcon className="size-10 text-black" />
                         <div>WhatsApp</div>
                      </div>
+
                   </div>
                </div>
                <div className="flex flex-row gap-3 lg:gap-6 mt-12 items-start lg:items-center">
