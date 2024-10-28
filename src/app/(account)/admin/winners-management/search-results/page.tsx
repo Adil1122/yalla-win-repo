@@ -12,6 +12,7 @@ function AdminWinnersSearchResult() {
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
    const [searchResults, setSearchResults] = useState<any>([])
+   const [search, setSearch] = useState<string>('')
    const queryParams = useSearchParams()
    const [amount, game, product, peoplePercent, country, city, area] = [
       queryParams.get('amount') || '',
@@ -66,7 +67,7 @@ function AdminWinnersSearchResult() {
             item = `product_id=${product}`
          }
 
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}&search=${search}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -126,7 +127,7 @@ function AdminWinnersSearchResult() {
       }
 
       try {
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}&search=${search}`, {
             method: 'OPTIONS',
          })
 
@@ -214,6 +215,10 @@ function AdminWinnersSearchResult() {
       }
    }
 
+   const handleSearch = () => {
+      setPagination(1)
+   }
+
    useEffect(() => {
 
       getTotalRecords()
@@ -255,8 +260,9 @@ function AdminWinnersSearchResult() {
                         <FontAwesomeIcon size="lg" icon={faSearch} />
                      </div>
                      <div className="w-full">
-                        <input type="text" className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder={game != null ? 'Search by ticket no' : 'Search by QR code'} />
+                        <input type="text" onChange={(e) => setSearch(e.target.value)} className="h-[40px] w-full bg-transparent ml-2 border-none focus:outline-none focus:ring-0 -mt-1" placeholder={game != '' && game != null ? 'Search by ticket no' : 'Search by QR code'} />
                      </div>
+                     <button type="button" onClick={handleSearch} className="px-4 py-2 bg-themeone text-white rounded-md">Search</button>
                   </div>
                   <div className="w-full flex gap-3 lg:ml-auto lg:w-fit">
                      <Link href={`/admin/winners-management/verify-results/?${queryString}`} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">

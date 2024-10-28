@@ -24,9 +24,10 @@ export async function GET(request: Request) {
       const platformType : string = searchparams.get('platform_type') + ''
       const percent = parseInt(searchparams.get('people_percent') + '')
       const gameType : string = searchparams.get('game_type') + ''
+      const search : string = searchparams.get('search') + ''
    
       await connectMongoDB()
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType, search)
       const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
       const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
       const finalResults = filteredResults.slice(skip, skip + limit)
@@ -82,9 +83,10 @@ export async function OPTIONS(request: Request) {
       const platformType : string = searchparams.get('platform_type') + ''
       const percent = parseInt(searchparams.get('people_percent') + '')
       const gameType : string = searchparams.get('game_type') + ''
+      const search : string = searchparams.get('search') + ''
    
       await connectMongoDB()
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType, search)
       const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
       const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
 
@@ -103,7 +105,7 @@ export async function OPTIONS(request: Request) {
    
 }
 
-const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string, platformType: string) => {
+const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string, platformType: string, search: string) => {
 
    let result : any = []
    if (gameId && gameId !== '' && gameId !== 'null') {
@@ -167,6 +169,7 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
             $match: {
                "InvoiceDetails.game_id": new mongoose.Types.ObjectId(gameId),
                ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
+               ...(search && search != 'null' && search != '' ? { "ticket_number": search } : {}),
             }
          },
          {
@@ -208,6 +211,7 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
          {
             $match: {
                invoice_type: "prize",
+               ...(search && search != 'null' && search != '' ? { "invoice_number": search } : {}),
                ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
             }
          },
