@@ -70,7 +70,7 @@ export async function GET(request: Request) {
 
         await connectMongoDB();
         var records = await Update.find({_id: {$ne: null}}).sort({'createdAt': -1});
-        var products = await Product.find({_id: {$ne: null}}).sort({'createdAt': -1}).limit(3);
+        var products = await Product.find({prize_id: null, game_id: { $ne: null }}).sort({'createdAt': 1}).limit(3);
         return NextResponse.json({
             messge: "Query successful ....",
             records: records,

@@ -13,6 +13,8 @@ import { useAuth } from '../AuthContext'
 import { useRouter } from 'next/navigation'
 import Modal from '../modal'
 import getDaysHoursMinsSecs from '@/libs/common';
+import Notification from "@/components/notificationWidget"
+import { setServers } from 'dns'
 
 export default function DashboardTopBar() {
    
@@ -24,32 +26,159 @@ export default function DashboardTopBar() {
    const isUser = pathname.startsWith('/user')
    const isAdmin = pathname.startsWith('/admin')
    const { setLoggedIn } = useAuth()
+   const [isBusy, setIsBusy] = useState<boolean>(false)
    const router = useRouter()
-
+   const [success, setSuccess] = useState('')
+   const [errors, setErrors] = useState({
+      currentPasswordError: '',
+      newPasswordError: '',
+      passwordConfirmationError: '',
+      apiError: ''
+   })
+   
    var [loggedInUser, setLoggedInUser] = useState({
       name: "",
+      firstName: "",
+      lastName: "",
+      email: "",
       image: "",
       qr_code: ""
    });
+   
+   const [changePassword, setChangePassword] = useState({
+      currentPassword: "",
+      newPassword: "",
+      passwordConfirmation: "",
+   })
 
    useEffect(() => {
-      // Check if user is logged in when component mounts
+      
       if(localStorage.getItem('yalla_logged_in_user') !== null) {
-         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '')
          var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
+
          if(parseFloat(time_diff.days) > 0 || parseFloat(time_diff.hours) >= 5) {
             logout()
          } else {
+
             setLoggedInUser({
                name: user.name,
+               firstName: user.first_name,
+               lastName: user.last_name,
+               email: user.email,
                image: user.image,
                qr_code: user.qr_code
-            });
+            })
          }
       } else {
          router.push('/');
       } 
    }, []);
+
+   const saveProfile = async () => {
+
+      if (!isBusy) {
+
+         if (loggedInUser.firstName == '' || loggedInUser.lastName == '') {
+            alert('Name cannot be empty')
+         } else {
+            
+            setIsBusy(true)   
+            const { _id } = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '')
+   
+            try {
+               let response = await fetch(`/api/admin/profile?id=${_id}`, {
+                  method: 'POST',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                     first_name: loggedInUser.firstName,
+                     last_name: loggedInUser.lastName
+                  })
+               })
+      
+               if(!response.ok) {
+                  console.log('error in winner announcement api')
+               } else if (response.status == 200) {
+                  
+                  const storedUser = JSON.parse(localStorage.getItem('yalla_logged_in_user') || '{}')
+                  storedUser.first_name = loggedInUser.firstName
+                  storedUser.last_name = loggedInUser.lastName
+                  localStorage.setItem('yalla_logged_in_user', JSON.stringify(storedUser))
+                  
+                  setProfileModal(false)
+                  setSuccess('Profile has been updated')
+               }
+            } catch (error) {
+               console.log(error)
+            }
+            
+            setIsBusy(false)
+         }
+      }
+   }
+   
+   const updatePassword = async () => {
+
+      if (!isBusy) {
+
+         setErrors({
+            currentPasswordError: '',
+            newPasswordError: '',
+            passwordConfirmationError: '',
+            apiError: ''
+         })
+
+         const { currentPassword, newPassword, passwordConfirmation } = changePassword
+
+         if (currentPassword == '') {
+            setErrors((prev) => ({...prev, currentPasswordError: 'Current password is required'}))
+         } else if (newPassword == '') {
+            setErrors((prev) => ({...prev, newPasswordError: 'New password is required'}))
+         } else if (newPassword.length < 8) {
+            setErrors((prev) => ({...prev, newPasswordError: 'Password must be at least 8 characters long'}))
+         } else if (passwordConfirmation == '') {
+            setErrors((prev) => ({...prev, passwordConfirmationError: 'Password confirmation is required'}))
+         } else if (newPassword !== passwordConfirmation) {
+            setErrors((prev) => ({...prev, passwordConfirmationError: 'Password does not match with password confirmation'}))
+         } else {
+            
+            setIsBusy(true)   
+            const { _id } = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '')
+   
+            try {
+               let response = await fetch(`/api/admin/change-password?id=${_id}`, {
+                  method: 'POST',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                     current_password: changePassword.currentPassword,
+                     new_password: changePassword.newPassword,
+                     password_confirmation: changePassword.passwordConfirmation
+                  })
+               })
+      
+               if(!response.ok) {
+                  const content = await response.json()
+                  setErrors((prev) => ({...prev, apiError: content.message}))
+               } else if (response.status == 200) {                  
+                  setChangePasswordModal(false)
+                  setSuccess('Password has been updated')
+               } else {
+                  const content = await response.json()
+                  console.log(content)
+                  setErrors((prev) => ({...prev, apiError: content.message}))
+               }
+            } catch (error) {
+               console.log(error)
+            }
+            
+            setIsBusy(false)
+         }
+      }
+   }
 
    const logout = () => {
       setLoggedIn(false);
@@ -154,39 +283,31 @@ export default function DashboardTopBar() {
                               </button>
                               <img className="rounded-full w-[120px] h-[120px] border-[2px]" src="/assets/images/cat-3.svg" alt="" />
                            </div>
-                           <button type="button" className="text-themetwo rounded-lg px-3 py-2 border-[2px] border-themetwo text-size-4 font-medium whitespace-nowrap">Edit Profile</button>
+                           <button type="button" className="text-themetwo rounded-lg px-3 py-2 border-[2px] border-themetwo text-size-4 font-medium whitespace-nowrap">Choose Photo</button>
                         </div>
                      </div>
                      <div className="flex flex-col gap-6 w-full">
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">First Name</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                              <input onChange={(e) => setLoggedInUser((prevUser) => ({...prevUser, firstName: e.target.value}))} className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" value={loggedInUser.firstName} />
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Last Name</div>
                            <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                              <input onChange={(e) => setLoggedInUser((prevUser) => ({...prevUser, lastName: e.target.value}))} className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" value={loggedInUser.lastName} />
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Email ID</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
-                           </div>
-                        </div>
-                        <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">Password</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="password" />
-                           </div>
+                           <div className="text-darkone text-size-2 border border-lightone rounded h-[40px] px-3 py-2">{loggedInUser.email}</div>
                         </div>
                      </div>
                   </div>
                   <div className="flex items-center ml-auto mt-12 gap-6">
                      <button onClick={() => setProfileModal(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
-                     <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
+                     <button onClick={saveProfile} className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
                   </div>
                </div>
             </div>
@@ -204,29 +325,47 @@ export default function DashboardTopBar() {
                   <div className="flex gap-6">
                      <div className="flex flex-col gap-6 w-full">
                         <div className="flex flex-col gap-4">
-                           <div className="text-darkone text-size-4">Old Password</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                           <div className="text-darkone text-size-4">Current Password</div>
+                           <div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input onChange={(e) => setChangePassword((prev) => ({...prev, currentPassword: e.target.value}))} className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="password" value={changePassword.currentPassword} />
+                              </div>
+                              {errors.currentPasswordError != '' && (
+                                 <div className="text-red-600">{errors.currentPasswordError}</div>
+                              )}
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">New Password</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                           <div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input onChange={(e) => setChangePassword((prev) => ({...prev, newPassword: e.target.value}))} className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="password" value={changePassword.newPassword} />
+                              </div>
+                              {errors.newPasswordError != '' && (
+                                 <div className="text-red-600">{errors.newPasswordError}</div>
+                              )}
                            </div>
                         </div>
                         <div className="flex flex-col gap-4">
                            <div className="text-darkone text-size-4">Confirm Password</div>
-                           <div className="text-darkone text-size-2 border border-lightone rounded">
-                              <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" />
+                           <div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input onChange={(e) => setChangePassword((prev) => ({...prev, passwordConfirmation: e.target.value}))} className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="password" value={changePassword.passwordConfirmation} />
+                              </div>
+                              {errors.passwordConfirmationError != '' && (
+                                 <div className="text-red-600">{errors.passwordConfirmationError}</div>
+                              )}
                            </div>
                         </div>
                      </div>
                   </div>
                   <div className="flex items-center ml-auto mt-12 gap-6">
                      <button onClick={() => setChangePasswordModal(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
-                     <button className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
+                     <button onClick={updatePassword} className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Save</button>
                   </div>
+                  {errors.apiError != '' && (
+                     <div className="text-red-600 w-fit ml-auto">{errors.apiError}</div>
+                  )}
                </div>
             </div>
          </Modal>
@@ -241,6 +380,10 @@ export default function DashboardTopBar() {
                </div>
             </div>
          </Modal>
+
+         { success !== '' && 
+            <Notification message="Success" description={success} type='success'  close={() => {setSuccess('')}} />  
+         }
       </>
    )
 }

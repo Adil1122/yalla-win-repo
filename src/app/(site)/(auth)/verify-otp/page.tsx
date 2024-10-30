@@ -108,7 +108,7 @@ export default function VerifyOTPPage() {
          <div className={`hidden lg:block lg:w-[45%] flex-grow relative bg-[url("/assets/images/signup.svg")] bg-center bg-cover bg-no-repeat rounded-3xl`}></div>
 
          { form.server_error !== '' && 
-            <Notification message="Server Error" description={form.server_error} type='error'  />  
+            <Notification message="Server Error" description={form.server_error} type='error'  close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}} />  
          } 
       </div>
    )

@@ -121,7 +121,7 @@ export default function SignUpPage() {
          <div className="w-[45%]">
             <Image width={700} className="ml-auto" alt="user signup" src={signUpImg}></Image>
          </div>
-         <Notification message="Server Error" description="This email already exists" type='error'  />
+         <Notification message="Server Error" description="This email already exists" type='error' close={() => {}} />
       </div>
    )
 }

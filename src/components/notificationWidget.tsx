@@ -9,9 +9,10 @@ interface NotificationProps {
    message: string;
    description: string;
    type: 'success' | 'error';
+   close: () => void;
 }
 
-export default function Notification({ message, description, type } : NotificationProps) {
+export default function Notification({ message, description, type, close } : NotificationProps) {
   const [show, setShow] = useState(true)
 
    return (
@@ -31,7 +32,7 @@ export default function Notification({ message, description, type } : Notificati
                               <p className="mt-1 text-size-1 text-gray-500">{description}</p>
                            </div>
                            <div className="ml-4 flex flex-shrink-0">
-                              <button type="button" onClick={() => setShow(false)} className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                              <button type="button" onClick={close} className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                  <span className="sr-only">Close</span>
                                  <XMarkIcon aria-hidden="true" className="h-5 w-5" />
                               </button>

@@ -213,11 +213,11 @@ export default function UserAccountRedeem({ params } : {params: { id: string; }}
          </Modal>
 
          { amountError !== '' && 
-            <Notification message="Payment Error" description={amountError} type='error'  />  
+            <Notification message="Payment Error" description={amountError} type='error' close={() => {setAmountError('')}} />  
          }
 
          { amountSuccess !== '' && 
-            <Notification message="Payment Success" description={amountSuccess} type='success'  />  
+            <Notification message="Payment Success" description={amountSuccess} type='success' close={() => {setAmountSuccess('')}} />  
          }
          
       </section>

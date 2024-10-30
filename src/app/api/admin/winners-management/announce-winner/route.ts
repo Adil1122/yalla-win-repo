@@ -177,6 +177,8 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
 
       if (inputType == 'game') {
 
+         // todo: Games names should be dynamic
+         
          if (record.GameDetails.name == 'Yalla 3' || record.GameDetails.name == 'Yalla 4') {
 
             if (record.ticket_type == 'Straight' && record.ticket_number == inputData) {

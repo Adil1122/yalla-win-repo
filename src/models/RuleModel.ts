@@ -16,6 +16,10 @@ const ruleSchema = new Schema (
         option_chance_3_correct_win_price: {type: Number, required: false},
         option_chance_2_correct_win_price: {type: Number, required: false},
         option_chance_1_correct_win_price: {type: Number, required: false},
+        six_numbers_win_price: {type: Number, required: false},
+        five_numbers_win_price: {type: Number, required: false},
+        four_numbers_win_price: {type: Number, required: false},
+        three_numbers_win_price: {type: Number, required: false},
     },
     {
         timestamps: true

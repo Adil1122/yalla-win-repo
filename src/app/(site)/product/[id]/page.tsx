@@ -2,14 +2,14 @@
 
 import UpcomingDrawCard from "@/components/upcoming-draw-card"
 import React, { useEffect, useState } from "react"
-
+import { useRouter } from 'next/navigation'
 
 type Tab = 'product' | 'prize'
 
 export default function Product({ params } : {params: { id: string; }}) {
 
    const [activeTab, setActiveTab] = useState<Tab>('product')
-
+   const router = useRouter()
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
    }
@@ -76,6 +76,36 @@ export default function Product({ params } : {params: { id: string; }}) {
       }
    }
 
+   const addToBasket = async () => {
+      if(localStorage.getItem("yalla_logged_in_user") !== null) {
+         var user = JSON.parse(localStorage.getItem("yalla_logged_in_user") + '');
+         var user_id = user._id;
+
+         let response = await fetch("/api/website/basket", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               user_id: user_id,
+               product_id: params.id,
+               quantity: 1
+            })
+         });
+
+         const content = await response.json();
+         console.log('content: ', content);
+         if(!response.ok) {
+            alert('error')
+         } else {
+            router.push('/cart')
+         }
+      } else {
+         alert('Please login first to Add to Cart.')
+      }
+
+   }
+
    return (
       <div className="flex flex-col flex-grow h-full w-full bg-gradient-to-r from-themeone to-themetwo overflow-x-hidden">
          <section className="flex flex-col lg:flex-row gap-12 lg:gap-10 py-6 lg:py-16">
@@ -83,13 +113,13 @@ export default function Product({ params } : {params: { id: string; }}) {
                <div className="bg-white rounded-standard w-full h-full flex flex-col xl:flex-row items-center gap-6 xl:gap-16 py-8 xl:py-0 px-8 xl:px-16">
                   <div className="flex flex-col gap-3 lg:gap-6">
                      <div className="text-theme-gradient font-semibold text-big-four leading-tight xl:leading-normal xl:text-extra-large-head">Win {prize.name} +</div>
-                     <div className="text-medium text-head-5 leading-tight xl:leading-normal">Buy a {product.name} and make your dream true!</div>
-                     <button className="hidden xl:block mt-12 text-center text-white xl:mt-24 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
+                     <div className="text-medium text-head-5 leading-tight xl:leading-normal">Buy {product.name} and make your dream true!</div>
+                     <button onClick={addToBasket} className="hidden xl:block mt-12 text-center text-white xl:mt-24 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
                   </div>
                   <div>
                      <img className="max-w-[200px] lg:max-w-auto" src={prize.image} alt="" />
                   </div>
-                  <button className="xl:hidden text-center text-white lg:mt-24 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
+                  <button onClick={addToBasket} className="xl:hidden text-center text-white lg:mt-24 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
                </div>
                <div className="flex gap-2 mx-auto"></div>
             </div>
@@ -240,7 +270,7 @@ export default function Product({ params } : {params: { id: string; }}) {
                      )}
                   </div>
                   <div>
-                     <button className="text-center text-white lg:mt-12 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
+                     <button onClick={addToBasket} className="text-center text-white lg:mt-12 bg-themeone font-semibold shadow-custom-1 rounded-full py-3 px-16 w-fit">Buy Now</button>
                   </div>
                </div>
             </div>

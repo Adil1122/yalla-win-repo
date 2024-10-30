@@ -1,22 +1,33 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
 import Link from 'next/link'
+import Notification from "@/components/notificationWidget";
+import 'suneditor/dist/css/suneditor.min.css'
+import suneditor from 'suneditor'
+import plugins from 'suneditor/src/plugins'
 
 type Tab = 'details' | 'communication'
 
 export default function AdminViewMerchantDetails({ params } : {params: { id: string; }}) {
 
    const fileInputRef = useRef<HTMLInputElement | null>(null)
+   const participateEditorRef = useRef<any>(null)
    
    const [activeTab, setActiveTab] = useState<Tab>('details')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [messageReply, setMessageReply] = useState<boolean>(false)
    const [imgSrc, setImgSrc] = useState<string>('/assets/images/home.svg')
    const [image, setImage] = useState<File | undefined>()
+   const [notif, setNotif] = useState<any>({
+      show: false,
+      message: '',
+      desc: '',
+      type: 'success'
+   })
    //const [record, setRecord] = useState([]);
    //const [product, setProduct] = useState<any>([]);
 
@@ -42,6 +53,11 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
       option_chance_3_correct_win_price: "",
       option_chance_2_correct_win_price: "",
       option_chance_1_correct_win_price: "",
+      six_numbers_win_price: 1,
+      five_numbers_win_price: 1,
+      four_numbers_win_price: 1,
+      three_numbers_win_price: 1,
+      game_name:"",
 
       introduction_error: "",
       how_to_participate_error: "",
@@ -83,8 +99,44 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
       }
    }
 
+   const setParticipateContent = (newContent: any) => {
+      if (participateEditorRef && participateEditorRef.current) {
+         
+         participateEditorRef.current.setContents(newContent)
+      }
+   }
+
+   const initiateParticipateEditor = () => {
+      let participateEditor = suneditor.create('how_to_participate', {
+         plugins: plugins,
+         buttonList: [
+            ['undo', 'redo'],
+            ['fontSize'],
+            ['paragraphStyle', 'blockquote'],
+            ['bold', 'underline', 'italic', 'strike'],
+            '/',
+            ['align', 'horizontalRule', 'list', 'image', 'lineHeight'],
+            ['fullScreen', 'showBlocks', 'codeView']
+         ]
+      })
+
+      participateEditor.onChange = function (contents: any, core: any) {
+         setRecord((prev) => ({...prev, how_to_participate: contents}))
+      }
+
+      return participateEditor
+   }
+
    useEffect(() => {
+
+      let participateEditor = initiateParticipateEditor()
+      participateEditorRef.current = participateEditor
+
       getRecord()
+
+      return () => {
+         participateEditor.destroy()
+      }
    }, [])
 
    async function getRecord() {
@@ -112,6 +164,11 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   option_chance_3_correct_win_price: content.record[0].option_chance_3_correct_win_price,
                   option_chance_2_correct_win_price: content.record[0].option_chance_2_correct_win_price,
                   option_chance_1_correct_win_price: content.record[0].option_chance_1_correct_win_price,
+                  game_name: content.record[0].GameDetails.name,
+                  six_numbers_win_price: content.record[0].six_numbers_win_price,
+                  five_numbers_win_price: content.record[0].five_numbers_win_price,
+                  four_numbers_win_price: content.record[0].four_numbers_win_price,
+                  three_numbers_win_price: content.record[0].three_numbers_win_price,
             
                   introduction_error: "",
                   how_to_participate_error: "",
@@ -124,6 +181,8 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   option_chance_2_correct_win_price_error: "",
                   option_chance_1_correct_win_price_error: "",
                })
+               
+               setParticipateContent(content.record[0].how_to_participate)
             }
 
             setProduct({
@@ -200,42 +259,42 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
          is_error = true;
        }
 
-       if (record.option_straight_text === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_straight_text === "") {
          err["option_straight_text_error"] = "Option straight text is Required";
          is_error = true;
        }
 
-       if (record.option_rumble_text === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_rumble_text === "") {
          err["option_rumble_text_error"] = "Option rumble text is Required";
          is_error = true;
        }
 
-       if (record.option_chance_text === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_chance_text === "") {
          err["option_chance_text_error"] = "Option chance text is Required";
          is_error = true;
        }
 
-       if (record.option_straight_win_price === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_straight_win_price === "") {
          err["option_straight_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
 
-       if (record.option_rumble_win_price === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_rumble_win_price === "") {
          err["option_rumble_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
 
-       if (record.option_chance_3_correct_win_price === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_chance_3_correct_win_price === "") {
          err["option_chance_3_correct_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
 
-       if (record.option_chance_2_correct_win_price === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_chance_2_correct_win_price === "") {
          err["option_chance_2_correct_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
 
-       if (record.option_chance_3_correct_win_price === "") {
+       if (record.game_name !== 'Yalla 6' && record.option_chance_3_correct_win_price === "") {
          err["option_chance_1_correct_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
@@ -263,14 +322,24 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
 
          formData.append("introduction", record.introduction);
          formData.append("how_to_participate", record.how_to_participate);
-         formData.append("option_straight_text", record.option_straight_text);
-         formData.append("option_chance_text", record.option_chance_text);
-         formData.append("option_rumble_text", record.option_rumble_text);
-         formData.append("option_straight_win_price", record.option_straight_win_price);
-         formData.append("option_rumble_win_price", record.option_rumble_win_price);
-         formData.append("option_chance_3_correct_win_price", record.option_chance_3_correct_win_price);
-         formData.append("option_chance_2_correct_win_price", record.option_chance_2_correct_win_price);
-         formData.append("option_chance_1_correct_win_price", record.option_chance_1_correct_win_price);
+         if (record.game_name != 'Yalla 6') {
+            formData.append("option_straight_text", record.option_straight_text);
+            formData.append("option_chance_text", record.option_chance_text);
+            formData.append("option_rumble_text", record.option_rumble_text);
+            formData.append("option_straight_win_price", record.option_straight_win_price);
+            formData.append("option_rumble_win_price", record.option_rumble_win_price);
+            formData.append("option_chance_3_correct_win_price", record.option_chance_3_correct_win_price);
+            formData.append("option_chance_2_correct_win_price", record.option_chance_2_correct_win_price);
+            formData.append("option_chance_1_correct_win_price", record.option_chance_1_correct_win_price);
+            formData.append("is_yalla_6", '0');
+         } else {
+
+            formData.append("six_numbers_win_price", record.six_numbers_win_price.toString());
+            formData.append("five_numbers_win_price", record.five_numbers_win_price.toString());
+            formData.append("four_numbers_win_price", record.four_numbers_win_price.toString());
+            formData.append("three_numbers_win_price", record.three_numbers_win_price.toString());
+            formData.append("is_yalla_6", '1');
+         }
          if (typeof image !== "undefined") {
             formData.append("image", image);
          }
@@ -283,8 +352,19 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
 
              if(!response.ok) {
 
+               setNotif({
+                  show: true,
+                  message: 'Server error',
+                  desc: '',
+                  type: 'error'
+               })
              } else {
-               alert('added ... ')
+               setNotif({
+                  show: true,
+                  message: 'Information Saved',
+                  desc: '',
+                  type: 'success'
+               })
              }
    
          } catch (error) {
@@ -352,9 +432,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                      <input type="file" className="opacity-0 absolute top-0 left-0 w-0 h-0" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
                      <div className="flex flex-col gap-2 flex-1">
                         <div className="text-darkone font-semibold text-size-4">Introduction</div>
-                        <textarea className="text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none" onChange={(e) => updateRecord({ introduction: e.target.value })}>
-                           {record.introduction}
-                        </textarea>
+                        <textarea value={record.introduction} className="text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none" onChange={(e) => updateRecord({ introduction: e.target.value })}></textarea>
 
                         {record.introduction_error !== "" && (
                            <span style={{ color: "red" }}>{record.introduction_error}</span>
@@ -363,10 +441,8 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                      </div>
                      <div className="flex flex-col gap-2 flex-1">
                         <div className="text-darkone font-semibold text-size-4">How to participate</div>
-                        <div className="text-darkone border border-lighttwo text-size-3 rounded">
-                           <input type="text" className="w-full h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" 
-                           value={record.how_to_participate}
-                           onChange={(e) => updateRecord({ how_to_participate: e.target.value })} />
+                        <div className="text-darkone text-size-3 rounded z-0">
+                           <textarea id="how_to_participate" onChange={() => {}} value={record.how_to_participate} className="w-full text-darkone border border-lighttwo text-size-3 px-6 py-3 pb-16 rounded focus:outline-none focus:ring-0 resize-none min-h-[300px]"></textarea>
                         </div>
 
                         {record.how_to_participate_error !== "" && (
@@ -377,6 +453,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                      <div className="flex flex-col lg:flex-row w-full gap-4">
                         <div className="flex flex-col gap-6 w-full">
                            <div className="text-darkone font-semibold text-size-4">Options & Prizes</div>
+                           {(record && (record.game_name == 'Yalla 3' || record.game_name == 'Yalla 4')) && (
                            <div className="flex flex-col gap-6">
                               <div className="flex gap-6 justify-between lg:w-[60%]">
                                  <div className="flex flex-col gap-2 lg:w-[50%]">
@@ -577,6 +654,126 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                  </div>
                               </div>
                            </div>
+                           )}
+                           {record && record.game_name == 'Yalla 6' && (
+                              <div className="flex flex-col gap-6">
+                                 <div className="flex gap-6 justify-between lg:w-[60%]">
+                                    <div className="flex flex-col gap-2 lg:w-[50%]">
+                                       <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">6 Correct Numbers</div>
+                                    </div>
+                                    <div className="flex items-start text-darkone">
+                                       <div className="flex flex-col gap-2 justify-center items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="text" value={product.price} onChange={(e) => updateProduct({ price: e.target.value })} className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {product.price_error !== "" && (
+                                             <span style={{ color: "red" }}>{product.price_error}</span>
+                                          )}
+                                       </div>
+                                       <div className="mx-4 text-head-7">*</div>
+                                       <div className="flex flex-col gap-2 items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="number" min="1" value={record.six_numbers_win_price} onChange={(e) => updateRecord({ six_numbers_win_price: e.target.value })} className="w-[150px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {record.option_straight_win_price_error !== "" && (
+                                             <span style={{ color: "red" }}>{record.option_straight_win_price_error}</span>
+                                          )}
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div className="flex gap-6 justify-between lg:w-[60%]">
+                                    <div className="flex flex-col gap-2 lg:w-[50%]">
+                                       <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">5 Correct Numbers</div>
+                                    </div>
+                                    <div className="flex items-start text-darkone">
+                                       <div className="flex flex-col gap-2 justify-center items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="text" value={product.price} onChange={(e) => updateProduct({ price: e.target.value })} className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {product.price_error !== "" && (
+                                             <span style={{ color: "red" }}>{product.price_error}</span>
+                                          )}
+                                       </div>
+                                       <div className="mx-4 text-head-7">*</div>
+                                       <div className="flex flex-col gap-2 items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="number" min="1" value={record.five_numbers_win_price} onChange={(e) => updateRecord({ five_numbers_win_price: e.target.value })} className="w-[150px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {record.option_straight_win_price_error !== "" && (
+                                             <span style={{ color: "red" }}>{record.option_straight_win_price_error}</span>
+                                          )}
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div className="flex gap-6 justify-between lg:w-[60%]">
+                                    <div className="flex flex-col gap-2 lg:w-[50%]">
+                                       <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">4 Correct Numbers</div>
+                                    </div>
+                                    <div className="flex items-start text-darkone">
+                                       <div className="flex flex-col gap-2 justify-center items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="text" value={product.price} onChange={(e) => updateProduct({ price: e.target.value })} className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {product.price_error !== "" && (
+                                             <span style={{ color: "red" }}>{product.price_error}</span>
+                                          )}
+                                       </div>
+                                       <div className="mx-4 text-head-7">*</div>
+                                       <div className="flex flex-col gap-2 items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="number" min="1" value={record.four_numbers_win_price} onChange={(e) => updateRecord({ four_numbers_win_price: e.target.value })} className="w-[150px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {record.option_straight_win_price_error !== "" && (
+                                             <span style={{ color: "red" }}>{record.option_straight_win_price_error}</span>
+                                          )}
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div className="flex gap-6 justify-between lg:w-[60%]">
+                                    <div className="flex flex-col gap-2 lg:w-[50%]">
+                                       <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">3 Correct Numbers</div>
+                                    </div>
+                                    <div className="flex items-start text-darkone">
+                                       <div className="flex flex-col gap-2 justify-center items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="text" value={product.price} onChange={(e) => updateProduct({ price: e.target.value })} className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {product.price_error !== "" && (
+                                             <span style={{ color: "red" }}>{product.price_error}</span>
+                                          )}
+                                       </div>
+                                       <div className="mx-4 text-head-7">*</div>
+                                       <div className="flex flex-col gap-2 items-center">
+                                          <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
+                                          <div className="border border-lighttwo text-size-3 rounded">
+                                             <input type="number" min="1" value={record.three_numbers_win_price} onChange={(e) => updateRecord({ three_numbers_win_price: e.target.value })} className="w-[150px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2" />
+                                          </div>
+
+                                          {record.option_straight_win_price_error !== "" && (
+                                             <span style={{ color: "red" }}>{record.option_straight_win_price_error}</span>
+                                          )}
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <button className="text-white ml-auto text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded" onClick={onSubmit}>
+                                 Save
+                                 </button>
+                              </div>
+                           )}
                         </div>
                      </div>
                   </div>
@@ -621,6 +818,10 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                </div>
             </div>
          </Modal>
+
+         { notif.show && 
+            <Notification message={notif.message} description={notif.desc} type={notif.type} close={() => {setNotif((prev: any) => ({ ...prev, show: false }))}}  />
+         }
       </section>
    )
 }

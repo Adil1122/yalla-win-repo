@@ -26,7 +26,21 @@ export async function GET(request: Request) {
                     foreignField: "_id",
                     as: "productWithRule",
                 }
-            }
+            },
+            {
+               $unwind: "$productWithRule",
+            },
+            {
+               $lookup: {
+                   from: 'games',
+                   localField: "productWithRule.game_id",
+                   foreignField: "_id",
+                   as: "GameDetails",
+               }
+           },
+           {
+            $unwind: "$GameDetails",
+            },
         ]).limit(1);
 
         if(record && record.length > 0) {
@@ -70,34 +84,59 @@ export async function POST(request: Request) {
         var option_chance_3_correct_win_price:any = data.get('option_chance_3_correct_win_price');
         var option_chance_2_correct_win_price:any = data.get('option_chance_2_correct_win_price');
         var option_chance_1_correct_win_price:any = data.get('option_chance_1_correct_win_price');
+        var six_numbers_win_price:any = data.get('six_numbers_win_price');
+        var five_numbers_win_price:any = data.get('five_numbers_win_price');
+        var four_numbers_win_price:any = data.get('four_numbers_win_price');
+        var three_numbers_win_price:any = data.get('three_numbers_win_price');
+        var is_yalla_6:any = data.get('is_yalla_6');
         let image = data.get('image');
 
         var rule: any = await Rule.find({product_id: product_id}).select('_id');
         var product: any = await Product.find({_id: product_id}).select(['_id', 'image']);
+        let document : any = {
+               product_id: product_id,
+               product_name: product_name,
+               product_price: product_price,
+               introduction: introduction,
+               how_to_participate: how_to_participate
+         }
 
-        let document = {
-            product_id: product_id,
-            product_name: product_name,
-            product_price: product_price,
-            introduction: introduction,
-            how_to_participate: how_to_participate,
-            option_straight_text: option_straight_text,
-            option_chance_text: option_chance_text,
-            option_rumble_text: option_rumble_text,
-            option_straight_win_price: option_straight_win_price,
-            option_rumble_win_price: option_rumble_win_price,
-            option_chance_3_correct_win_price: option_chance_3_correct_win_price,
-            option_chance_2_correct_win_price: option_chance_2_correct_win_price,
-            option_chance_1_correct_win_price: option_chance_1_correct_win_price,
+         if (is_yalla_6 == '1') {
+            document = {
+                ...document,
+                six_numbers_win_price: six_numbers_win_price,
+                five_numbers_win_price: five_numbers_win_price,
+                four_numbers_win_price: four_numbers_win_price,
+                three_numbers_win_price: three_numbers_win_price,
+            };
+        } else {
+            document = {
+                ...document,
+                option_straight_text: option_straight_text,
+                option_chance_text: option_chance_text,
+                option_rumble_text: option_rumble_text,
+                option_straight_win_price: option_straight_win_price,
+                option_rumble_win_price: option_rumble_win_price,
+                option_chance_3_correct_win_price: option_chance_3_correct_win_price,
+                option_chance_2_correct_win_price: option_chance_2_correct_win_price,
+                option_chance_1_correct_win_price: option_chance_1_correct_win_price,
+            };
         }
 
         var result;
+
+        console.log(document)
 
         if(rule && rule.length > 0) {
             let updates = {
                 $set: document
             }
-            result = await Rule.updateOne({_id: rule._id}, updates);
+            //result = await Rule.updateOne({_id: rule._id}, updates);
+            result = await Rule.findOneAndUpdate(
+               {product_id: product_id},
+               { $set: document },
+               {new: true}
+            )
         } else {
             result = await Rule.create(document);
         }

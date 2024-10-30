@@ -118,11 +118,11 @@ export default function ForgotPasswordPage() {
          <Image width={700} height={500}  className="ml-auto" alt="user signup" src={signUpImg}></Image>
          </div>
          { form.server_error !== '' && 
-            <Notification message="Server Error" description={form.server_error} type='error'  />  
+            <Notification message="Server Error" description={form.server_error} type='error' close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}} />  
          }
 
          { form.server_success !== '' && 
-            <Notification message="Success ..." description={form.server_success} type='success'  />  
+            <Notification message="Success ..." description={form.server_success} type='success' close={() => {setForm((prev: any) => ({ ...prev, server_success: '' }))}} />  
          }
       </div>
    );

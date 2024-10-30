@@ -390,11 +390,11 @@ const UserAccountAddCredit = () => {
          {/* option-2 pay via coupon ends */}
 
          { error !== '' && 
-            <Notification message="Payment Error" description={error} type='error'  />  
+            <Notification message="Payment Error" description={error} type='error' close={() => {setError('')}}  />  
          }
 
          { success !== '' && 
-            <Notification message="Payment Success" description={success} type='success'  />  
+            <Notification message="Payment Success" description={success} type='success' close={() => {setSuccess('')}} />  
          }
       </section>
    )

@@ -792,6 +792,7 @@ export default function SignUpPage() {
                message="Server Error"
                description={form.server_error}
                type="error"
+               close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}}
             />
          )}
       </div>

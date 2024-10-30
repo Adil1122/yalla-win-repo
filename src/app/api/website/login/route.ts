@@ -108,9 +108,16 @@ export async function POST(request: any) {
 
             }*/
 
+            const userWithoutPassword = Object.keys(user._doc).reduce((acc: any, key: any) => {
+               if (key !== 'password') {
+                     acc[key] = user[key];
+               }
+               return acc;
+            }, {})
+
             return NextResponse.json({
               message: "User successfully logged in",
-                user: user
+                user: userWithoutPassword
             }, {status: 200});
             //request.send(user).status(204);
           } else {

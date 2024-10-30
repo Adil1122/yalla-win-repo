@@ -479,8 +479,8 @@ export default function UserProfile() {
           Save Changes
           
         </div>
-        {user.server_success && <Notification message="Success" description={user.server_success} type="success" />}
-        {user.server_error && <Notification message="Error" description={user.server_error} type="error" />}
+        {user.server_success && <Notification message="Success" description={user.server_success} type="success" close={() => {setUser((prev: any) => ({ ...prev, server_success: '' }))}} />}
+        {user.server_error && <Notification message="Error" description={user.server_error} type="error" close={() => {setUser((prev: any) => ({ ...prev, server_error: '' }))}} />}
 
       </div>
     </section>
