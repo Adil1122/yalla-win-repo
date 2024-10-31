@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
                   {
                       $match: {
                         $and: [
-                            {draw_type: 'prize'},
+                            {draw_type: 'products'},
                             {
                                 draw_date: {
                                     $gt : new Date(), 
