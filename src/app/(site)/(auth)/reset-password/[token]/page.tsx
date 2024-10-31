@@ -170,8 +170,14 @@ export default function ResetPasswordPage({ params } : {params: { token: string;
       </div>
 
       {/* Notification */}
-      {form.server_error && <Notification message="Server Error" description={form.server_error} type="error" />}
-      {form.server_success && <Notification message="Success" description={form.server_success} type="success" />}
+      {form.server_error !== '' && 
+        <Notification message="Server Error" description={form.server_error} type="error"
+        close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}} />
+      }
+      {form.server_success !== '' && 
+        <Notification message="Success" description={form.server_success} type="success"
+        close={() => {setForm((prev: any) => ({ ...prev, server_success: '' }))}} />
+      }
     </div>
   );
 }
