@@ -119,8 +119,8 @@ export default function AdminAvailableCoupons() {
       var is_error = false;
 
       // Validation logic
-      if (form.coupon_code === '') {
-         err['coupon_code_error'] = 'Coupon Code is Required';
+      if(!isNumber(form.coupon_code) || form.coupon_code.length !== 12) {
+         err['coupon_code_error'] = 'Coupon Code must be 12 Digits Number';
          is_error = true;
       }
 
@@ -147,6 +147,13 @@ export default function AdminAvailableCoupons() {
 
       return is_error;
    }
+
+   function isNumber(value: any) {
+      if (isNaN(value)) {
+        return false;
+      }
+      return true;
+    }
 
    async function onSubmit(e: any) {
       e.preventDefault();
@@ -265,6 +272,19 @@ export default function AdminAvailableCoupons() {
       }
    } 
 
+   var changeStatus = async(rec_id: any) => {
+      let response = await fetch('/api/admin/coupon-management/available-coupons/extras?id=' + rec_id, {
+         method: 'GET',
+      });
+
+      if(!response.ok) {
+
+      } else {
+         coupon_type = activeTab;
+         getTotalRecords();
+      }
+   } 
+
    var totalPages = 0;
    var [currentPage, setCurrentPage] = useState(1);
    var [recordsPerPage, setRecordsPerPages] = useState(5);
@@ -337,15 +357,15 @@ export default function AdminAvailableCoupons() {
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{index + 1}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.coupon_code}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {coupon.price}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.date}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{coupon.date_only + ' ' + coupon.time_only}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => openEditPopup(coupon._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
                                        <FontAwesomeIcon size="lg" icon={faPencil} />
                                     </button>
                                     <div className="flex items-center gap-2 lg:gap-3 px-2 border-[2px] border-white rounded py-2">
-                                       <div className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer" onClick={handleToggle}>
-                                          <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${toggled ? 'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
+                                       <div className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer" onClick={() => changeStatus(coupon._id)}>
+                                          <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${coupon.active === 1 ? 'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
                                        </div>
                                     </div>
                                     <button type="button" onClick={() => setIdAndOpenDeletePopup(coupon._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

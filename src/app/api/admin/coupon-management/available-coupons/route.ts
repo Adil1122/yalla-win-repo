@@ -145,7 +145,12 @@ export async function GET(request: Request) {
         var type = searchparams.get('type') + '';
         console.log('type: ' + type)
 
-        var coupons = await Coupon.find({type: type}, {available_type: 'available'}).sort({'date': -1}).skip(skip).limit(limit);
+        var coupons = await Coupon.find({
+            $and: [
+                {type: type}, 
+                {available_type: 'available'}
+            ]
+        }).sort({'date': -1}).skip(skip).limit(limit);
 
         return NextResponse.json({
             messge: "Query successful ....",

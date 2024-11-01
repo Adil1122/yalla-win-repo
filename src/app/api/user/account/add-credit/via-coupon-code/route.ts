@@ -25,6 +25,12 @@ export async function POST(request: NextRequest) {
 
             if(coupon[0].active === 0) {
                 return NextResponse.json({
+                    message: "Coupon is not active ....",
+                }, {status: 500});
+            }
+
+            if(coupon[0].purchased === 1) {
+                return NextResponse.json({
                     message: "Coupon is already purchased ....",
                 }, {status: 500});
             }
@@ -131,6 +137,12 @@ export async function GET(request: NextRequest) {
             var user = await User.findOne({_id: user_id}).select(['_id', 'role'])
 
             if(coupon[0].active === 0) {
+                return NextResponse.json({
+                    message: "Coupon is not active ....",
+                }, {status: 500});
+            }
+
+            if(coupon[0].purchased === 1) {
                 return NextResponse.json({
                     message: "Coupon is already purchased ....",
                 }, {status: 500});
