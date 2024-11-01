@@ -18,6 +18,7 @@ export default function AdminSelectWinners() {
    const [dataset, setDataset] = useState<any>([])
    const [allGames, setAllGames] = useState<any>([])
    const [allProducts, setAllProducts] = useState<any>([])
+   const [totalSalesAmount, setTotalSalesAmount] = useState<number>(0)
    const schedule = 'weekly'
 
    const handleAnnouneWinner = (action: WinnerType) => {
@@ -47,6 +48,7 @@ export default function AdminSelectWinners() {
          } else {
             var data = content.graph_result.data
             setDataset(data)
+            setTotalSalesAmount(content.graph_result.total_sales)
          }
       } catch (error) {
          console.log(error)
@@ -109,7 +111,7 @@ export default function AdminSelectWinners() {
             <div className="flex flex-col gap-3 lg:gap-6 mt-20 lg:mt-36 w-full lg:w-[70%] mx-auto">
                <div className="flex flex-col lg:flex-row lg:gap-2 text-white font-bold text-head-1 lg:text-head-6">
                   <div>Total Sales Amount:</div>
-                  <div>AED 12343</div>
+                  <div>AED {totalSalesAmount}</div>
                </div>
                {dataset && dataset.length && (
                   <div className="bg-light-background-three backdrop-blur-64 w-full lg:px-12 py-6">
