@@ -153,6 +153,10 @@ html,body {
    -webkit-text-fill-color: transparent;
 }
 
+.__PrivateStripeElement { 
+   width: 100%;
+}
+
 .swiper-custom {
    margin-left: auto;
    margin-right: auto;

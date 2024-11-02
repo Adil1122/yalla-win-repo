@@ -298,16 +298,16 @@ const UserAccountAddCredit = () => {
 
                      <div className="flex flex-col gap-6">
                         <div className="w-full">
-                           <CardNumberElement className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
+                           <CardNumberElement className="placeholder-lighttwo text-white bg-transparent flex items-center justify-center border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
                            {/*<input className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" type="text" placeholder="Enter Card Details" />*/}
                         </div>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-4">
                            <div className="flex-1">
-                              <CardCvcElement className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
+                              <CardCvcElement className="placeholder-lighttwo text-white bg-transparent flex items-center justify-center border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
                               {/*<input className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" type="text" placeholder="CVV" />*/}
                            </div>
                            <div className="flex-1">
-                              <CardExpiryElement className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
+                              <CardExpiryElement className="placeholder-lighttwo text-white bg-transparent flex items-center justify-center border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" />
                               {/*<input className="placeholder-lighttwo text-white bg-transparent border-[2px] lg:border-[3px] rounded-lg border-lighttwo h-[45px] lg:h-[55px] focus:outline-none pl-3 w-full" type="text" placeholder="MM/YY" />*/}
                            </div>
                         </div>
