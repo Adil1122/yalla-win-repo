@@ -61,7 +61,7 @@ export default function Map({ lat, lon, zoom, height }: MapProps) {
 
    return (
       <>
-         <Script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChihPjU47wmq2YnGq_jycC-GC_pqzHlKc&callback=initMap" strategy="lazyOnload" />
+         <Script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" strategy="lazyOnload" />
          <div id="map" style={{ width: '100%', height: height }}></div>
       </>
    )
