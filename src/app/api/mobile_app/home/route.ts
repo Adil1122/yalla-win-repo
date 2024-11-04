@@ -157,7 +157,8 @@ export async function GET(request: any) {
                         {game_id: { $ne: null }},
                         {
                             game_id: {
-                                $in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
+                                //$in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
+                                $in : ['Yalla 3', 'Yalla 4', 'Yalla 6'], 
                             }
                         }]
                     }

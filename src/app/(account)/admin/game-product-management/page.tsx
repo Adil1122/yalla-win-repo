@@ -486,6 +486,8 @@ export default function AdminGameProdManagement() {
          current_page = pages.length
       }
       skip = recordsPerPage * (current_page - 1);
+      product_type = activeTabTwo;
+      merchant_app = activeTab;
       getProducts()
       setCurrentPage(current_page);
    }

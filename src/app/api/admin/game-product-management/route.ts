@@ -56,6 +56,7 @@ export async function POST(request: Request) {
                         image: blob ? blob.url : '',
                         category_id: category[0]._id,
                         game_id: game._id,
+                        game_name: game_name,
                         type: type
                     }
                     let product = await Product.create(productNewDocument);
@@ -215,7 +216,8 @@ export async function PUT(request: Request) {
                             status: product_status,
                             date: product_date,
                             image: blob ? blob.url : product.image,
-                            game_id: product.game_id
+                            game_id: product.game_id,
+                            game_name: game_name,
                         }
                         
                     }

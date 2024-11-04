@@ -7,6 +7,7 @@ const productSchema = new Schema (
         image: {type: String, required: false},
         category_id: {type: mongoose.Types.ObjectId, ref: 'Category', required: false},
         game_id: {type: mongoose.Types.ObjectId, ref: 'Game', required: false},
+        game_name: {type: String, required: false},
         prize_id: {type: mongoose.Types.ObjectId, ref: 'Prize', required: false},
         price: {type: Number, required: false},
         vat: {type: String, required: false},
