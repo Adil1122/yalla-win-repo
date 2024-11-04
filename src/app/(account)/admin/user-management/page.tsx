@@ -151,7 +151,7 @@ export default function AdminUserManagement() {
         name: content.result.name,
         residentialAddress: content.result.residentialAddress,
         email: content.result.email,
-        password: content.result.password,
+        password: '',
         country: content.result.country,
         city: content.result.city,
         area: content.result.area,
@@ -238,7 +238,7 @@ export default function AdminUserManagement() {
       is_error = true;
     }
 
-    if (form.password === "") {
+    if (id === '' && form.password === "") {
       err["password_error"] = "password  is Required";
       is_error = true;
     }
@@ -441,6 +441,7 @@ export default function AdminUserManagement() {
        current_page = pages.length
     }
     skip = recordsPerPage * (current_page - 1);
+    schedule = scheduleTab
     getUsers()
     setCurrentPage(current_page);
  }
@@ -690,7 +691,7 @@ export default function AdminUserManagement() {
                       type="button"
                       onClick={handleCommentClick}
                       className="relative text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
-                    >
+                    style={{display: 'none'}}>
                       <span className="absolute -top-4 -right-1 bg-white rounded-full text-darkone font-semibold text-sm w-[20px] flex items-center justify-center h-[20px]">
                         1
                       </span>
@@ -876,7 +877,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="password"
-                  placeholder="12345678"value={form.password}
+                  placeholder=""
                   onChange={(e) => updateForm({ password: e.target.value })} />
                </div>
                {
@@ -891,7 +892,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="text"
-                  placeholder="(96) 27617199"value={form.mobile}
+                  placeholder=""value={form.mobile}
                   onChange={(e) => updateForm({ mobile: e.target.value })} />
                </div>
                {
@@ -906,7 +907,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="text"
-                  placeholder="street address" value={form.residentialAddress}
+                  placeholder="" value={form.residentialAddress}
                   onChange={(e) => updateForm({ residentialAddress: e.target.value })} />
                </div>
                {
@@ -921,7 +922,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="text"
-                  placeholder="Dubai" value={form.city}
+                  placeholder="" value={form.city}
                   onChange={(e) => updateForm({ city: e.target.value })} />
                </div>
                {
@@ -937,7 +938,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="text"
-                  placeholder="United Arab Emirates" value={form.country}
+                  placeholder="" value={form.country}
                   onChange={(e) => updateForm({ country: e.target.value })} />
                </div>
                {
@@ -953,7 +954,7 @@ export default function AdminUserManagement() {
                 <input
                   className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                   type="text"
-                  placeholder="United Arab Emirates" value={form.area}
+                  placeholder="" value={form.area}
                   onChange={(e) => updateForm({ area: e.target.value })} />
                </div>
                {

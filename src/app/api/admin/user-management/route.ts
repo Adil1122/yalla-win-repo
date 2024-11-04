@@ -132,35 +132,45 @@ export async function PUT(request: Request) {
           }
 
           let bcrypt_password = await bcrypt.hash(password, 8);
-          let updates = {
-            $set: {
-                name: name,
-                first_name: first_name,
-                last_name: last_name,
-                residentialAddress:residentialAddress,
-                email: email,
-                password: bcrypt_password,
-                country:country,
-                city:city,
-                area:area,
-                mobile: mobile,
-                active: 1,
-                locked: 0,
-                mac: getMAC(),
-                qr_code: qr_code,
-                image: blob ? blob.url : user.image
-            }
-          };
 
-          const query = { _id: user._id };
-
-          let result = await User.updateOne(query, updates);
-
-          return NextResponse.json({
-            messge: "User updated successfully ....",
-            result: result
-          }, {status: 200});
+          var updateObject: any = {
+            name: name,
+            first_name: first_name,
+            last_name: last_name,
+            residentialAddress:residentialAddress,
+            email: email,
+            country:country,
+            city:city,
+            area:area,
+            mobile: mobile,
+            active: 1,
+            locked: 0,
+            mac: getMAC(),
+            qr_code: qr_code,
+            image: blob ? blob.url : user.image
         }
+
+        if(password !== '') {
+          console.log('password: ', password)
+          updateObject['password'] = bcrypt_password
+          updateObject['password_text'] = password
+        }
+
+        console.log('updateObject: ', updateObject)
+
+        let updates = {
+          $set: updateObject
+        };
+
+        const query = { _id: user._id };
+
+        let result = await User.updateOne(query, updates);
+
+        return NextResponse.json({
+          messge: "User updated successfully ....",
+          result: result
+        }, {status: 200});
+      }
     } catch (err) {
         console.error(err);
         return NextResponse.json({messge: err}, {status: 500});
