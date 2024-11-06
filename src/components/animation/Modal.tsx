@@ -5,7 +5,7 @@ import { useAnimations, useGLTF, useTexture } from "@react-three/drei"
 
 const Modal = forwardRef((props, ref) => {
    const group = useRef<Group>(null)
-   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/" + process.env.NEXT_PUBLIC_ANIMATION_NAME)
+   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/new_06.glb")
    const textures = useTexture([
       "/assets/animations/textures/21.png",
       "/assets/animations/textures/22.png",
@@ -15,12 +15,12 @@ const Modal = forwardRef((props, ref) => {
       "/assets/animations/textures/26.png",
    ])
    const materialNames = [
-      "ball.024",
-      "ball.025",
-      "ball.050",
-      "ball.052",
-      "ball.053",
-      "ball.054",
+      "dummy",
+      "dummy.001",
+      "dummy.002",
+      "dummy.003",
+      "dummy.004",
+      "dummy.005"
    ]
    const { camera } = useThree()
    const [animationFinished, setAnimationFinished] = useState(false)
