@@ -367,7 +367,7 @@ export default function Home() {
 
          {modalIsOpen && (
             <Modal open={true} onClose={() => setModalIsOpen(false)}>
-               <div className="flex flex-col justify-center gap-12 px-12 py-6 w-full lg:min-w-[800px] h-screen">
+               <div className="flex flex-col justify-center gap-12 px-12 w-full lg:min-w-[800px] h-[700px]">
                   <div className="flex items-center justify-between w-full">
                      <div onClick={() => setModalIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] ml-auto rounded-full flex items-center justify-center">
                         <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
