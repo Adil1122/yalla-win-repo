@@ -7,6 +7,7 @@ import GameModel from "@/models/GameModel"
 import ProductModel from "@/models/ProductModel"
 import InvoiceModel from "@/models/InvoiceModel"
 import { faBullseye } from "@fortawesome/free-solid-svg-icons"
+import { match } from "assert"
 
 export async function POST(request: Request) {
 
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
       const pipeline = getPipeline(inputType, inputValue, inputData)
       const records = inputType == 'game' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
       const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount))
-
+      
       if (winners.length) {
          await insertWinners(winners, inputType, dateAnnounced)
       }
@@ -232,26 +233,32 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
                }
             }
          } else if (record.GameDetails.name == 'Yalla 6') {
-            
             const inputDataArray : any = splitIntoSixPairs(inputData)
             const matchingSets = countMatchingSets(record.ticket_splitted, inputDataArray)
             
-            if (matchingSets == 6) {
-               record.winning_price_multiplier = record.RuleDetails.six_numbers_win_price
-               record.winning_match = '6 sets matching'
-               filteredResults.push(record)
-            } else if (matchingSets == 5) {
-               record.winning_price_multiplier = record.RuleDetails.five_numbers_win_price
-               record.winning_match = '5 sets matching'
-               filteredResults.push(record)
-            } else if (matchingSets == 4) {
-               record.winning_price_multiplier = record.RuleDetails.four_numbers_win_price
-               record.winning_match = '4 sets matching'
-               filteredResults.push(record)
-            } else if (matchingSets == 3) {
-               record.winning_price_multiplier = record.RuleDetails.three_numbers_win_price
-               record.winning_match = '3 sets matching'
-               filteredResults.push(record)
+            if (record.ticket_splitted.length == 6) {
+
+               if (matchingSets == 6) {
+                  record.winning_price_multiplier = record.RuleDetails.six_numbers_win_price
+                  record.winning_match = '6 sets matching'
+                  filteredResults.push(record)
+                  break
+               } else if (matchingSets == 5) {
+                  record.winning_price_multiplier = record.RuleDetails.five_numbers_win_price
+                  record.winning_match = '5 sets matching'
+                  filteredResults.push(record)
+                  break
+               } else if (matchingSets == 4) {
+                  record.winning_price_multiplier = record.RuleDetails.four_numbers_win_price
+                  record.winning_match = '4 sets matching'
+                  filteredResults.push(record)
+                  break
+               } else if (matchingSets == 3) {
+                  record.winning_price_multiplier = record.RuleDetails.three_numbers_win_price
+                  record.winning_match = '3 sets matching'
+                  filteredResults.push(record)
+                  break
+               }
             }
          }
       } else if (inputType == 'product') {

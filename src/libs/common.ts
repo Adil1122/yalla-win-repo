@@ -11,7 +11,7 @@ export default function getDaysHoursMinsSecs(date1: any, date2: any) {
     var hours: any = Math.floor((diffInSeconds % 86400) / 3600);
     var days: any = Math.floor(diffInSeconds / 86400);
 
-    console.log(`Difference: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
+    //console.log(`Difference: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
     days = days < 10 ? '0' + days : days;
     hours = hours < 10 ? '0' + hours : hours;
     minutes = minutes < 10 ? '0' + minutes : minutes;

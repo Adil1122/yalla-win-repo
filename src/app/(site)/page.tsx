@@ -15,11 +15,32 @@ const ProductGameCard = lazy(() => import("@/components/product-with-game-card")
 const ProductPrizeCard = lazy(() => import("@/components/product-with-prize-card"));
 const ResultsSection = lazy(() => import("@/components/results-section"));
 //const WinnerCard = lazy(() => import("@/components/winner-card"));
+import Modal from '@/components/modal'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTimes } from "@fortawesome/free-solid-svg-icons"
+import dynamic from "next/dynamic"
 
 export default function Home() {
 
    const swiperMainRef = useRef(null)
    const swiperDrawRef = useRef(null)
+   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+   const Scene = dynamic(() => import("@/components/animation/Scene"), { ssr: false })
+
+   const modelRef = useRef<any>(null)
+   const [textures, setTextures] = useState<any>(null)
+   const playYalla6Animation = (winner: any) => {
+
+      const ticketSplited = winner.winnersWithTickets[0].ticket_splitted
+      const formatedTicketArray = tranformTicketToTextures(ticketSplited)
+
+      setTextures(formatedTicketArray)
+      setModalIsOpen(true)
+   }
+
+   const tranformTicketToTextures = (arr: string[]): string[] => {
+      return arr.map(item => `/assets/animations/textures/${parseInt(item, 10) + 1}.png`);
+   }
 
    const [section, setSection] = useState({
       //upcoming_draws: {},
@@ -33,6 +54,7 @@ export default function Home() {
       yalla_4_top_winner: [],
       yalla_6_top_winner: [],
       home_page_banners: [],
+      game_winners_today: [],
       todayWinners: 0,
       previousWinners: 0
     });
@@ -91,7 +113,7 @@ export default function Home() {
             method: "GET",
             });
             const content = await response.json();
-            console.log(content)
+            //console.log(content)
 
             if(response.ok) {
 
@@ -105,7 +127,7 @@ export default function Home() {
                   productsWithPrize[i]['quantity_to_select'] = 1;
                 }
 
-                console.log('productsWithPrize: ', productsWithPrize)
+                //console.log('productsWithPrize: ', productsWithPrize)
 
                setSection((prev) => {
                   return { ...prev, ...{
@@ -121,10 +143,22 @@ export default function Home() {
                      yalla_6_top_winner: Array.from(content.yalla_6_top_winner),
                      todayWinners: content.todayWinners,
                      previousWinners: content.previousWinners,
-                     home_page_banners: Array.from(content.home_page_banners)
+                     home_page_banners: Array.from(content.home_page_banners),
+                     game_winners_today: Array.from(content.game_winners_today)
                   } };
                 });
                 localStorage.setItem('yalla_search', '')
+
+                const todayWinners = Array.from(content.game_winners_today)
+                if (todayWinners.length) {
+                  console.log(todayWinners)
+
+                  todayWinners.forEach((winner: any) => {
+                     if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
+                        playYalla6Animation(winner)
+                     }
+                  })
+                }
             } else {
                localStorage.setItem('yalla_search', '')
             }
@@ -326,6 +360,21 @@ export default function Home() {
             <img className="absolute -bottom-[8%] left-[60%]" src="/assets/images/star.svg" alt="" />
             <img className="absolute top-[30%] right-[2%]" src="/assets/images/star.svg" alt="" />
          </section>
+
+         {modalIsOpen && (
+            <Modal open={true} onClose={() => setModalIsOpen(false)}>
+               <div className="flex flex-col justify-center gap-12 px-12 py-6 w-full lg:min-w-[800px] h-screen">
+                  <div className="flex items-center justify-between w-full">
+                     <div onClick={() => setModalIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] ml-auto rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
+                     </div>
+                  </div>
+                  <div className="flex flex-col gap-6 h-full flex-grow bg-black">
+                     <Scene modelRef={modelRef} textures={textures} />
+                  </div>
+               </div>
+            </Modal>
+         )}
       </div>
    )
 }

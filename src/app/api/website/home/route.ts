@@ -129,6 +129,78 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(1);
 
+        const game_winners_today = await Winner
+        .aggregate([
+            {
+               $match: {
+                  $and: [
+                        {
+                           $or: [
+                              { game_id: new mongoose.Types.ObjectId("66b7739a5be99f25dc381535") },
+                              { game_id: new mongoose.Types.ObjectId("66b773b15be99f25dc381536") },
+                              { game_id: new mongoose.Types.ObjectId("66b773c55be99f25dc381537") },
+                           ]
+                     },
+                      {
+                          createdAt: {
+                              $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                              $lt: new Date(new Date().setHours(23, 59, 59, 999))
+                          }
+                      }
+                  ]
+              }
+            },
+            {
+                $lookup: {
+                    from: 'games',
+                    localField: "game_id",
+                    foreignField: "_id",
+                    as: "winnersWithGames",
+                }
+            },
+            {
+               $lookup: {
+                   from: 'draws',
+                   localField: "game_id",
+                   foreignField: "game_id",
+                   as: "winnersWithDraws",
+               }
+           },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "winnersWithUsers",
+                }
+            },
+            {
+                $lookup: {
+                    from: 'tickets',
+                    localField: "ticket_id",
+                    foreignField: "_id",
+                    as: "winnersWithTickets",
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "winnersWithProducts",
+                }
+            },
+            {
+               $group: {
+                   _id: "$game_id",
+                   latestWinner: { $last: "$$ROOT" }
+               }
+           },
+           {
+               $replaceRoot: { newRoot: "$latestWinner" }
+           }
+        ]).sort({'winning_date': -1});
+
         const product_winners = await Winner
         .aggregate([
             {
@@ -342,7 +414,8 @@ export async function GET(request: any) {
             previousWinners: previousWinners,
             game_draws: game_draws,
             prize_draws: prize_draws,
-            home_page_banners: home_page_banners
+            home_page_banners: home_page_banners,
+            game_winners_today: game_winners_today,
             }, {status: 200});
 
     } catch (error) {
