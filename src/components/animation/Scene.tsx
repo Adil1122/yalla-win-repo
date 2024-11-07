@@ -23,7 +23,7 @@ export default function Scene({ modelRef, textures }: any) {
    // Start animation once the model is fully loaded
    useEffect(() => {
       if (isModelLoaded) {
-         handleStartAnimation()
+         setTimeout(() => {handleStartAnimation()}, 2000)
       }
    }, [isModelLoaded])
 
