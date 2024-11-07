@@ -14,9 +14,13 @@ export default function Home() {
       }
    }
 
+   const textures = [
+      "/assets/animations/textures/1.png"
+   ]
+
    return (
       <main className="h-full flex-grow flex flex-col bg-black">
-         <Scene modelRef={modelRef} />
+         <Scene modelRef={modelRef} textures={textures} />
          <button onClick={handleStartAnimation} className="my-4 bg-blue-500 text-white rounded w-fit px-6 py-2 mx-auto">
             Start Animation
          </button>

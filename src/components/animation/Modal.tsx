@@ -1,4 +1,4 @@
-import { useEffect, useRef, forwardRef, useImperativeHandle, useState } from "react"
+import { useEffect, useMemo, useRef, forwardRef, useImperativeHandle, useState } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Group, MeshStandardMaterial, LoopOnce, Vector3 } from "three"
 import { useAnimations, useGLTF, useTexture } from "@react-three/drei"
@@ -11,12 +11,19 @@ interface ModalProps {
 const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
    const group = useRef<Group>(null)
    const { nodes, materials, animations, scene } = useGLTF("/assets/animations/new_06.glb")
-   const materialNames = ["dummy", "dummy.001", "dummy.002", "dummy.003", "dummy.004", "dummy.005"]
+   const textures : any = useTexture(texturess)
+   const materialNames = [
+      "dummy",
+      "dummy.001",
+      "dummy.002",
+      "dummy.003",
+      "dummy.004",
+      "dummy.005"
+   ]
    const { camera } = useThree()
    const [animationFinished, setAnimationFinished] = useState(false)
 
    const { actions } = useAnimations(animations, scene)
-   const textures : any = useTexture(texturess)
    const rotationAnim = actions["Cylinder.012Action.001"]
    const ballOutAnimations = [
       { action: actions["ball_out_1"], name: "out_1" },
@@ -29,17 +36,23 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
    const ballAnimations = Array.from({ length: 26 }, (_, i) => actions[`ball.${i}Action`])
    const targetPosition = new Vector3(-2, 0, 1)
 
+   // Expose startAnimation method to parent component
    useImperativeHandle(ref, () => ({
       startAnimation: () => {
-         ballOutAnimations.forEach(({ action }) => {
-            if (action) action.reset().stop()
+
+         ballOutAnimations.forEach(({ action, name }) => {
+            if (action) {
+               action.reset().stop()
+            }
          })
+
          if (rotationAnim) {
             rotationAnim.clampWhenFinished = true
             rotationAnim.setLoop(LoopOnce, 1)
             rotationAnim.reset().play()
             console.log("Wheel animation has started")
          }
+
          ballAnimations.forEach((ballAnim) => {
             if (ballAnim) {
                ballAnim.clampWhenFinished = true
@@ -51,12 +64,17 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
    }))
 
    useEffect(() => {
+
+      console.log(actions)
+      console.log(materials)
+
       materialNames.forEach((materialName, index) => {
          const material = materials[materialName] as MeshStandardMaterial | undefined
-         const texture = textures[index]
+         const texture : any = textures[index]
+   
          if (material && texture) {
-            material.map = texture
-            material.needsUpdate = true
+           material.map = texture
+           material.needsUpdate = true
          }
       })
 
@@ -65,21 +83,28 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
       }
 
       return () => {
-         // Clean up animations
-         rotationAnim?.stop()
-         ballAnimations.forEach((ballAnim) => ballAnim?.stop())
-         ballOutAnimations.forEach(({ action }) => action?.stop())
+         // if (rotationAnim) {
+         //    rotationAnim.stop()
+         // }
 
-         // Dispose of textures
-         textures.forEach((texture: any) => texture.dispose())
-         
-         console.log("Modal resources have been cleaned up")
+         // ballAnimations.forEach((ballAnim) => {
+         //    if (ballAnim) {
+         //       ballAnim.stop()
+         //    }
+         // })
+
+         ballOutAnimations.forEach(({ action, name }) => {
+            if (action) {
+               action.stop()
+               console.log(`Animation '${name}' stopped`)
+            }
+         })
       }
-
    }, [onLoaded, actions, textures, materials])
 
    useFrame(() => {
       if (rotationAnim) {
+         // Check if the animation is near the end of its duration
          if (rotationAnim.getClip().duration - rotationAnim.time < 0.00001) {
             console.log("Wheel animation has ended")
             rotationAnim.stop()
@@ -98,13 +123,14 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
 
       if (animationFinished) {
          const currentPosition = camera.position.clone()
-         currentPosition.lerp(targetPosition, 0.05)
+         currentPosition.lerp(targetPosition, 0.05) // 0.05 is the interpolation factor
          camera.position.copy(currentPosition)
-         camera.lookAt(0, 0, 0)
+         camera.lookAt(0, 0, 0) // Keep the camera focused on the origin (or any target point)
 
+         // Check if camera has reached the target position
          if (camera.position.distanceTo(targetPosition) < 0.01) {
             console.log("Camera has reached the target position")
-            setAnimationFinished(false)
+            setAnimationFinished(false); // Reset the animation finished state if desired
          }
       }
    })

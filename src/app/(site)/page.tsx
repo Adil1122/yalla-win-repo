@@ -28,12 +28,14 @@ export default function Home() {
    const Scene = dynamic(() => import("@/components/animation/Scene"), { ssr: false })
 
    const modelRef = useRef<any>(null)
+   const buttonRef = useRef<any>(null)
    const [textures, setTextures] = useState<any>(null)
-   const playYalla6Animation = (winner: any) => {
 
+   const playYalla6Animation = (winner: any) => {
+      
       const ticketSplited = winner.winnersWithTickets[0].ticket_splitted
       const formatedTicketArray = tranformTicketToTextures(ticketSplited)
-
+      
       setTextures(formatedTicketArray)
       setModalIsOpen(true)
    }
@@ -155,7 +157,9 @@ export default function Home() {
 
                   todayWinners.forEach((winner: any) => {
                      if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
-                        playYalla6Animation(winner)
+                        setTimeout(() => {
+                           playYalla6Animation(winner)
+                        }, 3000)
                      }
                   })
                 }
