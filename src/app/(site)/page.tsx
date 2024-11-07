@@ -159,7 +159,7 @@ export default function Home() {
                      if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
                         setTimeout(() => {
                            playYalla6Animation(winner)
-                        }, 3000)
+                        }, 5000)
                      }
                   })
                 }
