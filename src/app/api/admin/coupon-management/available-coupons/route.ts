@@ -13,6 +13,12 @@ export async function POST(request: Request) {
         var time_only: any = data.get('time_only');
         var date: any = data.get('date');
         var type: any = data.get('type');
+        var alreadyAdded = await Coupon.find({coupon_code: coupon_code}).select(['_id']);
+        if(alreadyAdded && alreadyAdded.length > 0) {
+            return NextResponse.json({
+                messge: "Coupon code already exists ....",
+              }, {status: 500});
+        }
         let newDocument = {
             coupon_code: coupon_code,
             price: price,
@@ -54,6 +60,14 @@ export async function PUT(request: Request) {
         var time_only: any = data.get('time_only');
         var date: any = data.get('date');
         var type: any = data.get('type');
+        
+        var alreadyAdded = await Coupon.find({coupon_code: coupon_code}).select(['_id']);
+        if(alreadyAdded && alreadyAdded.length > 0) {
+            return NextResponse.json({
+                messge: "Coupon code already exists ....",
+              }, {status: 500});
+        }
+
         var couponObj = await Coupon.findOne({_id: id});
         if(couponObj) {
             const query = { _id: couponObj._id };
