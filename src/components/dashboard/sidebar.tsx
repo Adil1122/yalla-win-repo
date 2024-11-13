@@ -205,6 +205,12 @@ export default function DashboardSideBar() {
          menu[index].active = true;
       }
 
+      if(pathname === '/admin/offers') {
+         index = 11;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+
       for (var i = 0; i < adminMenu.length; i++) {
          if(i !== index) {
             menu[i].active = false;
@@ -306,6 +312,7 @@ export default function DashboardSideBar() {
          {name: 'Results', href: '/admin/winners-management/results', active: false},
       ]},
       {name : 'Notifications', active: false, href: '/admin/notifications', icon: 'notif', children: []},
+      {name : 'Offers', active: false, href: '/admin/offers', icon: 'notif', children: []},
    ])
 
    const menu = isAdmin ? adminMenu : (isUser ? userMenu : [])
