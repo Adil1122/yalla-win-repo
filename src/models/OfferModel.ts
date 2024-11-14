@@ -10,8 +10,8 @@ const offerSchema = new Schema (
         qty_multiple: {type: Number, required: false},
         platform_type: {type: String, required: false},
         offer_type: {type: String, required: false},
-        start_date: {type: String, required: false},
-        expiry_date: {type: String, required: false},
+        start_date: {type: Date, required: false},
+        expiry_date: {type: Date, required: false},
         status: {type: String, required: false},
     },
     {

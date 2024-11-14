@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 // @ts-ignore
 import connectMongoDB from "@/libs/mongoosdb";
-import Draw from "@/models/DrawModel";
+//import Draw from "@/models/DrawModel";
 import Offer from "@/models/OfferModel";
 import Game from "@/models/GameModel";
 import Product from "@/models/ProductModel";
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         var offer_type: any = data.get('offer_type');
         var start_date:any = data.get('start_date');
         var expiry_date:any = data.get('expiry_date');
-        var status:any = data.get('status');
+        //var status:any = data.get('status');
 
         if(offer_type === 'games') {
             var game_id:any = data.get('game_id');
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
             offer_type: offer_type,
             start_date: start_date,
             expiry_date: expiry_date,
-            status: status,
+            status: 'active',
             product_id: product_id,
             qty_multiple: qty_multiple
         };
@@ -88,7 +88,7 @@ export async function PUT(request: Request) {
         var offer_type: any = data.get('offer_type');
         var start_date:any = data.get('start_date');
         var expiry_date:any = data.get('expiry_date');
-        var status:any = data.get('status');
+        //var status:any = data.get('status');
 
         if(offer_type === 'games') {
             var game_id:any = data.get('game_id');
@@ -119,7 +119,7 @@ export async function PUT(request: Request) {
             offer_type: offer_type,
             start_date: start_date,
             expiry_date: expiry_date,
-            status: status,
+            status: 'active',
             product_id: product_id,
             qty_multiple: qty_multiple
         }

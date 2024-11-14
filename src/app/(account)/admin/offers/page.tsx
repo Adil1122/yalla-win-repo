@@ -135,8 +135,8 @@ export default function AdminUpDrawsManagement() {
             free_qty: content.record.free_qty,
             platform_type: content.record.platform_type,
             offer_type: content.record.offer_type,
-            start_date: content.record.start_date,
-            expiry_date: content.record.expiry_date,
+            start_date: new Date(content.record.start_date).toISOString().slice(0, 10),
+            expiry_date: new Date(content.record.expiry_date).toISOString().slice(0, 10),
             status: content.record.status,
 
             name_error: "",
@@ -416,8 +416,8 @@ export default function AdminUpDrawsManagement() {
                      records.map((record: any) => (
                      <tr key={record._id}>
                         <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.name}</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.start_date}</td>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.expiry_date}</td>
+                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{new Date(record.start_date).toISOString().slice(0, 10)}</td>
+                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{new Date(record.expiry_date).toISOString().slice(0, 10)}</td>
                         <td>
                            <div className="flex items-center justify-center gap-2">
                               <button type="button" onClick={() => openEditPopup(record._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
