@@ -4,6 +4,7 @@ import User from "@/models/UserModel";
 import Shop from "@/models/ShopModel";
 import Machine from "@/models/MachineModel";
 import { getStartEndDates } from "@/libs/common";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
     try {
@@ -20,10 +21,14 @@ export async function POST(request: Request) {
         var country:any = data.get('country');
         var city:any = data.get('city');
         var area:any = data.get('area');
+        var password:any = data.get('password');
+        let bcrypt_password = await bcrypt.hash(password, 8);
         let newDocument = {
             name: name,
             eid: eid,
             email: email,
+            password: bcrypt_password,
+            password_text: password,
             mobile: mobile,
             shop_id: shop_id,
             machine_id: machine_id,
@@ -34,7 +39,8 @@ export async function POST(request: Request) {
             country: country,
             city: city,
             area: area,
-            user_type: 'merchant'
+            user_type: 'merchant',
+            mac: ""
         }
         //console.log(newDocument)
 
@@ -96,11 +102,15 @@ export async function PUT(request: Request) {
             var country:any = data.get('country');
             var city:any = data.get('city');
             var area:any = data.get('area');
+            var password:any = data.get('password');
+            let bcrypt_password = await bcrypt.hash(password, 8);
             let updates = {
                 $set: {
                     name: name,
                     eid: eid,
                     email: email,
+                    password: bcrypt_password,
+                    password_text: password,
                     mobile: mobile,
                     shop_id: shop_id,
                     machine_id: machine_id,
@@ -111,7 +121,8 @@ export async function PUT(request: Request) {
                     country: country,
                     city: city,
                     area: area,
-                    user_type: 'merchant'
+                    user_type: 'merchant',
+                    mac: ""
                 }
             }
             var result = await User.updateOne({_id: user._id}, updates);

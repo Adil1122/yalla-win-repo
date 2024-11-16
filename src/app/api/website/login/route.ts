@@ -72,6 +72,12 @@ export async function POST(request: any) {
               await User.updateOne(query, updates);
             }
 
+            if(platform === 'mobile' && user.role !== 'merchant') {
+              return NextResponse.json({
+                message: "Only merchant can login via Merchant App.",
+              }, {status: 201});
+            }
+
             const query = { _id: user._id };
             const updates = {
               $set: {
