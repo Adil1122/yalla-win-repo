@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
         let today = new Date().toISOString().slice(0, 10)
         //var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
         //var tomorrow = tomorrowDate.toISOString().slice(0, 10);
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var limit = parseInt(searchparams.get('limit') + '');
+        var skip = parseInt(searchparams.get('skip') + '');
 
         const invoices = await Invoice
               .find(
@@ -24,10 +28,11 @@ export async function GET(request: NextRequest) {
                                     $lt : new Date(today), 
                                     //$lt: new Date(tomorrow)
                                 }
-                            }
+                            },
+                            {cart_product_details: {$ne: null}}
                         ]
                   }
-              ).sort({'createdAt': -1}).limit(100);
+              ).sort({'createdAt': -1}).skip(skip).limit(limit);
 
         
         return NextResponse.json({
@@ -40,5 +45,35 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             message: "query error ....",
           }, {status: 500});
+    }
+}
+
+export async function OPTIONS(request: NextRequest) { 
+    try {
+        await connectMongoDB();
+        let today = new Date().toISOString().slice(0, 10)
+        const invoice_count = await Invoice.find({
+            $and: [
+                {invoice_type: 'prize'},
+                {
+                    createdAt: {
+                        $lt : new Date(today), 
+                        //$lt: new Date(tomorrow)
+                    }
+                },
+                {cart_product_details: {$ne: null}}
+            ]
+        }).countDocuments()
+
+        return NextResponse.json({
+            message: "query successful ....",
+            invoice_count: invoice_count
+            }, {status: 200});
+
+    } catch (error) {
+        return NextResponse.json({
+            message: "query error ....",
+            error: JSON.stringify(error)
+            }, {status: 500}); 
     }
 }

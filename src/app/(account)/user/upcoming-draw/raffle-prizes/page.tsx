@@ -84,7 +84,7 @@ export default function UpcomingRafflePrizes() {
 
    var totalPages = 0;
    var [currentPage, setCurrentPage] = useState(1);
-   var [recordsPerPage, setRecordsPerPages] = useState(2);
+   var [recordsPerPage, setRecordsPerPages] = useState(5);
    totalPages = draw_count;
    var pages = [];
    var show_pages: any = [];
