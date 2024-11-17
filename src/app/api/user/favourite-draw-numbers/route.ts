@@ -7,6 +7,10 @@ export async function GET(request: NextRequest) {
 
     try {
         await connectMongoDB();
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var limit = parseInt(searchparams.get('limit') + '');
+        var skip = parseInt(searchparams.get('skip') + '');
 
         const favourites = await Favourite
               .aggregate([
@@ -26,7 +30,7 @@ export async function GET(request: NextRequest) {
                         as: "drawInFavourite",
                     },
                   }
-              ]).sort({'createdAt': -1}).limit(100);
+              ]).sort({'createdAt': -1}).skip(skip).limit(limit);
 
         
         return NextResponse.json({
@@ -39,5 +43,22 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             message: "query error ....",
           }, {status: 500});
+    }
+}
+
+export async function OPTIONS(request: NextRequest) {
+    try {
+        await connectMongoDB();
+        const favourite_count = await Favourite.find().countDocuments()
+        return NextResponse.json({
+            message: "query successful ....",
+            favourite_count: favourite_count
+            }, {status: 200});
+
+    } catch (error) {
+        return NextResponse.json({
+            message: "query error ....",
+            error: JSON.stringify(error)
+            }, {status: 500});
     }
 }
