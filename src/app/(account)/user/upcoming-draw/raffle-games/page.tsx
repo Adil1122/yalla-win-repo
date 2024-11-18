@@ -35,7 +35,7 @@ export default function UpcomingRaflleGames() {
 
    const getDrawCount = async() => {
       try {
-         let response = await fetch("/api/user/upcoming-game-draws?skip", {
+         let response = await fetch("/api/user/upcoming-game-draws", {
             method: "OPTIONS",
          });
          const content = await response.json();
@@ -54,7 +54,7 @@ export default function UpcomingRaflleGames() {
 
    const getDraws = async() => {
       try {
-         let response = await fetch("/api/user/upcoming-game-draws?skip=" + skip + "&limit=" + recordsPerPage, {
+         let response = await fetch("/api/user/upcoming-game-draws?skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();

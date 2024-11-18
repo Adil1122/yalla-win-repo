@@ -54,7 +54,7 @@ export default function UpcomingRafflePrizes() {
 
    const getDraws = async() => {
       try {
-         let response = await fetch("/api/user/upcoming-prize-draws?skip=" + skip + "&limit=" + recordsPerPage, {
+         let response = await fetch("/api/user/upcoming-prize-draws?skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();

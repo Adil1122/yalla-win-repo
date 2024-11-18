@@ -40,7 +40,7 @@ export default function UserAccountWinningWithdrawGames() {
    const getWinners = async() => {
       try {
          var user = localStorage.getItem('yalla_logged_in_user') !== null ? JSON.parse(localStorage.getItem('yalla_logged_in_user') + '') : '';
-         let response = await fetch("/api/user/account/winning-withdraw/raffle-games?user_id=" + user._id + "&skip=" + skip + "&limit=" + recordsPerPage, {
+         let response = await fetch("/api/user/account/winning-withdraw/raffle-games?user_id=" + user._id + "&skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
          //let response = await fetch("/api/user/account/winning-withdraw/raffle-games?user_id=66c2fe4b6d0491b639435fa0" , {   
             method: "GET",
          });

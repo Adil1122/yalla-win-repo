@@ -4,6 +4,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 import Invoice from "@/models/InvoiceModel";
 import mongoose from "mongoose";
 import Ticket from "@/models/TicketModel";
+import { total_records_limit } from "@/libs/common";
 
 export async function GET(request: NextRequest) {
 
@@ -15,11 +16,14 @@ export async function GET(request: NextRequest) {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var user_id = searchparams.get('user_id') + '';
-        var limit = parseInt(searchparams.get('limit') + '');
-        var skip = parseInt(searchparams.get('skip') + '');
-
-
-        const invoices = await Invoice
+        var platform_type = searchparams.get('platform_type') + '';
+        var limit = total_records_limit;
+        var skip = 0;
+        if(platform_type === 'web') {
+            limit = parseInt(searchparams.get('limit') + '');
+            skip = parseInt(searchparams.get('skip') + '');
+        }
+        var invoices = await Invoice
               .aggregate([
                   {
                       $match: {

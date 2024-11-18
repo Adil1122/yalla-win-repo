@@ -39,7 +39,7 @@ export default function UserTransactionHistory() {
    const getTransactions = async() => {
       try {
          var user = localStorage.getItem('yalla_logged_in_user') !== null ? JSON.parse(localStorage.getItem('yalla_logged_in_user') + '') : '';
-         let response = await fetch("/api/user/account/transaction-history?user_id=" + user._id + "&skip=" + skip + "&limit=" + recordsPerPage, {
+         let response = await fetch("/api/user/account/transaction-history?user_id=" + user._id + "&skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();

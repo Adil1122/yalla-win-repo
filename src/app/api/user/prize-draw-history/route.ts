@@ -5,6 +5,7 @@ import Basket from "@/models/BasketModel";
 import mongoose from "mongoose";
 import Draw from "@/models/DrawModel";
 import Invoice from "@/models/InvoiceModel";
+import { total_records_limit } from "@/libs/common";
 
 export async function GET(request: NextRequest) {
 
@@ -15,8 +16,13 @@ export async function GET(request: NextRequest) {
         //var tomorrow = tomorrowDate.toISOString().slice(0, 10);
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
-        var limit = parseInt(searchparams.get('limit') + '');
-        var skip = parseInt(searchparams.get('skip') + '');
+        var platform_type = searchparams.get('platform_type') + '';
+        var limit = total_records_limit;
+        var skip = 0;
+        if(platform_type === 'web') {
+            limit = parseInt(searchparams.get('limit') + '');
+            skip = parseInt(searchparams.get('skip') + '');
+        }
 
         const invoices = await Invoice
               .find(

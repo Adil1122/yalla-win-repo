@@ -39,7 +39,7 @@ export default function UserDrawHistoryRaffleGame() {
 
    const getInvoices = async() => {
       try {
-         let response = await fetch("/api/user/game-draw-history?skip=" + skip + "&limit=" + recordsPerPage, {
+         let response = await fetch("/api/user/game-draw-history?skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();
