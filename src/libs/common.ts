@@ -125,6 +125,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     var dates: any = getDaysArray(start_date, end_date)
 
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const monthday = ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var data: any = [];
     var orders_data: any = [];
 
@@ -233,9 +234,16 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     } else {
 
         for(var i = 0; i < dates.length; i++) {
-            var day_name: any = i + 1
+            if(schedule === 'monthly') {
+                var day_name: any = i + 1
+            }
+            
             if(schedule === 'weekly') {
                 day_name = weekday[new Date(dates[i]).getDay()].toUpperCase().substring(0, 3)
+            }
+
+            if(schedule === 'till_date') {
+                day_name = monthday[new Date(dates[i]).getMonth()].toUpperCase()//.substring(0, 3)
             }
     
             data.push({

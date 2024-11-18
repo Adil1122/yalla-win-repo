@@ -23,6 +23,11 @@ export async function GET(request: any) {
    const productWeeklyReport = await getReportBySchedule('prize', 'weekly')
    const transformedProductWeeklyReport = transformWeeklyData(productWeeklyReport)
 
+   const tillDateReport = await getReportBySchedule('game', 'till_date')
+   const transformedTillDateReport = transformWeeklyData(tillDateReport)
+   const productTillDateReport = await getReportBySchedule('prize', 'till_date')
+   const transformedProductTillDateReport = transformWeeklyData(productTillDateReport)
+
    try {
       var data =  {
          "status": "success",
@@ -31,7 +36,7 @@ export async function GET(request: any) {
             "daily_product_report": updatedProductDailyReport,
             "weekly_report": transformedWeeklyReport,
             "weekly_product_report": transformedProductWeeklyReport,
-            "sales_till_today": [
+            "sales_till_today": transformedTillDateReport/*[
                {
                      "JAN": 4,
                      "FEB": 10,
@@ -43,7 +48,8 @@ export async function GET(request: any) {
                      "AUG": 11,
                      "SEP": 4
                }
-            ],
+            ]*/,
+            "sales_till_today_product": transformedProductTillDateReport,
             "monthly_report": [
                transformedMonthlyReport
             ],
