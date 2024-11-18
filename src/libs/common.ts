@@ -92,6 +92,10 @@ export function getStartEndDates(schedule: any) {
         start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     }
 
+    if(schedule === 'till_date') {
+        start_date = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    }
+
     return {
         start_date,
         end_date

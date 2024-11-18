@@ -5,7 +5,7 @@ import Basket from "@/models/BasketModel";
 import mongoose from "mongoose";
 import Draw from "@/models/DrawModel";
 import Invoice from "@/models/InvoiceModel";
-import { total_records_limit } from "@/libs/common";
+import { total_records_limit, getStartEndDates } from "@/libs/common";
 
 export async function GET(request: NextRequest) {
 
@@ -39,6 +39,51 @@ export async function GET(request: NextRequest) {
                         ]
                   }
               ).sort({'createdAt': -1}).skip(skip).limit(limit);
+
+        
+        return NextResponse.json({
+            message: "query successful ....",
+            invoices: invoices
+            }, {status: 200});
+        
+
+    } catch(error) {
+        return NextResponse.json({
+            message: "query error ....",
+          }, {status: 500});
+    }
+}
+
+export async function PATCH(request: NextRequest) {
+    try {
+        await connectMongoDB();
+        let today = new Date().toISOString().slice(0, 10)
+        //var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        //var tomorrow = tomorrowDate.toISOString().slice(0, 10);
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var schedule = searchparams.get('schedule') + '';
+        var dates: any = getStartEndDates(schedule)
+        var start_date = dates['start_date']
+        var end_date = dates['end_date']
+
+        console.log(today)
+
+        const invoices = await Invoice
+              .find(
+                  {
+                        $and: [
+                            {invoice_type: 'prize'},
+                            {
+                                createdAt: {
+                                    $gte : new Date(start_date), 
+                                    $lt: new Date(end_date)
+                                }
+                            },
+                            {cart_product_details: {$ne: null}}
+                        ]
+                  }
+              ).sort({'createdAt': -1}).skip(0).limit(total_records_limit);
 
         
         return NextResponse.json({
