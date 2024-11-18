@@ -233,6 +233,14 @@ export async function PATCH(request: NextRequest) {
                     foreignField: "_id",
                     as: "productInBasket",
                 },
+            },
+            {
+                $lookup: {
+                    from: "prizes",
+                    localField: "prize_id",
+                    foreignField: "_id",
+                    as: "prizeInBasket",
+                },
             }
         ]).sort({'createdAt': -1}).limit(100);
         
