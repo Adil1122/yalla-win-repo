@@ -7,6 +7,8 @@ import Invoice from "@/models/InvoiceModel";
 import Ticket from "@/models/TicketModel";
 import Draw from "@/models/DrawModel";
 import User from "@/models/UserModel";
+import Wallet from "@/models/WalletModel";
+import mongoose from "mongoose";
 export async function POST(request: NextRequest) {
 
   try {
@@ -59,6 +61,23 @@ export async function POST(request: NextRequest) {
             }
 
             let ticketResult = await Ticket.insertMany(ticket_details);
+
+            if(user && user.role !== 'merchant') {
+                let query = { user_id: user._id };
+                let walletResult = await Wallet.find(query);
+                const updates = {
+                    $set: {
+                        amount: walletResult[0].amount - total_amount,
+                    },
+                };
+                let walletUpdateResult = await Wallet.updateMany(query, updates);
+                if(!walletUpdateResult) {
+                    return NextResponse.json({
+                        message: "User wallet could not be updated ....",
+                        invoiceResult: invoiceResult
+                    }, {status: 500});
+                }
+            }
 
             return NextResponse.json({
                 message: "query successful ....",

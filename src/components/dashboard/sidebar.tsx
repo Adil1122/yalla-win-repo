@@ -28,12 +28,21 @@ export default function DashboardSideBar() {
          if(isUser) {
             if(user.role === 'merchant') {
                router.push('/');
+            } if(user.role === 'admin') {
+               router.push('/');
             } else {
                setUserMenuSelected()
             }
             
          } else {
-            setAdminMenuSelected()
+
+            if(user.role === 'merchant') {
+               router.push('/');
+            } if(user.role === 'user') {
+               router.push('/');
+            } else {
+               setAdminMenuSelected()
+            }
          } 
       } else {
          router.push('/');

@@ -46,10 +46,16 @@ type InvoiceTab = 'invoice' | 'ticket'
 
    useEffect(() => {
     if(localStorage.getItem("yalla_logged_in_user") !== null) {
-      getUserBasket();
+      var user = JSON.parse(localStorage.getItem("yalla_logged_in_user") + '')
+      if(user.role === 'user') {
+         getUserBasket();
+      } else {
+         router.push('/');
+      }
     } else {
         router.push('login');
     }
+
    }, []);
 
    const getUserBasket = async() => {
