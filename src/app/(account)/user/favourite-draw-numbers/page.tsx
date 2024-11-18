@@ -95,7 +95,7 @@ export default function UserfavDrawNumbers() {
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow py-20 flex flex-col">
          <button type="button" className="flex flex-row items-center gap-3 text-white px-6 lg:px-12 w-fit">
-            <FontAwesomeIcon size="xl" icon={faArrowLeft} />
+            {/*<FontAwesomeIcon size="xl" icon={faArrowLeft} />*/}
             <div className="font-bold text-head-2 lg:text-head-4">Favourite Draw Numbers</div>
          </button>
          <div className="flex flex-col flex-grow w-screen w-full lg:w-auto overflow-x-auto px-6 lg:px-12 mt-8 lg:mt-12">
