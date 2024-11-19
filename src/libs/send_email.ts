@@ -4,8 +4,8 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   // credentials for live
   service: "gmail",
-  //port: 587,
-  //secure: false, // Use `true` for port 465, `false` for all other ports
+  port: 465,
+  secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
     user: 'khansahib7090@gmail.com',
     pass: 'kfun qbaa mwpi slno',
@@ -27,7 +27,7 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   const info = await transporter.sendMail({
     from: {
         name: "Muhammad Adil",
-        address: 'adil7090@gmail.com'
+        address: 'khansahib7090@gmail.com'
     }, // sender address
     to: [to], // list of receivers
     subject: subject, // Subject line
