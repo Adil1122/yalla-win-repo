@@ -26,7 +26,7 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   console.log(process.env.APP_EMAIL)
   const info = await transporter.sendMail({
     from: {
-        name: "Muhammad Adil",
+        name: "Yalla Win",
         address: 'khansahib7090@gmail.com'
     }, // sender address
     to: [to], // list of receivers
