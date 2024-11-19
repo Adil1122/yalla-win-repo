@@ -27,7 +27,7 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   const info = await transporter.sendMail({
     from: {
         name: "Muhammad Adil",
-        address: process.env.APP_EMAIL
+        address: 'adil7090@gmail.com'
     }, // sender address
     to: [to], // list of receivers
     subject: subject, // Subject line
