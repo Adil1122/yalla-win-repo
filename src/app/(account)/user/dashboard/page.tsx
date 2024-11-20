@@ -124,7 +124,7 @@ export default function UserDashboard() {
             <div className="bg-white rounded-lg flex flex-col items-center justify-center py-12 px-6">
                <div className="flex items-center gap-2">
                   <div className="text-darkone text-head-3 lg:text-head-5 whitespace-nowrap">Current Balance:</div>
-                  <div className="font-semibold text-darkone text-head-3 lg:text-head-8 text-themeone whitespace-nowrap">AED {wallet.amount}</div>
+                  <div className="font-semibold text-darkone text-head-3 lg:text-head-8 text-themeone whitespace-nowrap">AED {parseFloat(wallet.amount + '').toFixed(2)}</div>
                </div>
                <div className="flex items-center font-light text-darkone extra-small:text-size-2 extra-small:whitespace-nowrap text-size-3 gap-2">
                   <div>Last Update:</div>

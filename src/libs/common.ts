@@ -124,6 +124,10 @@ export function getStartEndDates(schedule: any) {
         start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     }
 
+    if(schedule === 'till_date') {
+        start_date = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    }
+
     return {
         start_date,
         end_date
@@ -153,6 +157,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     var dates: any = getDaysArray(start_date, end_date)
 
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const monthday = ["Jan","Feb","Mar","Apr","May","Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var data: any = [];
     var orders_data: any = [];
 
@@ -261,9 +266,16 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     } else {
 
         for(var i = 0; i < dates.length; i++) {
-            var day_name: any = i + 1
+            if(schedule === 'monthly') {
+                var day_name: any = i + 1
+            }
+            
             if(schedule === 'weekly') {
                 day_name = weekday[new Date(dates[i]).getDay()].toUpperCase().substring(0, 3)
+            }
+
+            if(schedule === 'till_date') {
+                day_name = monthday[new Date(dates[i]).getMonth()].toUpperCase()//.substring(0, 3)
             }
     
             data.push({
@@ -306,5 +318,7 @@ const getDaysArray = function(start: any, end: any) {
 function getTime(date: any) {
     return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
 }
+
+export var total_records_limit = 1000
 
 

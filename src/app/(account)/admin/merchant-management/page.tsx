@@ -58,6 +58,7 @@ export default function AdminMerchantManagement() {
        method: 'DELETE',
     });
     var content = await response.json();
+    schedule = scheduleTab
     setId('');
     setModalTwoIsOpen(false)
 
@@ -102,6 +103,7 @@ export default function AdminMerchantManagement() {
     eid: "",
     mobile: "",
     email: "",
+    password: "",
     shop_id: "",
     profit_percentage: "",
     machine_id: "",
@@ -114,6 +116,7 @@ export default function AdminMerchantManagement() {
     eid_error: "",
     mobile_error: "",
     email_error: "",
+    password_error: "",
     shop_id_error: "",
     profit_percentage_error: "",
     machine_id_error: "",
@@ -131,6 +134,7 @@ export default function AdminMerchantManagement() {
       eid: "",
       mobile: "",
       email: "",
+      password: "",
       shop_id: "",
       profit_percentage: "",
       machine_id: "",
@@ -142,6 +146,7 @@ export default function AdminMerchantManagement() {
       name_error: "",
       eid_error: "",
       mobile_error: "",
+      password_error: "",
       email_error: "",
       shop_id_error: "",
       profit_percentage_error: "",
@@ -168,10 +173,12 @@ export default function AdminMerchantManagement() {
     if (!response.ok) {
     } else {
       setForm({
+
         name: content.result.name,
         eid: content.result.eid,
         mobile: content.result.mobile,
         email: content.result.email,
+        password: content.result.password_text,
         shop_id: content.result.shop_id,
         profit_percentage: content.result.profit_percentage,
         machine_id: content.result.machine_id,
@@ -183,6 +190,7 @@ export default function AdminMerchantManagement() {
         name_error: "",
         eid_error: "",
         mobile_error: "",
+        password_error: "",
         email_error: "",
         shop_id_error: "",
         profit_percentage_error: "",
@@ -211,6 +219,7 @@ export default function AdminMerchantManagement() {
       eid_error: "",
       mobile_error: "",
       email_error: "",
+      password_error: "",
       shop_id_error: "",
       profit_percentage_error: "",
       machine_id_error: "",
@@ -233,11 +242,16 @@ export default function AdminMerchantManagement() {
     }
 
     if (form.mobile === "") {
-      err["mobile_error"] = "Phone Number  is Required";
+      err["mobile_error"] = "Phone Number is Required";
       is_error = true;
     }
     if (form.email === "") {
-      err["email_error"] = "Email   is Required";
+      err["email_error"] = "Email is Required";
+      is_error = true;
+    }
+
+    if (id === '' && form.password === "") {
+      err["password_error"] = "Password is Required";
       is_error = true;
     }
 
@@ -294,6 +308,7 @@ export default function AdminMerchantManagement() {
       formData.append("country", form.country);
       formData.append("city", form.city);
       formData.append("area", form.area);
+      formData.append("password", form.password);
 
       var url = "/api/admin/merchant-management";
       var method = "POST";
@@ -324,6 +339,7 @@ export default function AdminMerchantManagement() {
           });
           setModalIsOpen(false);
         }
+        schedule = scheduleTab
         getMerchantCounts()
       } catch (error) {
         setForm((prev) => {
@@ -853,6 +869,24 @@ export default function AdminMerchantManagement() {
                   <span style={{ color: "red" }}>{form.email_error}</span>
                 )}
               </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="text-darkone text-size-4">Password</div>
+                <div className="text-darkone text-size-2 border border-lightone rounded">
+                  <input
+                    className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
+                    type="password"
+                    placeholder=""
+                    value={form.password}
+                    onChange={(e) => updateForm({ password: e.target.value })}
+                  />
+                </div>
+
+                {form.password_error !== "" && (
+                  <span style={{ color: "red" }}>{form.password_error}</span>
+                )}
+              </div>
+
               <div className="flex flex-col gap-4">
                 <div className="text-darkone text-size-4">Choose Shop</div>
                 <div className="text-darkone text-size-2 border border-lightone rounded">

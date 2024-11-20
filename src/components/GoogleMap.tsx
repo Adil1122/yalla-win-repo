@@ -42,14 +42,18 @@ export default function Map({ lat, lon, zoom, height }: MapProps) {
             ]
          }
 
-         const mapElement = document.getElementById('map');
-         const map = new google.maps.Map(mapElement!, mapOptions)
 
-         new google.maps.Marker({
-         position: new google.maps.LatLng(lat, lon),
-         map: map,
-         title: 'Yalla Draw'
-         })
+         const mapElement: any = document.getElementById('map');
+         if(mapElement) {
+            const map = new google.maps.Map(mapElement!, mapOptions)
+
+            new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lon),
+            map: map,
+            title: 'Yalla Draw'
+            })
+         }
+         
       }
 
       if (window.google) {

@@ -1,6 +1,7 @@
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { MouseEventHandler } from 'react'
+import { formatDate } from '@/libs/common'
 
 interface CartItemProps {
    item_id: string;
@@ -29,7 +30,7 @@ interface CartItemProps {
                   </div>
                   <div className="flex flex-row gap-1 lg:gap-2">
                      <div>Date:</div>
-                     <div>{item_date}</div>
+                     <div>{formatDate(item_date)}</div>
                   </div>
                   <div className="flex flex-row items-center gap-6 mt-4 lg:mt-8">
                      <div>Quantity</div>

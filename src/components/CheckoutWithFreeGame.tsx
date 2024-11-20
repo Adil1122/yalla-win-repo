@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import TicketCard from "@/components/ticket-card";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
+import { useRouter } from 'next/navigation';
+import { formatDate } from '@/libs/common'
 
 type InvoiceTab = 'invoice' | 'ticket';
 
@@ -44,15 +46,26 @@ interface CheckoutWithFreeGameProps {
    var [tickets, setTickets] = useState([])
 
    var [quantity, setQuantity] = useState(1);
+   var [qty_multiple, setQtyMultiple] = useState(1);
    var [step, setStep] = useState(1);
    var [game_name, setGameName] = useState('');
    var [game_id, setGameId] = useState('');
    var [total_amount, setTotalAmount] = useState(0);
    var [server_error, setServerError] = useState('');
+   const router = useRouter();
 
 
    useEffect(() => {
-      getPageContents();
+      if(localStorage.getItem("yalla_logged_in_user") !== null) {
+         var user = JSON.parse(localStorage.getItem("yalla_logged_in_user") + '')
+         if(user.role === 'user') {
+            getPageContents();
+         } else {
+            router.push('/');
+         }
+       } else {
+           router.push('login');
+       }
    }, []);
 
    const resetValues = () => {
@@ -162,7 +175,7 @@ interface CheckoutWithFreeGameProps {
                      //alert(content.message)
                      //setStep(3);
                      var ticket_details:any = [];
-                     for (var i = 1; i <= quantity; i++) {
+                     for (var i = 1; i <= quantity*qty_multiple; i++) {
                         var localStorageDetails = JSON.parse(localStorage.getItem('ticket_number_' + i) + '');
                         var ticket_type = localStorage.getItem('game_type_' + i);
                         var ticket_detail = {
@@ -267,6 +280,7 @@ interface CheckoutWithFreeGameProps {
                setGameName(content.result[0].productWithGame[0].name);
                setGameId(content.result[0].productWithGame[0]._id);
                setTotalAmount(content.result[0].price * game_product_quantity);
+               setQtyMultiple(content.offer && content.offer.length > 0 ? content.offer[0].qty_multiple : 1)
                setProduct((prev) => {
                   return {...prev, ...content.result[0]};
                 });
@@ -281,7 +295,7 @@ interface CheckoutWithFreeGameProps {
    }
 
    const ticket_rows = [];
-   for (let i = 0; i < quantity; i++) {
+   for (let i = 0; i < quantity*qty_multiple; i++) {
       ticket_rows.push(
          <TicketCard key={i} gameName={game_name} productPrice={product.price} quantity={quantity} s_no={i+1} />
       );
@@ -431,7 +445,7 @@ interface CheckoutWithFreeGameProps {
                            </div>
                            <div className="flex justify-between">
                               <div>Order Date</div>
-                              <div>{invoice.invoice_date}{/*28 July, 2024 8:22 PM*/}</div>
+                              <div>{formatDate(invoice.invoice_date)}{/*28 July, 2024 8:22 PM*/}</div>
                            </div>
                            <div className="flex justify-between">
                               <div>Order Status</div>
@@ -482,7 +496,7 @@ interface CheckoutWithFreeGameProps {
                               </div>
                               <div className="flex justify-between">
                                  <div>Order Date</div>
-                                 <div>{invoice.invoice_date}{/*28 July, 2024 8:22 PM*/}</div>
+                                 <div>{formatDate(invoice.invoice_date)}{/*28 July, 2024 8:22 PM*/}</div>
                               </div>
                               <div className="flex justify-between">
                                  <div>Order Status</div>

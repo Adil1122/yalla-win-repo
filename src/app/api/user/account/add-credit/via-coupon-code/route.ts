@@ -238,7 +238,16 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     try {
         await connectMongoDB();
-        var activeCoupons = await Coupon.find({active: 1});
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var type = searchparams.get('type') + '';
+
+        var activeCoupons = await Coupon.find({
+            $and: [
+                {active: 1},
+                {type: type}
+            ]
+        });
         return NextResponse.json({
             message: "Query successful ....",
             activeCoupons: activeCoupons

@@ -3,13 +3,16 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import getDaysHoursMinsSecs, {formatISODate} from '@/libs/common'
+import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default function UpcomingRafflePrizes() {
    const [draws, setDraws] = useState([]);
    const [timers, setTimers] = useState<any>([]);
+   var [time_interval, setTimeInterval] = useState(0)
 
    useEffect(() => {
-      getDraws();
+      //getDraws();
+      getDrawCount()
    }, []);
 
    const setTimings = (draws: any) => {
@@ -27,9 +30,31 @@ export default function UpcomingRafflePrizes() {
       setTimers(temp_timers);
    }
 
-   const getDraws = async() => {
+   var skip = 0
+   var [draw_count, setDrawCount] = useState(0);
+
+   const getDrawCount = async() => {
       try {
          let response = await fetch("/api/user/upcoming-prize-draws", {
+            method: "OPTIONS",
+         });
+         const content = await response.json();
+         //console.log(content)
+
+         if(!response.ok) {
+
+         } else {
+            setDrawCount(content.draw_count)
+            getDraws()
+         }
+      } catch (error) {
+         
+      }
+   }
+
+   const getDraws = async() => {
+      try {
+         let response = await fetch("/api/user/upcoming-prize-draws?skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();
@@ -43,8 +68,11 @@ export default function UpcomingRafflePrizes() {
          if(!response.ok) {
 
          } else {
-            //setDraws(content.draws);
-            const interval = setInterval(() => setTimings(temp), 1000)
+            if(time_interval !== 0) {
+               clearInterval(time_interval)
+            }
+            const interval: any = setInterval(() => setTimings(temp), 1000)
+            setTimeInterval(interval)
             return () => {
                clearInterval(interval);
             }
@@ -53,10 +81,38 @@ export default function UpcomingRafflePrizes() {
          
       }
    }
+
+   var totalPages = 0;
+   var [currentPage, setCurrentPage] = useState(1);
+   var [recordsPerPage, setRecordsPerPages] = useState(5);
+   totalPages = draw_count;
+   var pages = [];
+   var show_pages: any = [];
+   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
+      pages.push(i);
+      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
+         show_pages.push(i);
+      }
+   }
+   console.log('pages: ', pages)
+
+   function setPagination(current_page: any) {
+      if(current_page < 1) {
+         current_page = 1;
+      }
+
+      if(current_page > pages.length) {
+         current_page = pages.length
+      }
+      skip = recordsPerPage * (current_page - 1);
+      getDraws()
+      setCurrentPage(current_page);
+   }
+
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow py-20 flex flex-col">
          <button type="button" className="flex flex-row items-center gap-3 text-white px-6 lg:px-12 w-fit">
-            <FontAwesomeIcon size="xl" icon={faArrowLeft} />
+            {/*<FontAwesomeIcon size="xl" icon={faArrowLeft} />*/}
             <div className="font-bold text-head-2 lg:text-head-4">Raffle Prize</div>
          </button>
          <div className="w-screen w-full lg:w-auto overflow-x-auto px-6 lg:px-12 mt-8 lg:mt-12">
@@ -64,7 +120,7 @@ export default function UpcomingRafflePrizes() {
                <thead>
                   <tr className="bg-white">
                      <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-left text-darkone rounded-tl rounded-bl">Draw #</th>
-                     <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product Name</th>
+                     <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product Namejjj</th>
                      <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product Image</th> 
                      <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Draw Date</th>
                      <th scope="col" className="px-4 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Timer</th>
@@ -111,6 +167,35 @@ export default function UpcomingRafflePrizes() {
                </tbody>
             </table>
          </div>
+
+         <div className="font-poppins-medium mt-12 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
+
+            {
+               pages.length > 0 &&
+               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
+                  <FontAwesomeIcon size="1x" icon={faChevronLeft} />
+               </div>
+            }
+
+            {
+               pages.map((page: any) => (
+                  show_pages.includes(page) && (
+                     page === currentPage ?
+                     <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                     :
+                     <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                  ) 
+            ))}
+
+            {
+               pages.length > 0 &&
+               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
+                  <FontAwesomeIcon size="1x" icon={faChevronRight} />
+               </div>
+            }
+
+         </div>
+
       </section>
    )
 }

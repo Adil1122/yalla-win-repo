@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { faChevronLeft, faChevronRight, faCommentAlt, faEye, faImage, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
+import Notification from "@/components/notificationWidget"
 
 type Tab = 'shop' | 'app' | 'website'
 
@@ -182,12 +183,15 @@ export default function AdminAvailableCoupons() {
                body: formData
             });
 
+            var content = await response.json()
+            console.log('cont: ', content)
+
             setId('');
             setModalIsOpen(false)
 
             if (!response.ok) {
                setForm((prev) => {
-                  return { ...prev, server_error: `HTTP error! status: ${response.status}` };
+                  return { ...prev, server_error: `HTTP error! status: ${content.messge}` };
                });
             } else {
                setForm((prev) => {
@@ -560,6 +564,15 @@ export default function AdminAvailableCoupons() {
                </div>
             </div>
          </Modal>
+         {
+            form.server_error !== "" &&
+            <Notification
+               message="Server Error"
+               description={form.server_error}
+               type="error"
+               close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}}
+            />
+         }
       </section>
    )
 }

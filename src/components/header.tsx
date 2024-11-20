@@ -95,16 +95,16 @@ export default function Header() {
          var time_diff = getDaysHoursMinsSecs(new Date(user.loginTime), new Date())
          if(parseFloat(time_diff.days) > 0 || parseFloat(time_diff.hours) >= 5) {
             logout()
-         }
-
-         if(user.role === 'admin') {
-            setDashboardUrl('/admin/dashboard');
-         } else if(user.role === 'user') {
-            setDashboardUrl('/user/dashboard');
          } else {
-            router.push('/');
+            if(user.role === 'admin') {
+               setDashboardUrl('/admin/dashboard');
+            } else if(user.role === 'user') {
+               setDashboardUrl('/user/dashboard');
+            } else {
+               router.push('/');
+            }
+            setLoggedIn(true)
          }
-         setLoggedIn(true)
       } 
    }, [loggedIn]);
 

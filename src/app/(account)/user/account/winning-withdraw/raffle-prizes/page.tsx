@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { formatISODate } from '@/libs/common'
+import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default function UserAccountWinningWithdrawPrizes() {
 
@@ -20,13 +21,38 @@ export default function UserAccountWinningWithdrawPrizes() {
 
    const [winners, setWinners] = useState([]);
    useEffect(() => {
-      getWinners();
+      //getWinners();
+      getWinnerCount()
    }, []);
+
+   var skip = 0
+   var [winner_count, setWinnerCount] = useState(0);
+
+   const getWinnerCount = async() => {
+      try {
+         var user = localStorage.getItem('yalla_logged_in_user') !== null ? JSON.parse(localStorage.getItem('yalla_logged_in_user') + '') : '';
+         let response = await fetch("/api/user/account/winning-withdraw/raffle-prizes?user_id=" + user._id, {
+            method: "OPTIONS",
+         });
+         const content = await response.json();
+         //console.log(content)
+
+         if(!response.ok) {
+
+         } else {
+            setWinnerCount(content.winner_count)
+            console.log('content.winner_count: ', content.winner_count)
+            getWinners()
+         }
+      } catch (error) {
+         
+      }
+   }
 
    const getWinners = async() => {
       try {
          var user = localStorage.getItem('yalla_logged_in_user') !== null ? JSON.parse(localStorage.getItem('yalla_logged_in_user') + '') : '';
-         let response = await fetch("/api/user/account/winning-withdraw/raffle-prizes?user_id=" + user._id , {
+         let response = await fetch("/api/user/account/winning-withdraw/raffle-prizes?user_id=" + user._id + "&skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web" , {
          //let response = await fetch("/api/user/account/winning-withdraw/raffle-games?user_id=66c2fe4b6d0491b639435fa0" , {   
             method: "GET",
          });
@@ -51,10 +77,37 @@ export default function UserAccountWinningWithdrawPrizes() {
       }
    }
 
+   var totalPages = 0;
+   var [currentPage, setCurrentPage] = useState(1);
+   var [recordsPerPage, setRecordsPerPages] = useState(5);
+   totalPages = winner_count;
+   var pages = [];
+   var show_pages: any = [];
+   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
+      pages.push(i);
+      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
+         show_pages.push(i);
+      }
+   }
+   console.log('pages: ', pages)
+
+   function setPagination(current_page: any) {
+      if(current_page < 1) {
+         current_page = 1;
+      }
+
+      if(current_page > pages.length) {
+         current_page = pages.length
+      }
+      skip = recordsPerPage * (current_page - 1);
+      getWinners()
+      setCurrentPage(current_page);
+   }
+
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow py-20 flex flex-col">
          <button type="button" className="flex flex-row items-center gap-3 text-white px-6 lg:px-12 w-fit">
-            <FontAwesomeIcon size="xl" icon={faArrowLeft} />
+            {/*<FontAwesomeIcon size="xl" icon={faArrowLeft} />*/}
             <div className="font-bold text-head-2 lg:text-head-4">Winning/Withdraw</div>
          </button>
          <div className="w-screen w-full lg:w-auto overflow-x-auto px-6 lg:px-12 mt-8 lg:mt-12">
@@ -95,6 +148,36 @@ export default function UserAccountWinningWithdrawPrizes() {
                </tbody>
             </table>
          </div>
+
+         <div className="font-poppins-medium mt-12 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
+
+            {
+               pages.length > 0 &&
+               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
+                  <FontAwesomeIcon size="1x" icon={faChevronLeft} />
+               </div>
+            }
+
+            {
+               pages.map((page: any) => (
+                  show_pages.includes(page) && (
+                     page === currentPage ?
+                     <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                     :
+                     <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
+                  ) 
+            ))}
+
+            {
+               pages.length > 0 &&
+               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
+                  <FontAwesomeIcon size="1x" icon={faChevronRight} />
+               </div>
+            }
+
+         </div>
+
+
          <Modal open={modalIsOpen} onClose={closeModal}>
             <div className="flex flex-col items-center justify-center gap-3 px-12 py-6">
                <div onClick={closeModal} className="ml-auto cursor-pointer">

@@ -3,21 +3,21 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   // credentials for live
-  /*host: "smtp.gmail.email",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  service: "gmail",
+  //port: 465,
+  //secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: process.env.APP_EMAIL,
-    pass: process.env.APP_PASSWORD,
-  },*/
+    user: 'khansahib7090@gmail.com',
+    pass: 'kfun qbaa mwpi slno',
+  },
 
   // credentials for local
-  host: 'smtp.ethereal.email',
+  /*host: 'smtp.ethereal.email',
     port: 587,
     auth: {
         user: 'clifton58@ethereal.email',
         pass: 'EX2QxYNT5gBRgwrbRQ'
-    }
+    }*/
 });
 
 // async..await is not allowed in global scope, must use a wrapper
@@ -26,8 +26,8 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   console.log(process.env.APP_EMAIL)
   const info = await transporter.sendMail({
     from: {
-        name: "Muhammad Adil",
-        address: process.env.APP_EMAIL
+        name: "Yalla Win",
+        address: 'khansahib7090@gmail.com'
     }, // sender address
     to: [to], // list of receivers
     subject: subject, // Subject line

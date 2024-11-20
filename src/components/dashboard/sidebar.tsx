@@ -28,12 +28,21 @@ export default function DashboardSideBar() {
          if(isUser) {
             if(user.role === 'merchant') {
                router.push('/');
+            } if(user.role === 'admin') {
+               router.push('/');
             } else {
                setUserMenuSelected()
             }
             
          } else {
-            setAdminMenuSelected()
+
+            if(user.role === 'merchant') {
+               router.push('/');
+            } if(user.role === 'user') {
+               router.push('/');
+            } else {
+               setAdminMenuSelected()
+            }
          } 
       } else {
          router.push('/');
@@ -205,6 +214,12 @@ export default function DashboardSideBar() {
          menu[index].active = true;
       }
 
+      if(pathname === '/admin/offers') {
+         index = 11;
+         sub_index = 0;
+         menu[index].active = true;
+      }
+
       for (var i = 0; i < adminMenu.length; i++) {
          if(i !== index) {
             menu[i].active = false;
@@ -306,6 +321,7 @@ export default function DashboardSideBar() {
          {name: 'Results', href: '/admin/winners-management/results', active: false},
       ]},
       {name : 'Notifications', active: false, href: '/admin/notifications', icon: 'notif', children: []},
+      {name : 'Offers', active: false, href: '/admin/offers', icon: 'notif', children: []},
    ])
 
    const menu = isAdmin ? adminMenu : (isUser ? userMenu : [])
@@ -325,7 +341,7 @@ export default function DashboardSideBar() {
    return (
       <div className="flex flex-col flex-grow h-full max-h-screen overflow-y-auto">
          <div className="flex items-center justify-center my-5 lg:my-9">
-            <img className="max-h-[80px] lg:max-h-auto" src="/assets/images/logo.svg" alt="" />   
+            <Link href="/"><img className="max-h-[80px] lg:max-h-auto" src="/assets/images/logo.svg" alt="" /></Link>
          </div>
          <div className="flex flex-col">
             

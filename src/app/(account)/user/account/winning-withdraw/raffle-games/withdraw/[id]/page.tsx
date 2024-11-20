@@ -81,7 +81,7 @@ export default function UserAccountWithdraw({ params } : {params: { id: string; 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow gap-6 lg:gap-12 lg:px-12 py-12 lg:py-20 flex flex-col">
          <button type="button" className="flex flex-row items-center gap-3 text-white w-fit px-6">
-            <FontAwesomeIcon size="xl" icon={faArrowLeft} />
+            {/*<FontAwesomeIcon size="xl" icon={faArrowLeft} />*/}
             <div className="font-bold text-head-2 lg:text-head-4">Withdraw</div>
          </button>
 
