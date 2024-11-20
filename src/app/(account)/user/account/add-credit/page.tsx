@@ -53,7 +53,7 @@ const UserAccountAddCredit = () => {
     }, [])
 
     const getActiveCoupons = async () => {
-         const response = await fetch('/api/user/account/add-credit/via-coupon-code', {
+         const response = await fetch('/api/user/account/add-credit/via-coupon-code?type=website', {
             method: 'PATCH',
          });
          const content = await response.json();
@@ -356,6 +356,7 @@ const UserAccountAddCredit = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {
                            activeCoupons.map((coupon: any) => (
+                              coupon.purchased === 0 &&
                               <div key={coupon._id} className="border-[2px] lg:border-[3px] border-white rounded-lg flex flex-col gap-2 lg:gap-4">
                                  <div className="flex flex-col text-white px-6 py-4 gap-1 lg:gap-3">
                                     <div className="font-semibold text-head-2 lg:text-head-4">{coupon.price} AED</div>
@@ -374,16 +375,37 @@ const UserAccountAddCredit = () => {
                                        </div>
                                     </div>
                                  </div>
-                                 {
-                                    coupon.purchased === 0 &&
-                                    <button className="text-themetwo font-bold text-head-2 lg:text-head-4 text-center py-2 lg:py-3 bg-white" data-quantity={coupon.quantity_to_select} data-coupon-id={coupon._id} data-coupon-code={coupon.coupon_code} onClick={(e) => buyCoupon(e)}>Buy Now</button>
-                                 }
+                                 <button className="text-themetwo font-bold text-head-2 lg:text-head-4 text-center py-2 lg:py-3 bg-white" data-quantity={coupon.quantity_to_select} data-coupon-id={coupon._id} data-coupon-code={coupon.coupon_code} onClick={(e) => buyCoupon(e)}>Buy Now</button>
                               </div>
                            ))
                         }
 
                      </div>
                   </div>
+
+                  <div className="flex flex-col gap-6 lg:gap-8 mt-6 bg-light-background-two backdrop-blur-64 lg:bg-transparent px-6 lg:py-0 py-6">
+                     <h2 className="text-white font-bold text-size-4 lg:text-head-4">Already Purchased Coupons</h2>
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {
+                           activeCoupons.map((coupon: any) => (
+                              coupon.purchased === 1 &&
+                              <div key={coupon._id} className="border-[2px] lg:border-[3px] border-white rounded-lg flex flex-col gap-2 lg:gap-4">
+                                 <div className="flex flex-col text-white px-6 py-4 gap-1 lg:gap-3">
+                                    <div className="font-semibold text-head-2 lg:text-head-4">{coupon.price} AED</div>
+                                    <div className="font-semibold text-head-2 lg:text-head-4">{coupon.coupon_code}</div>
+                                    <div className="text-head-1 lg:text-head-3">{coupon.date}</div>
+                                    <div className="flex items-center justify-between">
+                                       
+                                    </div>
+                                 </div>
+                                 
+                              </div>
+                           ))
+                        }
+
+                     </div>
+                  </div>
+
                </div>
             </>
          )}
