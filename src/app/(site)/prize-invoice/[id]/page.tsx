@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
+import { formatDate } from '@/libs/common'
 
 type InvoiceTab = 'invoice' | 'ticket'
  const Cart = ({ params } : {params: { id: string; }}) => {
@@ -82,7 +83,7 @@ type InvoiceTab = 'invoice' | 'ticket'
 
                            <div>Order Date: {
                                  invoice.length > 0 && 
-                                 invoice[0].invoice_date
+                                 formatDate(invoice[0].invoice_date)
                               }
                            </div>
 
@@ -179,7 +180,7 @@ type InvoiceTab = 'invoice' | 'ticket'
                                  <div>
                                     {
                                        invoice.length > 0 && 
-                                       invoice[0].createdAt
+                                       formatDate(invoice[0].createdAt)
                                     }
                                  </div>
                               </div>

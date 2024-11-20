@@ -5,6 +5,7 @@ import TicketCard from "@/components/ticket-card";
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
 import { useRouter } from 'next/navigation';
+import { formatDate } from '@/libs/common'
 
 type InvoiceTab = 'invoice' | 'ticket';
 
@@ -444,7 +445,7 @@ interface CheckoutWithFreeGameProps {
                            </div>
                            <div className="flex justify-between">
                               <div>Order Date</div>
-                              <div>{invoice.invoice_date}{/*28 July, 2024 8:22 PM*/}</div>
+                              <div>{formatDate(invoice.invoice_date)}{/*28 July, 2024 8:22 PM*/}</div>
                            </div>
                            <div className="flex justify-between">
                               <div>Order Status</div>
@@ -495,7 +496,7 @@ interface CheckoutWithFreeGameProps {
                               </div>
                               <div className="flex justify-between">
                                  <div>Order Date</div>
-                                 <div>{invoice.invoice_date}{/*28 July, 2024 8:22 PM*/}</div>
+                                 <div>{formatDate(invoice.invoice_date)}{/*28 July, 2024 8:22 PM*/}</div>
                               </div>
                               <div className="flex justify-between">
                                  <div>Order Status</div>

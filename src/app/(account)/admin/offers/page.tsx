@@ -390,7 +390,7 @@ export default function AdminUpDrawsManagement() {
             </div>
             <div className="flex items-center w-full gap-12 text-white font-bold text-size-4 mt-12">
                <div className={`cursor-pointer ${activeTabTwo === 'games' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('games')}>Games</div>
-               <div className={`cursor-pointer ${activeTabTwo === 'products' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('products')}>Raffle Products</div>
+               <div className={`cursor-pointer ${activeTabTwo === 'products' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('products')} style={{display: 'none'}}>Raffle Products</div>
             </div>
             <div className="flex flex-col mt-6">
 

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { faChevronLeft, faChevronRight, faCommentAlt, faEye, faImage, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
+import { formatDate } from '@/libs/common'
 
 type Tab = 'app-web' | 'merchant'
 type TabTwo = 'games' | 'products'
@@ -584,7 +585,7 @@ export default function AdminGameProdManagement() {
                               </td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {product.price}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.status}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.date}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(product.date)}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                     <button type="button" onClick={() => openEditPopup(product._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">

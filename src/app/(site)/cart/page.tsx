@@ -5,6 +5,7 @@ import CartItem from "@/components/cart-item";
 import { useRouter } from 'next/navigation';
 import QRCode from "react-qr-code";
 import { useReactToPrint } from 'react-to-print';
+import { formatDate } from '@/libs/common'
 
 type InvoiceTab = 'invoice' | 'ticket'
  const Cart = () => {
@@ -267,7 +268,7 @@ type InvoiceTab = 'invoice' | 'ticket'
                            <div>Payment Detail</div>
                            <div>Billed to: {invoice.user_name}</div>
                            <div>Order Number: {invoice.invoice_number}</div>
-                           <div>Order Date: {invoice.invoice_date}</div>
+                           <div>Order Date: {formatDate(invoice.invoice_date)}</div>
                            <div>Total Amount: {total_amount} AED</div>
                         </div>
                         <div className="bg-custom-purple text-black text-sm lg:text-size-3 font-light py-2 lg:py-4 mt-4">
@@ -332,7 +333,7 @@ type InvoiceTab = 'invoice' | 'ticket'
                               </div>
                               <div className="flex justify-between">
                                  <div>Order Date</div>
-                                 <div>{invoice.invoice_date}</div>
+                                 <div>{formatDate(invoice.invoice_date)}</div>
                               </div>
                               {/*<div className="flex justify-between">
                                  <div>Raffle Draw Price</div>

@@ -341,7 +341,7 @@ export default function DashboardSideBar() {
    return (
       <div className="flex flex-col flex-grow h-full max-h-screen overflow-y-auto">
          <div className="flex items-center justify-center my-5 lg:my-9">
-            <img className="max-h-[80px] lg:max-h-auto" src="/assets/images/logo.svg" alt="" />   
+            <Link href="/"><img className="max-h-[80px] lg:max-h-auto" src="/assets/images/logo.svg" alt="" /></Link>
          </div>
          <div className="flex flex-col">
             
