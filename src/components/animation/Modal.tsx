@@ -5,34 +5,85 @@ import { useAnimations, useGLTF, useTexture } from "@react-three/drei"
 
 interface ModalProps {
    onLoaded: () => void
+   onEnded: () => void
    texturess: any
+   animationType: any
 }
 
-const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
+const Modal = forwardRef(({ onLoaded, onEnded, texturess, animationType }: ModalProps, ref) => {
    const group = useRef<Group>(null)
-   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/new_06.glb")
+   const { nodes, materials, animations, scene } = useGLTF("/assets/animations/"+animationType+".glb")
    const textures : any = useTexture(texturess)
-   const materialNames = [
-      "dummy",
-      "dummy.001",
-      "dummy.002",
-      "dummy.003",
-      "dummy.004",
-      "dummy.005"
-   ]
+   const [ballOutAnimations, setBallOutAnimations] = useState<any>([])
+
+   useEffect(() => {
+
+      let materialNames : string[]
+
+      if (animationType == 'yalla_6') {
+         materialNames = [
+            "dummy.012",
+            "dummy.013",
+            "dummy.014",
+            "dummy.015",
+            "dummy.016",
+            "dummy.017"
+         ]
+
+         setBallOutAnimations([
+            { action: actions["ball_out_1"], name: "out_1" },
+            { action: actions["ball_out_2"], name: "out_2" },
+            { action: actions["ball_out_3"], name: "out_3" },
+            { action: actions["ball_out_4"], name: "out_4" },
+            { action: actions["ball_out_5"], name: "out_5" },
+            { action: actions["ball_out_6"], name: "out_6" },
+         ])
+      } else if (animationType == 'yalla_4') {
+         materialNames = [
+            "dummy.012",
+            "dummy.013",
+            "dummy.014",
+            "dummy.015"
+         ]
+
+         setBallOutAnimations([
+            { action: actions["ball_out_1"], name: "out_1" },
+            { action: actions["ball_out_2"], name: "out_2" },
+            { action: actions["ball_out_3"], name: "out_3" },
+            { action: actions["ball_out_4"], name: "out_4" }
+         ])
+      } else if (animationType == 'yalla_3') {
+         materialNames = [
+            "dummy.012",
+            "dummy.013",
+            "dummy.014"
+         ]
+
+         setBallOutAnimations([
+            { action: actions["ball_out_1"], name: "out_1" },
+            { action: actions["ball_out_2"], name: "out_2" },
+            { action: actions["ball_out_3"], name: "out_3" }
+         ])
+      } else {
+         materialNames = []
+      }
+
+      materialNames.forEach((materialName : string, index: number) => {
+         const material = materials[materialName] as MeshStandardMaterial | undefined
+         const texture : any = textures[index]
+   
+         if (material && texture) {
+           material.map = texture
+           material.needsUpdate = true
+         }
+      })
+   }, [])
+
    const { camera } = useThree()
    const [animationFinished, setAnimationFinished] = useState(false)
 
    const { actions } = useAnimations(animations, scene)
    const rotationAnim = actions["Cylinder.012Action.001"]
-   const ballOutAnimations = [
-      { action: actions["ball_out_1"], name: "out_1" },
-      { action: actions["ball_out_2"], name: "out_2" },
-      { action: actions["ball_out_3"], name: "out_3" },
-      { action: actions["ball_out_4"], name: "out_4" },
-      { action: actions["ball_out_5"], name: "out_5" },
-      { action: actions["ball_out_6"], name: "out_6" },
-   ]
    const ballAnimations = Array.from({ length: 26 }, (_, i) => actions[`ball.${i}Action`])
    const targetPosition = new Vector3(-2, 0, 1)
 
@@ -40,7 +91,7 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
    useImperativeHandle(ref, () => ({
       startAnimation: () => {
 
-         ballOutAnimations.forEach(({ action, name }) => {
+         ballOutAnimations.forEach(({ action, name } : any) => {
             if (action) {
                action.reset().stop()
             }
@@ -68,16 +119,6 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
       console.log(actions)
       console.log(materials)
 
-      materialNames.forEach((materialName, index) => {
-         const material = materials[materialName] as MeshStandardMaterial | undefined
-         const texture : any = textures[index]
-   
-         if (material && texture) {
-           material.map = texture
-           material.needsUpdate = true
-         }
-      })
-
       if (onLoaded) {
          onLoaded()
       }
@@ -93,14 +134,14 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
          //    }
          // })
 
-         ballOutAnimations.forEach(({ action, name }) => {
+         ballOutAnimations.forEach(({ action, name }: any) => {
             if (action) {
                action.stop()
                console.log(`Animation '${name}' stopped`)
             }
          })
       }
-   }, [onLoaded, actions, textures, materials])
+   }, [actions, textures, materials])
 
    useFrame(() => {
       if (rotationAnim) {
@@ -110,7 +151,7 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
             rotationAnim.stop()
 
             setAnimationFinished(true)
-            ballOutAnimations.forEach(({ action, name }) => {
+            ballOutAnimations.forEach(({ action, name }: any) => {
                if (action) {
                   action.clampWhenFinished = true
                   action.setLoop(LoopOnce, 1)
@@ -123,14 +164,14 @@ const Modal = forwardRef(({ onLoaded, texturess }: ModalProps, ref) => {
 
       if (animationFinished) {
          const currentPosition = camera.position.clone()
-         currentPosition.lerp(targetPosition, 0.05) // 0.05 is the interpolation factor
+         currentPosition.lerp(targetPosition, 0.05)
          camera.position.copy(currentPosition)
-         camera.lookAt(0, 0, 0) // Keep the camera focused on the origin (or any target point)
+         camera.lookAt(0, 0, 0)
 
-         // Check if camera has reached the target position
          if (camera.position.distanceTo(targetPosition) < 0.01) {
             console.log("Camera has reached the target position")
-            setAnimationFinished(false); // Reset the animation finished state if desired
+            onEnded()
+            setAnimationFinished(false)
          }
       }
    })

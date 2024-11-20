@@ -14,35 +14,52 @@ import AccountCard from "@/components/account-card"
 const ProductGameCard = lazy(() => import("@/components/product-with-game-card"));
 const ProductPrizeCard = lazy(() => import("@/components/product-with-prize-card"));
 const ResultsSection = lazy(() => import("@/components/results-section"));
-//const WinnerCard = lazy(() => import("@/components/winner-card"));
 import Modal from '@/components/modal'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import dynamic from "next/dynamic"
 
 export default function Home() {
 
    const swiperMainRef = useRef(null)
    const swiperDrawRef = useRef(null)
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
-   const Scene = dynamic(() => import("@/components/animation/Scene"), { ssr: false })
+   const [animationFile, setAnimationFile] = useState<string>('')
+   const [iframeSrc, setIframeSrc] = useState<string>('')
 
-   const modelRef = useRef<any>(null)
-   const buttonRef = useRef<any>(null)
-   const [textures, setTextures] = useState<any>(null)
-
-   const playYalla6Animation = (winner: any) => {
+   const checkAnimationTime = (winner: any, game: string) => {
       
-      const ticketSplited = winner.winnersWithTickets[0].ticket_splitted
-      const formatedTicketArray = tranformTicketToTextures(ticketSplited)
-      
-      setTextures(formatedTicketArray)
-      setModalIsOpen(true)
+      if (game == '3') {
+         const now = new Date()
+         if (now.getHours() === 17 && now.getMinutes() === 58) {
+            setAnimationFile(winner.animation_video)
+         }
+      } else if (game == '4') {
+         const now = new Date()
+         if (now.getHours() === 17 && now.getMinutes() === 0) {
+            setAnimationFile(winner.animation_video)
+         }
+      } else if (game == '6') {
+         const now = new Date()
+         if (now.getHours() === 18 && now.getMinutes() === 2) {
+            setAnimationFile(winner.animation_video)
+         }
+      }
    }
 
-   const tranformTicketToTextures = (arr: string[]): string[] => {
-      return arr.map(item => `/assets/animations/textures/${parseInt(item, 10) + 1}.png`);
-   }
+   useEffect(() => {
+      if (modalIsOpen && animationFile && animationFile != '') {
+         
+         setIframeSrc(`https://drive.google.com/file/d/${animationFile}/preview`)
+      }
+   }, [modalIsOpen])
+
+   useEffect(() => {
+
+      if (animationFile) {
+
+         setModalIsOpen(true)
+      }
+   }, [animationFile])
 
    const [section, setSection] = useState({
       //upcoming_draws: {},
@@ -62,7 +79,7 @@ export default function Home() {
     });
 
     var [start, setStart] = useState(0);
-   
+
    useEffect(() => {
 
       if (swiperMainRef.current) {
@@ -153,13 +170,21 @@ export default function Home() {
 
                 const todayWinners = Array.from(content.game_winners_today)
                 if (todayWinners.length) {
-                  console.log(todayWinners)
 
                   todayWinners.forEach((winner: any) => {
-                     if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
-                        setTimeout(() => {
-                           playYalla6Animation(winner)
-                        }, 5000)
+                     
+                     if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 3') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '3')
+                        }, 60000)
+                     } else if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 4') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '4')
+                        }, 60000)
+                     } else if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '6')
+                        }, 60000)
                      }
                   })
                 }
@@ -374,7 +399,7 @@ export default function Home() {
                      </div>
                   </div>
                   <div className="flex flex-col gap-6 h-full flex-grow bg-black">
-                     <Scene modelRef={modelRef} textures={textures} />
+                     <iframe width="100%" height="100%" frameBorder="0" allow="autoplay" title="Video" className="w-full h-full" src={iframeSrc}></iframe>
                   </div>
                </div>
             </Modal>

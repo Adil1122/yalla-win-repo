@@ -134,21 +134,24 @@ export async function GET(request: any) {
             {
                $match: {
                   $and: [
-                        {
-                           $or: [
-                              { game_id: new mongoose.Types.ObjectId("66b7739a5be99f25dc381535") },
-                              { game_id: new mongoose.Types.ObjectId("66b773b15be99f25dc381536") },
-                              { game_id: new mongoose.Types.ObjectId("66b773c55be99f25dc381537") },
-                           ]
+                     {
+                        $or: [
+                           { game_id: new mongoose.Types.ObjectId("66b7739a5be99f25dc381535") },
+                           { game_id: new mongoose.Types.ObjectId("66b773b15be99f25dc381536") },
+                           { game_id: new mongoose.Types.ObjectId("66b773c55be99f25dc381537") },
+                        ]
                      },
-                      {
-                          createdAt: {
-                              $gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                              $lt: new Date(new Date().setHours(23, 59, 59, 999))
-                          }
-                      }
+                     {
+                        createdAt: {
+                           $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                           $lt: new Date(new Date().setHours(23, 59, 59, 999))
+                        }
+                     },
+                     {
+                        animation_video: { $ne: null }
+                     }
                   ]
-              }
+               }
             },
             {
                 $lookup: {

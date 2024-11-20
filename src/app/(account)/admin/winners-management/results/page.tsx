@@ -1,25 +1,28 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { faArrowLeft, faChevronDown, faChevronLeft, faChevronRight, faPencil, faSearch, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { SwitchComponent } from '@/components/SwitchComponent'
-import { get } from 'http'
+import { formatDate, formatDateOnly, formatISODate } from '@/libs/common'
+import { useRouter } from 'next/navigation'
 
-type Tab = 'results' | 'images'
+type Tab = 'results' | 'images' | 'videos'
 type TabTwo = 'app' | 'shop' | 'web'
 
 export default function AdminWinnerResults() {
 
    const [activeTabTwo, setActiveTabTwo] = useState<Tab>('results')
    const [gameWinners, setGameWinners] = useState<any>([])
+   const [ticketNumber, setTicketNumber] = useState<any>()
+   const [videoWinner, setVideoWinner] = useState<any>()
+   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [productWinners, setProductWinners] = useState<any>([])
    const [winnerImages, setWinnerImages] = useState<any>([])
    const [toggleApp, setToggledApp] = useState<boolean>(false)
    const [toggleShop, setToggledShop] = useState<boolean>(false)
    const [toggleWeb, setToggledWeb] = useState<boolean>(false)
+   const router = useRouter()
    
    const handleTabTwoChange = (tab: Tab) => {
       setActiveTabTwo(tab)
@@ -100,6 +103,31 @@ export default function AdminWinnerResults() {
       }
    }
 
+   const handleCreateAnimation = (winner: any) => {
+      setVideoWinner(winner)
+      setModalIsOpen(true)
+   }
+
+   const handleCreateVideoSubmit = () => {
+
+      if (videoWinner && ticketNumber) {
+         if (videoWinner.GameDetails.name == 'Yalla 3' && ticketNumber.length != 3) {
+            alert('For Yalla 3 the ticket number must contain exactly 3 digits between 1 and 8')
+            return
+         } else if (videoWinner.GameDetails.name == 'Yalla 4' && ticketNumber.length != 4) {
+            alert('For Yalla 3 the ticket number must contain exactly 4 digits between 1 and 8')
+            return
+         } else if (videoWinner.GameDetails.name == 'Yalla 6' && ticketNumber.length != 12) {
+            alert('For Yalla 6 the ticket number must contain exactly 12 digits between 1 and 25')
+            return  
+         }
+
+         router.push(`/admin/winners-management/results/animation/${ticketNumber}/${videoWinner._id}`)
+      } else {
+         alert('Make sure the ticket number is valid')
+      }
+   }
+
    useEffect(() => {
 
       getTotalRecords()
@@ -113,6 +141,7 @@ export default function AdminWinnerResults() {
                <div className="flex items-center w-full gap-12 text-white text-size-4">
                   <div className={`cursor-pointer ${activeTabTwo === 'results' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('results')}>Results</div>
                   <div className={`cursor-pointer ${activeTabTwo === 'images' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('images')}>Images</div>
+                  <div className={`cursor-pointer ${activeTabTwo === 'videos' ? 'underline' : ''}`} onClick={() => handleTabTwoChange('videos')}>Videos</div>
                </div>
                <div className="flex items-center gap-12">
                   <div className="flex items-center gap-2 ml-auto">
@@ -189,8 +218,82 @@ export default function AdminWinnerResults() {
                   </div>
                )}
                
+               {activeTabTwo == 'videos' && (
+                  <div className="flex flex-col mt-1 px-12">
+                     <>
+                        <table className="w-full">
+                           <thead>
+                              <tr className="bg-white">
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Game Name</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Ticket Number</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Winning Amount</th>
+                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Winning Date</th>
+                                 <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Video</th>
+                              </tr>
+                           </thead>
+                           <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
+                              {gameWinners.map((winner: any, index: number) => (
+                              <tr key={index}>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.GameDetails.name}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails.ticket_number}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.prize_amount}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(winner.createdAt)).fomattedDate}</td>
+                                 <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                                    {winner.animation_video && (
+                                       <button className="bg-gradient-to-r from-themeone to-themetwo text-white rounded px-4 py-2 mx-auto flex gap-2 items-center">
+                                          <FontAwesomeIcon size="lg" icon={faPlay} />
+                                          <div className="text-white">Play Video</div>
+                                       </button>
+                                    )}
+                                    {!winner.animation_video && (
+                                       <button onClick={() => {handleCreateAnimation(winner)}} className="bg-themeone text-white rounded px-4 py-2 mx-auto flex gap-2 items-center">
+                                          <div className="text-white">Create Video</div>
+                                       </button>
+                                    )}
+                                 </td>
+                              </tr>
+                              ))}
+                           </tbody>
+                        </table>
+                     </>
+                  </div>
+               )}
             </div>
          </div>
+
+         <Modal open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+            <div className="flex flex-col justify-center gap-12 px-12 w-full lg:min-w-[800px]">
+               <div className="flex items-center justify-between w-full">
+                  <div className="text-darkone text-head-2">Create / Upload Winner Video</div>
+                  <div onClick={() => setModalIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] rounded-full flex items-center justify-center">
+                     <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
+                  </div>
+               </div>
+               <div className="flex flex-col gap-3 flex-grow">
+                  <div className="flex flex-row items-center gap-4">
+                     <div className="text-darkone text-size-4">Game Name: </div>
+                     <div className="text-darkone text-size-4">{videoWinner?.GameDetails.name}</div>
+                  </div>
+                  <div className="flex flex-row gap-4">
+                     <div className="text-darkone text-size-4">Announcement Date: </div>
+                     <div className="text-darkone text-size-4">{formatDateOnly(videoWinner?.createdAt)}</div>
+                  </div>
+                  <div className="flex flex-row gap-4">
+                     <div className="text-darkone text-size-4">Winning Amount: </div>
+                     <div className="text-darkone text-size-4">{videoWinner?.prize_amount}</div>
+                  </div>
+                  <div className="flex flex-col gap-4 my-6">
+                     <div className="text-darkone text-size-2 border border-lightone rounded">
+                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" placeholder="Enter Your Ticket Number" onChange={(e) => setTicketNumber(e.target.value)} />
+                     </div>
+                  </div>
+                  <div className="flex items-center ml-auto gap-6">
+                     <button onClick={() => setModalIsOpen(false)} className="text-lightfive text-head-1 font-medium text-center px-6 py-3 bg-white border border-lightfive w-fit rounded">Cancel</button>
+                     <button onClick={handleCreateVideoSubmit} className="text-white text-head-1 font-medium text-center px-8 py-3 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">Create</button>
+                  </div>
+               </div>
+            </div>
+         </Modal>
       </section>
    )
 }

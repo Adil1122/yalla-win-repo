@@ -20,7 +20,7 @@ export default function Home() {
 
    return (
       <main className="h-full flex-grow flex flex-col bg-black">
-         <Scene modelRef={modelRef} textures={textures} />
+         <Scene modelRef={modelRef} textures={textures} animationType="yalla_6" />
          <button onClick={handleStartAnimation} className="my-4 bg-blue-500 text-white rounded w-fit px-6 py-2 mx-auto">
             Start Animation
          </button>

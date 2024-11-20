@@ -40,6 +40,38 @@ export function formatDate(dateString: string): string {
    return formattedDate.replace(',', ''); // Remove the comma for formatting
 }
 
+export function getCurrentDateTime(timeZone: string): string {
+   const now = new Date();
+    
+   const formatter = new Intl.DateTimeFormat('en-GB', {
+      timeZone: timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+   });
+
+   const formatted = formatter.format(now);
+
+   const [date, time] = formatted.split(', ');
+   const [day, month, year] = date.split('/');
+
+   return `${year}-${month}-${day} ${time}`;
+}
+
+export function formatDateOnly(dateString: string): string {
+   const date = new Date(dateString);
+ 
+   const year = date.getFullYear();
+   const month = String(date.getMonth() + 1).padStart(2, '0');
+   const day = String(date.getDate()).padStart(2, '0');
+ 
+   return `${day}-${month}-${year}`;
+}
+
 export function formatISODate(date: any) {
     //const date = new Date(isoString);
 

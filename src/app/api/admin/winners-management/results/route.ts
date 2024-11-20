@@ -108,11 +108,15 @@ const getPipeline = (type: string) => {
          {
             $project: {
                _id: 1,
+               animation_video: 1,
+               createdAt: 1,
+               prize_amount: 1,
                "GameDetails.name": 1,
                "UserDetails.first_name": 1,
                "UserDetails.last_name": 1,
                "UserDetails.image": 1,
-               "TicketDetails.ticket_number": 1
+               "TicketDetails.ticket_number": 1,
+               "TicketDetails.ticket_splitted": 1
             }
          }
       ]
@@ -169,6 +173,7 @@ const getPipeline = (type: string) => {
          {
             $project: {
                _id: 1,
+               prize_amount: 1,
                "ProductDetails.name": 1,
                "PrizeDetails.name": 1,
                "UserDetails.first_name": 1,

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
       const pipeline = getPipeline(inputType, inputValue, inputData)
       const records = inputType == 'game' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
-      const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount))
+      const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount), dateAnnounced)
       
       if (winners.length) {
          await insertWinners(winners, inputType, dateAnnounced)
@@ -110,6 +110,7 @@ const getPipeline = (inputType: string, inputValue: string, inputData: string) =
                ticket_number: 1,
                ticket_type: 1,
                ticket_splitted: 1,
+               createdAt: 1,
                "InvoiceDetails.game_id": 1,
                "InvoiceDetails.user_id": 1,
                "InvoiceDetails.product_id": 1,
@@ -170,7 +171,18 @@ const getPipeline = (inputType: string, inputValue: string, inputData: string) =
    return result
 }
 
-const getWinners = async (records: any, inputType: string, inputValue: string, inputData: string, maxWinAmount: number) => {
+const isGivenDateWinner = (dateString: string, givenDate: string) => {
+   const recordDate = new Date(dateString)
+   const comparisonDate = new Date(givenDate)
+
+   return (
+      recordDate.getUTCFullYear() === comparisonDate.getUTCFullYear() &&
+      recordDate.getUTCMonth() === comparisonDate.getUTCMonth() &&
+      recordDate.getUTCDate() === comparisonDate.getUTCDate()
+   )
+}
+
+const getWinners = async (records: any, inputType: string, inputValue: string, inputData: string, maxWinAmount: number, dateAnnounced: string) => {
 
    let filteredResults: any = []
 
@@ -179,7 +191,11 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
       if (inputType == 'game') {
 
          // todo: Games names should be dynamic
-         
+
+         if (!isGivenDateWinner(record.createdAt, dateAnnounced)) {
+            continue
+         }
+
          if (record.GameDetails.name == 'Yalla 3' || record.GameDetails.name == 'Yalla 4') {
 
             if (record.ticket_type == 'Straight' && record.ticket_number == inputData) {
@@ -189,6 +205,8 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
 
                   filteredResults.push(record)
                   record.winning_price_multiplier = record.RuleDetails.option_straight_win_price
+
+                  console.log(record._id, record.createdAt)
                }
             } else if (record.ticket_type == 'Rumble') {
                const combinations = getCombinations(record.ticket_number)

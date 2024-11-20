@@ -15,7 +15,8 @@ const winnerSchema = new Schema (
         winning_date: {type: Date, required: false},
         prize_amount: {type: Number, required: false},
         amount_withdrawn: {type: Number, required: false},
-        platform_type: { type: String, default: 'web', required: false }
+        platform_type: { type: String, default: 'web', required: false },
+        animation_video: { type: String, required: false },
     },
     {
         timestamps: true
