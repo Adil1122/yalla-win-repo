@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
          return NextResponse.json({ message: 'Winner not found' }, { status: 404 })
       }
 
-      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string)
-         const auth = new google.auth.GoogleAuth({
+      const credentials = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string, 'base64').toString('utf8'))
+      const auth = new google.auth.GoogleAuth({
          credentials,
          scopes: ['https://www.googleapis.com/auth/drive.file'],
       })
