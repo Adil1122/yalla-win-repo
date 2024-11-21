@@ -30,17 +30,17 @@ export default function Home() {
       
       if (game == '3') {
          const now = new Date()
-         if (now.getHours() === 17 && now.getMinutes() === 10) {
+         if (now.getHours() === 22 && now.getMinutes() === 0) {
             setAnimationFile(winner.animation_video)
          }
       } else if (game == '4') {
          const now = new Date()
-         if (now.getHours() === 17 && now.getMinutes() === 15) {
+         if (now.getHours() === 22 && now.getMinutes() === 5) {
             setAnimationFile(winner.animation_video)
          }
       } else if (game == '6') {
          const now = new Date()
-         if (now.getHours() === 17 && now.getMinutes() === 20) {
+         if (now.getHours() === 22 && now.getMinutes() === 10) {
             setAnimationFile(winner.animation_video)
          }
       }
