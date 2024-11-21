@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
             name: `${winnerId}.webm`,
             parents: [process.env.GOOGLE_DRIVE_FOLDER_ID as string],
          },
+         fields: 'id',
       })
 
       const document = {
