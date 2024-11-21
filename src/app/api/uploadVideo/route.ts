@@ -64,6 +64,6 @@ export async function POST(req: NextRequest) {
       // return NextResponse.json({ message: 'Video uploaded successfully', fileId: '' }, { status: 200 })
    } catch (err: any) {
       console.error('Error uploading to Google Drive:', err)
-      return NextResponse.json({ message: 'Error uploading video', error: credentials }, { status: 500 })
+      return NextResponse.json({ message: 'Error uploading video', error: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string }, { status: 500 })
    }
 }
