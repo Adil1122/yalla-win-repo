@@ -5,14 +5,6 @@ import path from 'path'
 import { Readable } from 'stream'
 import WinnerModel from '@/models/WinnerModel'
 
-export const config = {
-   api: {
-      bodyParser: {
-         sizeLimit: '25mb',
-      },
-   },
-}
-
 export async function POST(req: NextRequest) {
    const formData = await req.formData();
    const file = formData.get('file');
