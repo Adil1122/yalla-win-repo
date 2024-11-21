@@ -20,15 +20,22 @@ export async function POST(req: NextRequest) {
 
    const arrayBuffer = await file.arrayBuffer()
    const uint8Array = new Uint8Array(arrayBuffer)
+   const base64String = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string;
 
    try {
+
+      if (!base64String) {
+         throw new Error('Environment variable GOOGLE_APPLICATION_CREDENTIALS_JSON is not set.')
+      }
 
       const winner = await WinnerModel.findById(winnerId)
       if (!winner) {
          return NextResponse.json({ message: 'Winner not found' }, { status: 404 })
       }
 
-      const credentials = JSON.parse(Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string, 'base64').toString('utf8'))
+      const decoded = Buffer.from(base64String, 'base64').toString('utf8')
+      const credentials = JSON.parse(decoded)
+      
       const auth = new google.auth.GoogleAuth({
          credentials,
          scopes: ['https://www.googleapis.com/auth/drive.file'],
