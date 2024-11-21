@@ -23,18 +23,14 @@ export async function POST(req: NextRequest) {
 
    try {
 
-      const credentialsPath = process.env.GOOGLE_CREDENTIALS_PATH
-      if (!credentialsPath) {
-         return NextResponse.json({ message: 'Google credentials path is not defined' }, { status: 500 })
-      }
-
       const winner = await WinnerModel.findById(winnerId)
       if (!winner) {
          return NextResponse.json({ message: 'Winner not found' }, { status: 404 })
       }
 
-      const auth = new google.auth.GoogleAuth({
-         keyFile: path.join(process.cwd(), credentialsPath),
+      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON as string)
+         const auth = new google.auth.GoogleAuth({
+         credentials,
          scopes: ['https://www.googleapis.com/auth/drive.file'],
       })
 
