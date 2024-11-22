@@ -95,7 +95,7 @@ export default function AdminWinnerVideo() {
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
          {winner && !isUploading && (
-            <div className="flex flex-col gap-6 h-full flex-grow bg-black">
+            <div className="flex flex-col gap-6 max-h-[600px] max-w-[800px] h-full flex-grow bg-black">
                <Scene modelRef={modelRef} textures={textures} animationType="yalla_6" onAnimationEnd={handleAnimationEnd} />
             </div>
          )}

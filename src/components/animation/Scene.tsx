@@ -43,7 +43,7 @@ export default function Scene({ modelRef, textures, animationType, onAnimationEn
       const canvasElement = canvasRef.current
 
       if (canvasElement) {
-         const stream = canvasElement.captureStream(25)
+         const stream = canvasElement.captureStream(15)
          streamRef.current = stream
 
          if (videoRef.current) {
