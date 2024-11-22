@@ -173,6 +173,9 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
             }
          },
          {
+            $sort: { createdAt: -1 }
+         },
+         {
             $project: {
                _id: 1,
                ticket_number: 1,
@@ -214,6 +217,9 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                ...(search && search != 'null' && search != '' ? { "invoice_number": search } : {}),
                ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
             }
+         },
+         {
+            $sort: { createdAt: -1 }
          },
          {
             $project: {

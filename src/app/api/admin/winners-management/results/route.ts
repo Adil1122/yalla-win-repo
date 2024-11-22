@@ -110,6 +110,7 @@ const getPipeline = (type: string) => {
                _id: 1,
                animation_video: 1,
                createdAt: 1,
+               winning_date: 1,
                prize_amount: 1,
                "GameDetails.name": 1,
                "UserDetails.first_name": 1,
@@ -118,6 +119,9 @@ const getPipeline = (type: string) => {
                "TicketDetails.ticket_number": 1,
                "TicketDetails.ticket_splitted": 1
             }
+         },
+         {
+            $sort: { winning_date: -1 }
          }
       ]
    } else if (type == 'product') {
@@ -174,6 +178,7 @@ const getPipeline = (type: string) => {
             $project: {
                _id: 1,
                prize_amount: 1,
+               winning_date: 1,
                "ProductDetails.name": 1,
                "PrizeDetails.name": 1,
                "UserDetails.first_name": 1,
@@ -181,6 +186,9 @@ const getPipeline = (type: string) => {
                "UserDetails.image": 1,
                "InvoiceDetails.invoice_number": 1
             }
+         },
+         {
+            $sort: { winning_date: -1 }
          }
       ]
    }
