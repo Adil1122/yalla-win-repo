@@ -1,11 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { faPlay, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCloudUpload, faPlay, faShare, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
 import { formatDate, formatDateOnly, formatISODate } from '@/libs/common'
 import { useRouter } from 'next/navigation'
+import SocialShare from '@/components/SocialShare'
 
 type Tab = 'results' | 'images' | 'videos'
 type TabTwo = 'app' | 'shop' | 'web'
@@ -244,13 +245,11 @@ export default function AdminWinnerResults() {
                                  <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(winner.createdAt)).fomattedDate}</td>
                                  <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                                     {winner.animation_video && (
-                                       <button className="bg-gradient-to-r from-themeone to-themetwo text-white rounded px-4 py-2 mx-auto flex gap-2 items-center">
-                                          <FontAwesomeIcon size="lg" icon={faPlay} />
-                                          <div className="text-white">Play Video</div>
-                                       </button>
+                                       <SocialShare url={`https://drive.google.com/file/d/${winner.animation_video}/preview`} title="Share video" />
                                     )}
                                     {!winner.animation_video && (
                                        <button onClick={() => {handleCreateAnimation(winner)}} className="bg-themeone text-white rounded px-4 py-2 mx-auto flex gap-2 items-center">
+                                          <FontAwesomeIcon size="lg" icon={faCloudUpload} />
                                           <div className="text-white">Create Video</div>
                                        </button>
                                     )}
