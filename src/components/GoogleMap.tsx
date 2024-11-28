@@ -10,11 +10,13 @@ declare global {
 interface MapProps {
    lat: number;
    lon: number;
+   center_name: string;
    zoom: number;
    height: string;
+   coords: any
 }
 
-export default function Map({ lat, lon, zoom, height }: MapProps) {
+export default function Map({ lat, lon, center_name, zoom, height, coords }: MapProps) {
    useEffect(() => {
       const initMap = () => {
          const mapOptions = {
@@ -48,10 +50,18 @@ export default function Map({ lat, lon, zoom, height }: MapProps) {
             const map = new google.maps.Map(mapElement!, mapOptions)
 
             new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lon),
-            map: map,
-            title: 'Yalla Draw'
+               position: new google.maps.LatLng(lat, lon),
+               map: map,
+               title: center_name
             })
+
+            for(var i = 0; i < coords.length; i++) {
+               new google.maps.Marker({
+                  position: new google.maps.LatLng(coords[i].lat, coords[i].lon),
+                  map: map,
+                  title: coords[i].name
+               })
+            }
          }
          
       }

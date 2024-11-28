@@ -525,7 +525,7 @@ const handleRadioChange = (event: any) => {
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{machine.status}</td>
                            <td>
                               <div className="flex items-center justify-center gap-2">
-                                 <Link href="machine-management/map/12" className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
+                                 <Link href={"machine-management/map/" + machine._id} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
                                     <FontAwesomeIcon size="lg" icon={faLocation} />
                                  </Link>
                                  <button type="button" onClick={(e) => openEditPopup(machine._id)} className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2">
