@@ -24,6 +24,9 @@ export async function GET(request: Request) {
          }, {status: 200});
 
     } catch (error) {
-        
+        return NextResponse.json({
+            messge: "Query error ....",
+            error: JSON.stringify(error)
+         }, {status: 200});
     }
 }
