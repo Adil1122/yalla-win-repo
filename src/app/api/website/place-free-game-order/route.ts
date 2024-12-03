@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
 
   try {
     await connectMongoDB();
+
+    return NextResponse.json({
+        message: "point 1 working now ....",
+    }, {status: 200});
+
     let {
         game_id, 
         product_id, 
@@ -24,10 +29,6 @@ export async function POST(request: NextRequest) {
         ticket_details,
         platform
     } = await request.json();
-
-    return NextResponse.json({
-        message: "point 1 ....",
-    }, {status: 200});
 
     let draw = await Draw.find(
         {game_id: game_id},
