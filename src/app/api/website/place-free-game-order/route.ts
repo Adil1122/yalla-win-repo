@@ -14,8 +14,10 @@ export async function POST(request: NextRequest) {
   try {
     await connectMongoDB();
 
+    var js = await request.json();
+
     return NextResponse.json({
-        message: "point 1 working now ....",
+        message: JSON.stringify(js),
     }, {status: 200});
 
     let {
