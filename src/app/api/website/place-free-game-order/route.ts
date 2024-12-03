@@ -11,26 +11,10 @@ import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
 export async function POST(request: NextRequest) {
 
-  try {
+  //try {
     await connectMongoDB();
 
     let {
-        game_id, 
-        /*product_id, 
-        user_id, invoice_number, 
-        invoice_date, 
-        vat, 
-        total_amount, 
-        invoice_status,
-        ticket_details,
-        platform*/
-    } = await request.json();
-
-    return NextResponse.json({
-        message: JSON.stringify(game_id),
-    }, {status: 200});
-
-    /*let {
         game_id, 
         product_id, 
         user_id, invoice_number, 
@@ -41,6 +25,8 @@ export async function POST(request: NextRequest) {
         ticket_details,
         platform
     } = await request.json();
+
+    try {
 
     let draw = await Draw.find(
         {game_id: game_id},
@@ -108,7 +94,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             message: "no draw found ....",
         }, {status: 500});
-    }*/
+    }
 
     //let {ticket_details} = await request.json();
 
