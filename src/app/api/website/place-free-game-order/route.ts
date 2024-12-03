@@ -25,16 +25,16 @@ export async function POST(request: NextRequest) {
         platform
     } = await request.json();
 
+    return NextResponse.json({
+        message: "point 1 ....",
+    }, {status: 200});
+
     let draw = await Draw.find(
         {game_id: game_id},
         {draw_type: 'games'}
     ).sort({'draw_date': -1}).limit(1);
 
     let user = await User.findOne({_id: user_id}).select(['_id', 'city', 'country'])
-
-    return NextResponse.json({
-        message: "point 1 ....",
-    }, {status: 200});
 
     if(draw && draw.length > 0) {
 
