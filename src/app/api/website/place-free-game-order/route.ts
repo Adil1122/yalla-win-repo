@@ -96,8 +96,8 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         return NextResponse.json({
-          message: "error query ....",
-          error: error
+          message: "error query exception ....",
+          error: JSON.stringify(error)
         }, {status: 500});
     }
 }
