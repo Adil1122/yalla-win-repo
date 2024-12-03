@@ -14,13 +14,23 @@ export async function POST(request: NextRequest) {
   try {
     await connectMongoDB();
 
-    var js = await request.json();
+    let {
+        game_id, 
+        /*product_id, 
+        user_id, invoice_number, 
+        invoice_date, 
+        vat, 
+        total_amount, 
+        invoice_status,
+        ticket_details,
+        platform*/
+    } = await request.json();
 
     return NextResponse.json({
-        message: JSON.stringify(js),
+        message: JSON.stringify(game_id),
     }, {status: 200});
 
-    let {
+    /*let {
         game_id, 
         product_id, 
         user_id, invoice_number, 
@@ -98,7 +108,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             message: "no draw found ....",
         }, {status: 500});
-    }
+    }*/
 
     //let {ticket_details} = await request.json();
 
