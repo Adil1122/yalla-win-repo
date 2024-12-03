@@ -32,7 +32,13 @@ export async function POST(request: NextRequest) {
 
     let user = await User.findOne({_id: user_id}).select(['_id', 'city', 'country'])
 
+    return NextResponse.json({
+        message: "point 1 ....",
+    }, {status: 200});
+
     if(draw && draw.length > 0) {
+
+
 
         let draw_id = draw[0]._id.toString();
         let invoiceDocument = {
