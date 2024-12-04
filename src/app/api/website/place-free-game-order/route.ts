@@ -70,6 +70,11 @@ export async function POST(request: NextRequest) {
 
         console.log(invoiceResult)
 
+        return NextResponse.json({
+            message: "Invoice Result ....",
+            invoiceResult: invoiceResult
+        }, {status: 500});
+
         if(invoiceResult && invoiceResult._id) {
             for(var i = 0; i < ticket_details.length; i++) {
                 ticket_details[i]["invoice_id"] = invoiceResult._id;
