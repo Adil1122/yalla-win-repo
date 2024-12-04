@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         {draw_type: 'games'}
     ).sort({'draw_date': -1}).limit(1);
 
-    let user = await User.findOne(user_condition).select(['_id', 'city', 'country'])
+    let user = await User.findOne(user_condition).select(['_id', 'city', 'country', 'role'])
 
     if(draw && draw.length > 0) {
 
@@ -77,11 +77,6 @@ export async function POST(request: NextRequest) {
             }
 
             let ticketResult = await Ticket.insertMany(ticket_details);
-
-            return NextResponse.json({
-                message: "Ticket Result ....",
-                ticketResult: ticketResult
-            }, {status: 200});
 
             if(user && user.role !== 'merchant') {
                 let query = { user_id: user._id };
