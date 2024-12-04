@@ -47,21 +47,13 @@ export async function POST(request: NextRequest) {
 
     let user = await User.findOne(user_condition).select(['_id', 'city', 'country'])
 
-    return NextResponse.json({
-        message: "user successful ....",
-        user: user,
-        user_condition: user_condition
-    }, {status: 200});
-
     if(draw && draw.length > 0) {
-
-
 
         let draw_id = draw[0]._id.toString();
         let invoiceDocument = {
             game_id: game_id,
             product_id: product_id, 
-            user_id: user_id, 
+            user_id: user._id, 
             draw_id: draw_id,
             invoice_number: invoice_number, 
             invoice_date: invoice_date, 
