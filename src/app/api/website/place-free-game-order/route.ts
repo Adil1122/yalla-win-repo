@@ -29,12 +29,12 @@ export async function POST(request: NextRequest) {
 
     var user_condition = {_id: user_id}
 
-    if(platform === 'merchant') {
+    /*if(platform === 'merchant') {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var userId = searchparams.get('userId') + '';
         user_condition = {_id: userId}
-    }
+    }*/
 
     //var user_id = '67500225dee7b382bb99f2a7'
 
