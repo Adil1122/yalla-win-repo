@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         let invoiceDocument = {
             game_id: game_id,
             product_id: product_id, 
-            user_id: user._id, 
+            user_id: user._id.toString(), 
             draw_id: draw_id,
             invoice_number: invoice_number, 
             invoice_date: invoice_date, 
