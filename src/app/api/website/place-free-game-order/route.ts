@@ -16,17 +16,18 @@ export async function POST(request: NextRequest) {
 
     let {
         game_id, 
-        product_id, 
+        product_id,
+        user_id, 
         invoice_number, 
         invoice_date, 
         vat, 
         total_amount, 
         invoice_status,
         ticket_details,
-        platform
+        platform,
     } = await request.json();
 
-    var user_id = '67500225dee7b382bb99f2a7'
+    //var user_id = '67500225dee7b382bb99f2a7'
 
     try {
 
