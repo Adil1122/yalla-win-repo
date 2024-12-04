@@ -70,17 +70,18 @@ export async function POST(request: NextRequest) {
 
         console.log(invoiceResult)
 
-        return NextResponse.json({
-            message: "Invoice Result ....",
-            invoiceResult: invoiceResult
-        }, {status: 500});
-
         if(invoiceResult && invoiceResult._id) {
+
             for(var i = 0; i < ticket_details.length; i++) {
                 ticket_details[i]["invoice_id"] = invoiceResult._id;
             }
 
             let ticketResult = await Ticket.insertMany(ticket_details);
+
+            return NextResponse.json({
+                message: "Ticket Result ....",
+                ticketResult: ticketResult
+            }, {status: 200});
 
             if(user && user.role !== 'merchant') {
                 let query = { user_id: user._id };
