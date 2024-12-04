@@ -47,6 +47,12 @@ export async function POST(request: NextRequest) {
 
     let user = await User.findOne(user_condition).select(['_id', 'city', 'country'])
 
+    return NextResponse.json({
+        message: "user successful ....",
+        user: user,
+        user_condition: user_condition
+    }, {status: 200});
+
     if(draw && draw.length > 0) {
 
 
