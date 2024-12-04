@@ -27,6 +27,12 @@ export async function POST(request: NextRequest) {
         platform,
     } = await request.json();
 
+    if(platform === 'merchant') {
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        user_id = searchparams.get('user_id') + '';
+    }
+
     //var user_id = '67500225dee7b382bb99f2a7'
 
     try {
