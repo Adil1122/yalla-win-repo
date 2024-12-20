@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
                     product_ids.push(new mongoose.Types.ObjectId(products_in_basket[i].productInBasket[0]._id + ''));
                 }
 
-                //console.log('product_ids: ', product_ids)
+                console.log('product_ids: ', product_ids)
 
                 var draws = await Draw.find({product_id: {$in: product_ids}});
                 if(draws && draws.length > 0) {
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
                   }, {status: 200});
                 } else {
                   return NextResponse.json({
-                    message: "query error ....",
+                    message: "No draw found ....",
                   }, {status: 500});
                 }
             } else {
