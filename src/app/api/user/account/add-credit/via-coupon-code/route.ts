@@ -276,7 +276,8 @@ export async function PATCH(request: NextRequest) {
                 {active: 1},
                 {type: type},
                 {auto_generated: 1},
-                {coupon_code: ''}
+                {coupon_code: ''},
+                {date: {$lte: new Date()}}
             ]
         });
 

@@ -43,6 +43,7 @@ const UserAccountAddCredit = () => {
     const stripe = useStripe();
     const elements = useElements();
     const [activeCoupons, setActiveCoupons] = useState([]);
+    const [purchasedCoupons, setPurchasedCoupons] = useState([]);
     const [coupon_code, setCouponCode] = useState('');
     var card_element: any = null;
 
@@ -53,7 +54,8 @@ const UserAccountAddCredit = () => {
     }, [])
 
     const getActiveCoupons = async () => {
-         const response = await fetch('/api/user/account/add-credit/via-coupon-code?type=website', {
+         var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+         const response = await fetch('/api/user/account/add-credit/via-coupon-code?type=website&user_id=' + user._id, {
             method: 'PATCH',
          });
          const content = await response.json();
@@ -65,6 +67,12 @@ const UserAccountAddCredit = () => {
                temp[i]['quantity_to_select'] = 1;
             }
             setActiveCoupons(temp)
+
+            temp = content.purchasedCoupons;
+            for(var i = 0; i < temp.length; i++) {
+               temp[i].date = formatISODate(new Date(temp[i].date)).formatedDateOnly;
+            }
+            setPurchasedCoupons(temp)
          }
     }
 
@@ -193,9 +201,10 @@ const UserAccountAddCredit = () => {
             var quantity = e.currentTarget.getAttribute('data-quantity');
             var coupon_id = e.currentTarget.getAttribute('data-coupon-id');
             var current_coupon_code = e.currentTarget.getAttribute('data-coupon-code');
+            var id = e.currentTarget.getAttribute('data-id');
             
             var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
-            const response = await fetch('/api/user/account/add-credit/via-coupon-code?user_id=' + user._id + '&coupon_code=' + current_coupon_code + '&quantity=' + quantity, {
+            const response = await fetch('/api/user/account/add-credit/via-coupon-code?user_id=' + user._id + '&coupon_code=' + current_coupon_code + '&quantity=' + quantity + '&id=' + id, {
                method: 'GET',
             });
             //var content = await response.json();
@@ -203,7 +212,7 @@ const UserAccountAddCredit = () => {
                setSuccess('')
                setError('Coupon could not be Purchased');
             } else {
-               var temp: any = activeCoupons;
+               /*var temp: any = activeCoupons;
                for(var i = 0; i < temp.length; i++) {
                   if(temp[i]._id === coupon_id) {
                      temp[i].purchased = 1;
@@ -211,7 +220,8 @@ const UserAccountAddCredit = () => {
                }
                setActiveCoupons((prev) => {
                   return [...prev];
-               });
+               });*/
+               getActiveCoupons()
 
                setError('')
                setSuccess('Coupon purchased successfully');
@@ -375,7 +385,7 @@ const UserAccountAddCredit = () => {
                                        </div>
                                     </div>
                                  </div>
-                                 <button className="text-themetwo font-bold text-head-2 lg:text-head-4 text-center py-2 lg:py-3 bg-white" data-quantity={coupon.quantity_to_select} data-coupon-id={coupon._id} data-coupon-code={coupon.coupon_code} onClick={(e) => buyCoupon(e)}>Buy Now</button>
+                                 <button className="text-themetwo font-bold text-head-2 lg:text-head-4 text-center py-2 lg:py-3 bg-white" data-quantity={coupon.quantity_to_select} data-coupon-id={coupon._id} data-coupon-code={coupon.coupon_code} data-id={coupon._id} onClick={(e) => buyCoupon(e)}>Buy Now</button>
                               </div>
                            ))
                         }
@@ -387,8 +397,7 @@ const UserAccountAddCredit = () => {
                      <h2 className="text-white font-bold text-size-4 lg:text-head-4">Already Purchased Coupons</h2>
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {
-                           activeCoupons.map((coupon: any) => (
-                              coupon.purchased === 1 &&
+                           purchasedCoupons.map((coupon: any) => (
                               <div key={coupon._id} className="border-[2px] lg:border-[3px] border-white rounded-lg flex flex-col gap-2 lg:gap-4">
                                  <div className="flex flex-col text-white px-6 py-4 gap-1 lg:gap-3">
                                     <div className="font-semibold text-head-2 lg:text-head-4">{coupon.price} AED</div>
