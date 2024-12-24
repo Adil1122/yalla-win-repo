@@ -16,7 +16,8 @@ const couponSchema = new Schema (
         shop_id: {type: mongoose.Types.ObjectId, ref: 'Shop', required: false},
         user_id: {type: mongoose.Types.ObjectId, ref: 'User', required: false},
         available_type: {type: String, required: false},
-        expiration_date: {type: Date, required: false}
+        expiration_date: {type: Date, required: false},
+        auto_generated: {type: Number, required: false}
     },
     {
         timestamps: true

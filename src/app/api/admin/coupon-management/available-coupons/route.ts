@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 // @ts-ignore
 import connectMongoDB from "@/libs/mongoosdb";
 import Coupon from "@/models/CouponModel";
+import Settings from "@/models/SettingsModel";
 
 export async function POST(request: Request) {
     try {
@@ -13,12 +14,17 @@ export async function POST(request: Request) {
         var time_only: any = data.get('time_only');
         var date: any = data.get('date');
         var type: any = data.get('type');
-        var alreadyAdded = await Coupon.find({coupon_code: coupon_code}).select(['_id']);
-        if(alreadyAdded && alreadyAdded.length > 0) {
-            return NextResponse.json({
-                messge: "Coupon code already exists ....",
-              }, {status: 500});
+        var auto_generated: any = parseInt(data.get('auto_generated') + '');
+        console.log(auto_generated)
+        if(auto_generated === 0) {
+            var alreadyAdded = await Coupon.find({coupon_code: coupon_code}).select(['_id']);
+            if(alreadyAdded && alreadyAdded.length > 0) {
+                return NextResponse.json({
+                    messge: "Coupon code already exists ....",
+                }, {status: 500});
+            }
         }
+        
         let newDocument = {
             coupon_code: coupon_code,
             price: price,
@@ -28,7 +34,8 @@ export async function POST(request: Request) {
             active: 1,
             purchased: 0,
             type: type,
-            available_type: 'available'
+            available_type: 'available',
+            auto_generated: auto_generated
         };
         let coupon = await Coupon.create(newDocument);
 
@@ -60,15 +67,24 @@ export async function PUT(request: Request) {
         var time_only: any = data.get('time_only');
         var date: any = data.get('date');
         var type: any = data.get('type');
-        
-        var alreadyAdded = await Coupon.find({coupon_code: coupon_code}).select(['_id']);
-        if(alreadyAdded && alreadyAdded.length > 0) {
-            return NextResponse.json({
-                messge: "Coupon code already exists ....",
-              }, {status: 500});
-        }
 
         var couponObj = await Coupon.findOne({_id: id});
+        var auto_generated: any = parseInt(data.get('auto_generated') + '');
+        if(auto_generated === 0) {
+            var alreadyAdded = await Coupon.find({
+                $and: [
+                    {coupon_code: coupon_code},
+                    {_id: {$ne: id}}
+                ]
+            }).select(['_id']);
+            if(alreadyAdded && alreadyAdded.length > 0) {
+                return NextResponse.json({
+                    messge: "Coupon code already exists ....",
+                }, {status: 500});
+            }
+        }
+
+        
         if(couponObj) {
             const query = { _id: couponObj._id };
             let updates = {
@@ -81,7 +97,8 @@ export async function PUT(request: Request) {
                     active: 1,
                     purchased: 0,
                     type: type,
-                    available_type: 'available'
+                    available_type: 'available',
+                    auto_generated: auto_generated
                 }
             };
             var coupon = await Coupon.updateOne(query, updates);
@@ -166,9 +183,12 @@ export async function GET(request: Request) {
             ]
         }).sort({'date': -1}).skip(skip).limit(limit);
 
+        var settings = await Settings.find({}).sort({created_at: -1}).limit(1)
+
         return NextResponse.json({
             messge: "Query successful ....",
-            coupons: coupons
+            coupons: coupons,
+            settings: settings[0]
           }, {status: 200});
 
     } catch (error) {
