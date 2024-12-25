@@ -183,12 +183,9 @@ export async function GET(request: Request) {
             ]
         }).sort({'date': -1}).skip(skip).limit(limit);
 
-        var settings = await Settings.find({}).sort({created_at: -1}).limit(1)
-
         return NextResponse.json({
             messge: "Query successful ....",
-            coupons: coupons,
-            settings: settings[0]
+            coupons: coupons
           }, {status: 200});
 
     } catch (error) {
@@ -219,11 +216,14 @@ export async function OPTIONS(request: Request) {
             available_type: 'available'
         }).countDocuments();
 
+        var settings = await Settings.find({}).sort({created_at: -1}).limit(1)
+
         return NextResponse.json({
             messge: "query successful ....",
             shop_coupons_count: shop_coupons_count,
             app_coupons_count: app_coupons_count,
-            web_coupons_count: web_coupons_count
+            web_coupons_count: web_coupons_count,
+            settings: settings[0]
 
         }, {status: 200});
 
