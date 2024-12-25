@@ -207,14 +207,14 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
 
                 if(time.includes('AM')) {
                     if(time_int >= 8 && time_int < 10) {
-                        daily_data[0].sales += data_sales[i].amount
+                        daily_data[0].sales += data_sales[i].amount - 1
                         daily_order_data[0].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 10 && time_int < 12) {
-                        daily_data[1].sales += data_sales[i].amount
+                        daily_data[1].sales += data_sales[i].amount - 1
                         daily_order_data[1].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
@@ -222,28 +222,28 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                 } else if(time.includes('PM')) {
 
                     if(time_int >= 12 && time_int < 2) {
-                        daily_data[2].sales += data_sales[i].amount
+                        daily_data[2].sales += data_sales[i].amount - 1
                         daily_order_data[2].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 2 && time_int < 4) {
-                        daily_data[3].sales += data_sales[i].amount
+                        daily_data[3].sales += data_sales[i].amount - 1
                         daily_order_data[3].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 4 && time_int < 6) {
-                        daily_data[4].sales += data_sales[i].amount
+                        daily_data[4].sales += data_sales[i].amount - 1
                         daily_order_data[4].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 6 && time_int < 8) {
-                        daily_data[5].sales += data_sales[i].amount
+                        daily_data[5].sales += data_sales[i].amount - 1
                         daily_order_data[5].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
@@ -257,6 +257,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                     
                 }
             }
+        
         }
 
         data = daily_data
