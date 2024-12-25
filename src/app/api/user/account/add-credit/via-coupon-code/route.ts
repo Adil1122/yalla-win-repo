@@ -196,6 +196,7 @@ export async function GET(request: NextRequest) {
 
                 return NextResponse.json({
                     message: "Coupon successfully purchased ....",
+                    newCoupon: newCoupon
                 }, {status: 200});
 
             } else if(walletResult && walletResult.length > 0) {
