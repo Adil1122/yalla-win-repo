@@ -7,6 +7,7 @@ import Coupon from "@/models/CouponModel";
 import Transaction from "@/models/TransactionModel";
 import connectMongoDB from "@/libs/mongoosdb";
 import User from "@/models/UserModel";
+import Settings from "@/models/SettingsModel";
 export async function POST(request: NextRequest) {
     try {
         await connectMongoDB();
@@ -273,6 +274,7 @@ export async function PATCH(request: NextRequest) {
         var searchparams = new URLSearchParams(url.searchParams);
         var type = searchparams.get('type') + '';
         var user_id = searchparams.get('user_id') + '';
+        var settings = await Settings.find({}).limit(1)
 
         var activeCoupons = await Coupon.find({
             $and: [
@@ -297,7 +299,8 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({
             message: "Query successful ....",
             activeCoupons: activeCoupons,
-            purchasedCoupons: purchasedCoupons
+            purchasedCoupons: purchasedCoupons,
+            settings: settings[0]
         }, {status: 200});
 
     } catch (error) {
@@ -307,4 +310,27 @@ export async function PATCH(request: NextRequest) {
         }, {status: 200});
     }
 }
+
+export async function OPTIONS(request: NextRequest) {
+
+    try {
+
+        var settings = await Settings.find({}).limit(1)
+        return NextResponse.json({
+            message: "Query successful ....",
+            settings: settings[0]
+        }, {status: 200});
+
+    } catch (error) {
+
+        return NextResponse.json({
+            message: "Query error ....",
+            error: JSON.stringify(error)
+        }, {status: 200});
+
+    }
+
+}
+
+
 

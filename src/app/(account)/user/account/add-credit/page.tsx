@@ -45,6 +45,7 @@ const UserAccountAddCredit = () => {
     const [activeCoupons, setActiveCoupons] = useState([]);
     const [purchasedCoupons, setPurchasedCoupons] = useState([]);
     const [coupon_code, setCouponCode] = useState('');
+    const [settings, setSettings] = useState<any>({});
     var card_element: any = null;
 
     useEffect(() => {
@@ -73,6 +74,7 @@ const UserAccountAddCredit = () => {
                temp[i].date = formatISODate(new Date(temp[i].date)).formatedDateOnly;
             }
             setPurchasedCoupons(temp)
+            setSettings(content.settings)
          }
     }
 
@@ -244,14 +246,17 @@ const UserAccountAddCredit = () => {
             <h2 className="text-white font-bold text-size-4 lg:text-head-4">Choose Payment Method</h2>
             <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
             {paymentModes.map((item, index) => (
-               <div key={index} onClick={() => handlePaymentMode(item.id as PaymentMode)} className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer">
-                  <div className="w-[15px] h-[15px] lg:w-[25px] lg:h-[25px] rounded-full ring-[2px] lg:ring-[3px] ring-white flex items-center justify-center">
-                     {item.id == selectedPaymentMode && (
-                        <div className="w-[11px] h-[11px] lg:w-[20px] lg:h-[20px] rounded-full bg-white"></div>
-                     )}
+               (item.id == 'card' || (item.id == 'coupon' && settings.show_coupons_web === '1')) && (
+                  <div key={index} onClick={() => handlePaymentMode(item.id as PaymentMode)} className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer">
+                     <div className="w-[15px] h-[15px] lg:w-[25px] lg:h-[25px] rounded-full ring-[2px] lg:ring-[3px] ring-white flex items-center justify-center">
+                        {item.id == selectedPaymentMode && (
+                           <div className="w-[11px] h-[11px] lg:w-[20px] lg:h-[20px] rounded-full bg-white"></div>
+                        )}
+                     </div>
+                     <div className="text-white font-medium text-size-3 lg:text-head-1">{item.name}</div>
                   </div>
-                  <div className="text-white font-medium text-size-3 lg:text-head-1">{item.name}</div>
-               </div>
+               )
+
             ))}
             </div>   
          </div>
@@ -271,7 +276,7 @@ const UserAccountAddCredit = () => {
                         <Image alt="Dream draw icon" className="lg:hidden" width={50} src={mastecardIcon}></Image>
                         <Image alt="Dream draw icon" className="hidden lg:flex" width={60} src={mastecardIcon}></Image>
                      </div>
-                     <button className="bg-white rounded-lg text-size-2 lg:text-size-4 text-themetwo font-medium py-3 lg:py-4 px-16 lg:w-fit">Add Now</button>
+                     <button className="bg-white rounded-lg text-size-2 lg:text-size-4 text-themetwo font-medium py-3 lg:py-4 px-16 lg:w-fit" style={{display: 'none'}}>Add Now</button>
                   </div>
                </div>
                {/* pay via card step 1 ends */}
@@ -287,14 +292,14 @@ const UserAccountAddCredit = () => {
                            </div>
                            <div className="text-white font-medium text-size-3 lg:text-head-1">Credit/Debit Card</div>
                         </div>
-                        <div className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer">
+                        <div className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer" style={{display: 'none'}}>
                            <div className="rounded border border-[2px] lg:border-[3px] border-white w-[20px] h-[20px] lg:w-[25px] lg:h-[25px] flex items-center justify-center">
                               {/* add this when checked */}
                               {/* <FontAwesomeIcon className="text-white ml-[1px]" size="1x" icon={faCheck} /> */}
                            </div>
                            <div className="text-white font-medium text-size-3 lg:text-head-1">Pay By Pay</div>
                         </div>
-                        <div className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer">
+                        <div className="flex flex-row items-center gap-4 lg:gap-6 cursor-pointer" style={{display: 'none'}}>
                            <div className="rounded border border-[2px] lg:border-[3px] border-white w-[20px] h-[20px] lg:w-[25px] lg:h-[25px] flex items-center justify-center">
                               {/* add this when checked */}
                               {/* <FontAwesomeIcon className="text-white ml-[1px]" size="1x" icon={faCheck} /> */}
