@@ -139,6 +139,11 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     var user_ids: any = [];
     var total_sales: any = 0
     for(var i = 0; i < records.length; i++) {
+        let date = new Date(records[i].invoice_date);
+        let timezoneOffset = date.getTimezoneOffset();
+        let pstOffset = -300; // this is the offset for the Pacific Standard Time timezone
+        let adjustedTime = new Date(date.getTime() + (pstOffset + timezoneOffset) * 60 * 1000);
+
         data_sales.push({
             user_id: records[i].user_id,
             date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
@@ -318,7 +323,7 @@ const getDaysArray = function(start: any, end: any) {
 };
 
 function getTime(date: any) {
-    return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+    return date.toLocaleString('en-US', { timeZone: 'Asia/Karachi', hour: 'numeric', minute: 'numeric', hour12: true })
 }
 
 export var total_records_limit = 1000

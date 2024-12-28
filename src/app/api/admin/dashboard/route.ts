@@ -68,7 +68,7 @@ export async function GET(request: Request) {
       return NextResponse.json({
          messge: "Query success ....",
          graph_result: getGraphResult(records, start_date, end_date, schedule),
-         records: records,
+         //records: records,
          merchants: merchants
       }, {status: 200});
 
