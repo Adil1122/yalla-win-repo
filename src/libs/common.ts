@@ -323,7 +323,7 @@ const getDaysArray = function(start: any, end: any) {
 };
 
 function getTime(date: any) {
-    return date.toLocaleString('en-US', { timeZone: 'Asia/Karachi', hour: 'numeric', minute: 'numeric', hour12: true })
+    return date.toLocaleString('en-US', { timeZone: 'Asia/Dubai', hour: 'numeric', minute: 'numeric', hour12: true })
 }
 
 export var total_records_limit = 1000
