@@ -304,7 +304,8 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
         data: data,
         orders_data: orders_data,
         total_users: user_ids.length,
-        total_sales: total_sales
+        total_sales: total_sales,
+        data_sales: data_sales
     };
 }
 
