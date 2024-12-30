@@ -698,7 +698,7 @@ export default function AdminMerchantManagement() {
                 <td>
                   <div className="flex items-center justify-center gap-2">
                     <Link
-                      href="merchant-management/view/12"
+                      href={"merchant-management/view/" + merchant._id}
                       className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
                     >
                       <FontAwesomeIcon size="lg" icon={faEye} />

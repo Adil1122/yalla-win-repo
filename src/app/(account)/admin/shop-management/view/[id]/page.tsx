@@ -8,6 +8,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { SwitchComponent } from '@/components/SwitchComponent'
 import { get } from 'http'
 import Link from 'next/link'
+import { formatISODate } from '@/libs/common'
 
 type Tab = 'games' | 'products' | 'sales' | 'transaction'
 type InvoiceTab = 'invoice' | 'ticket'
@@ -393,7 +394,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Category</th>
-                              <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>
+                              {/*<th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>*/}
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
                               <th scope="col" className="w-[11%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
@@ -410,8 +411,8 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                                  <img className="max-w-[60px] mx-auto" src={rec.productWithInvoice && rec.productWithInvoice.length > 0 ? rec.productWithInvoice[0].image : ''} alt="" />
                               </td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].name : 'None'}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].type : 'None'}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              {/*<td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].type : 'None'}</td>*/}
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(rec.createdAt)).fomattedDate + ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {rec.total_amount}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>

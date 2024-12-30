@@ -530,6 +530,7 @@ export default function AdminShopManagement() {
 
             { 
               shops.map((shop: any) => (
+              shop.merchantWithShop.length > 0 && 
               <tr key={shop._id}>
                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.name}

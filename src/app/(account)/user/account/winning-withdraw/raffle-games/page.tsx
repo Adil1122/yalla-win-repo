@@ -115,11 +115,11 @@ export default function UserAccountWinningWithdrawGames() {
                <tbody className="divide-y divide-lightthree">
                { 
                   winners.map((winner: any) => (
-                     //(winner.drawInWinner.length > 0 && winner.productInWinner.length > 0) && ( 
+                     (winner.drawInWinner.length > 0 && winner.productInWinner.length > 0 && winner.gameInWinner.length > 0) && ( 
                      <tr key={winner._id}>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">{winner.s_no}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm text-white lg:text-size-1">{winner.s_no}</td>
-                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.game_name ? winner.game_name : 'None'}</td>
+                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.gameInWinner.length > 0 ? winner.gameInWinner[0].name : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.drawInWinner.length > 0 ? winner.drawInWinner[0].draw_date : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.productInWinner.length > 0 ? winner.productInWinner[0].name : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {winner.prize_amount}</td>
@@ -128,7 +128,7 @@ export default function UserAccountWinningWithdrawGames() {
                            <Link href={"raffle-games/details/" + winner._id} className="text-themeone font-medium px-4 py-1 lg:py-3 cursor-pointer lg:px-8 text-sm lg:text-size-1 bg-white rounded mx-auto w-fit" style={{display: 'none'}}>Details</Link>
                         </td>
                      </tr>
-                  //)
+                  )
                ))
                }
                </tbody>
