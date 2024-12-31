@@ -54,6 +54,14 @@ export async function GET(request: NextRequest) {
                             as: "invoiceInWinner",
                         },
                    },
+                   {
+                        $lookup: {
+                            from: "games",
+                            localField: "game_id",
+                            foreignField: "_id",
+                            as: "gameInWinner",
+                        },
+                    }
               ]).sort({'createdAt': -1}).skip(skip).limit(limit);
 
             if(winners && winners.length > 0) {

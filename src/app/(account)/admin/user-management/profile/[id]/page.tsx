@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
+import { formatISODate } from '@/libs/common'
+import Link from 'next/link'
 
 type Tab = 'games' | 'products' | 'transaction' | 'communication'
 type InvoiceTab = 'invoice' | 'ticket'
@@ -200,7 +202,7 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Category</th>
-                              <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>
+                              {/*<th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Type</th>*/}
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Price</th>
                               <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
@@ -217,15 +219,15 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
                                  <img className="max-w-[60px] mx-auto" src={rec.productWithInvoice && rec.productWithInvoice.length > 0 ? rec.productWithInvoice[0].image : ''} alt="" />
                               </td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].name : 'None'}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].type : 'None'}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              {/*<td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.gameWithInvoice && rec.gameWithInvoice.length > 0 ? rec.gameWithInvoice[0].type : 'None'}</td>*/}
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(rec.createdAt)).formatedDateOnly}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.total_amount}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
+                                    <Link href={"/admin/shop-management/game-invoice/" + rec._id} target='_blank' className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
                                        Invoice
-                                    </button>
+                                    </Link>
                                  </div>
                               </td>
                            </tr>
@@ -259,14 +261,14 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
                                  <img className="max-w-[60px] mx-auto" src="/assets/images/cap.svg" alt="" />
                               </td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">iPhone</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(rec.createdAt)).formatedDateOnly}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.total_amount}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.invoice_status}</td>
                               <td>
                                  <div className="flex items-center justify-center gap-2">
-                                    <button onClick={() => handleShowInvoice(rec._id)} type="button" className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
+                                    <Link href={"/admin/shop-management/prize-invoice/" + rec._id} target='_blank' className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2">
                                        Invoice
-                                    </button>
+                                    </Link>
                                  </div>
                               </td>
                            </tr>
@@ -299,7 +301,7 @@ export default function AdminUserProfile({ params } : {params: { id: string; }})
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.via}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.card_details}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {rec.amount}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(rec.createdAt)).formatedDateOnly}</td>
                               <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{rec.note}</td>
                            </tr>
                            ))

@@ -530,6 +530,7 @@ export default function AdminShopManagement() {
 
             { 
               shops.map((shop: any) => (
+              shop.merchantWithShop.length > 0 && 
               <tr key={shop._id}>
                 <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">
                   {shop.name}
@@ -706,9 +707,9 @@ export default function AdminShopManagement() {
             <div className="flex flex-col gap-3">
               <div className="flex">
                 <h2 className="text-head-1 text-darkone">
-                  Choose Machine / Add New
+                  Choose Machine
                 </h2>
-                <div className="ml-auto">
+                <div className="ml-auto" style={{display: 'none'}}>
                   <SwitchComponent
                     isEnabled={shopMachineToggle}
                     onToggle={handleShopMachineToggle}

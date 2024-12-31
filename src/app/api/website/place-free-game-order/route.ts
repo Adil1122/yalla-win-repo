@@ -11,26 +11,32 @@ import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
 export async function POST(request: NextRequest) {
 
-  try {
+  //try {
     await connectMongoDB();
+
     let {
         game_id, 
-        product_id, 
-        user_id, invoice_number, 
+        product_id,
+        user_id, 
+        invoice_number, 
         invoice_date, 
         vat, 
         total_amount, 
         invoice_status,
         ticket_details,
-        platform
+        platform,
     } = await request.json();
+
+    var user_condition = {_id: user_id}
+
+    try {
 
     let draw = await Draw.find(
         {game_id: game_id},
         {draw_type: 'games'}
     ).sort({'draw_date': -1}).limit(1);
 
-    let user = await User.findOne({_id: user_id}).select(['_id', 'city', 'country'])
+    let user = await User.findOne(user_condition).select(['_id', 'city', 'country', 'role'])
 
     if(draw && draw.length > 0) {
 
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
         let invoiceDocument = {
             game_id: game_id,
             product_id: product_id, 
-            user_id: user_id, 
+            user_id: user._id.toString(), 
             draw_id: draw_id,
             invoice_number: invoice_number, 
             invoice_date: invoice_date, 
@@ -56,6 +62,7 @@ export async function POST(request: NextRequest) {
         console.log(invoiceResult)
 
         if(invoiceResult && invoiceResult._id) {
+
             for(var i = 0; i < ticket_details.length; i++) {
                 ticket_details[i]["invoice_id"] = invoiceResult._id;
             }
@@ -96,8 +103,8 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         return NextResponse.json({
-          message: "error query ....",
-          error: error
+          message: "error query exception ....",
+          error: JSON.stringify(error)
         }, {status: 500});
     }
 }

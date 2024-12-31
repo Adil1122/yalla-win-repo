@@ -63,7 +63,7 @@ export default function ContactPage() {
                         disableDefaultUI={true}
                      />
                   </APIProvider>*/}
-                  <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="400px" />
+                  <GoogleMap lat={25.276987} lon={55.296249} center_name='Yalla Win' zoom={11} height="400px" coords={[]} />
                </div>
             </div>
             <div className="flex flex-col lg:flex-row lg:gap-12 mt-2">
@@ -90,7 +90,7 @@ export default function ContactPage() {
                         disableDefaultUI={true}
                      />
                   </APIProvider>*/}
-                  <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="400px" />
+                  <GoogleMap lat={25.276987} lon={55.296249} center_name='Yalla Win' zoom={11} height="400px" coords={[]} />
                   
                </div>
                <div className="flex flex-col gap-4 w-full w-full lg:w-[45%] lg:text-size-4 text-size-2">

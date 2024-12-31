@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { faArrowLeft, faChevronLeft, faChevronRight, faEye, faPaperPlane, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
+import { formatISODate } from "@/libs/common";
 
 type Tab = 'details' | 'communication'
 
@@ -158,7 +159,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec._id}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.name}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">20%</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{rec.createdAt}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatISODate(new Date(rec.createdAt)).fomattedDate}</td>
                         </tr>
                         ))
                      }

@@ -51,6 +51,8 @@ export default function AdminDashboard() {
       getGraphData()
    }, [selectedItem])
 
+   const [coords, setCoords] = useState([])
+
    async function getGraphData() {
       try {
          var selected_name = selectedItem !== null ? selectedItem.name : ''
@@ -67,6 +69,17 @@ export default function AdminDashboard() {
             var orders_data = content.graph_result.orders_data
             var total_sales = content.graph_result.total_sales
             var total_users = content.graph_result.total_users
+            var merchants = content.merchants
+            var temp: any = []
+            for(var i = 0; i < merchants.length; i++) {
+               temp.push({
+                  lat: parseFloat(merchants[i].initial_coords.lat),
+                  lon: parseFloat(merchants[i].initial_coords.long),
+                  name: merchants[i].name
+               })
+            }
+            console.log('coords data: ', temp)
+            setCoords(temp)
             setDataSet(data)
             setOrdersDataSet(orders_data)
             setTotalSales(total_sales)
@@ -243,7 +256,10 @@ export default function AdminDashboard() {
 
                            <div className="flex flex-col gap-3">
                               <div className="text-white font-bold text-size-4">Locate Machines</div>
-                              <GoogleMap lat={40.6700} lon={-73.9400} zoom={11} height="350px" />
+                              {
+                                 coords && coords.length > 0 &&
+                                 <GoogleMap lat={25.276987} lon={55.296249} center_name="Yalla Win" zoom={11} height="350px" coords={coords} />
+                              }
                            </div>
 
                         </div>

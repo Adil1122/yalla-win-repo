@@ -139,6 +139,11 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     var user_ids: any = [];
     var total_sales: any = 0
     for(var i = 0; i < records.length; i++) {
+        let date = new Date(records[i].invoice_date);
+        let timezoneOffset = date.getTimezoneOffset();
+        let pstOffset = -300; // this is the offset for the Pacific Standard Time timezone
+        let adjustedTime = new Date(date.getTime() + (pstOffset + timezoneOffset) * 60 * 1000);
+
         data_sales.push({
             user_id: records[i].user_id,
             date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
@@ -207,14 +212,14 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
 
                 if(time.includes('AM')) {
                     if(time_int >= 8 && time_int < 10) {
-                        daily_data[0].sales += data_sales[i].amount
+                        daily_data[0].sales += data_sales[i].amount - 1
                         daily_order_data[0].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 10 && time_int < 12) {
-                        daily_data[1].sales += data_sales[i].amount
+                        daily_data[1].sales += data_sales[i].amount - 1
                         daily_order_data[1].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
@@ -222,28 +227,28 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                 } else if(time.includes('PM')) {
 
                     if(time_int >= 12 && time_int < 2) {
-                        daily_data[2].sales += data_sales[i].amount
+                        daily_data[2].sales += data_sales[i].amount - 1
                         daily_order_data[2].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 2 && time_int < 4) {
-                        daily_data[3].sales += data_sales[i].amount
+                        daily_data[3].sales += data_sales[i].amount - 1
                         daily_order_data[3].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 4 && time_int < 6) {
-                        daily_data[4].sales += data_sales[i].amount
+                        daily_data[4].sales += data_sales[i].amount - 1
                         daily_order_data[4].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
 
                     if(time_int >= 6 && time_int < 8) {
-                        daily_data[5].sales += data_sales[i].amount
+                        daily_data[5].sales += data_sales[i].amount - 1
                         daily_order_data[5].sales ++
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
@@ -257,6 +262,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                     
                 }
             }
+        
         }
 
         data = daily_data
@@ -303,7 +309,8 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
         data: data,
         orders_data: orders_data,
         total_users: user_ids.length,
-        total_sales: total_sales
+        total_sales: total_sales,
+        data_sales: data_sales
     };
 }
 
@@ -316,7 +323,7 @@ const getDaysArray = function(start: any, end: any) {
 };
 
 function getTime(date: any) {
-    return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+    return date.toLocaleString('en-US', { timeZone: 'Asia/Dubai', hour: 'numeric', minute: 'numeric', hour12: true })
 }
 
 export var total_records_limit = 1000

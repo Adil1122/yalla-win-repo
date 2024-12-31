@@ -36,13 +36,16 @@ export async function GET(request: NextRequest) {
                 }
               ]).sort({'createdAt': -1}).limit(100);
 
+              //console.log('here: ', products_in_basket)
+
               if(products_in_basket && products_in_basket.length > 0) {
                 var product_ids = [];
                 for (var i = 0; i < products_in_basket.length; i++) {
-                    product_ids.push(new mongoose.Types.ObjectId(products_in_basket[i].productInBasket[0]._id + ''));
+                    if(products_in_basket[i].productInBasket.length > 0) {
+                      product_ids.push(new mongoose.Types.ObjectId(products_in_basket[i].productInBasket[0]._id + ''));
+                    }
                 }
-
-                //console.log('product_ids: ', product_ids)
+                console.log('draw found ...')
 
                 var draws = await Draw.find({product_id: {$in: product_ids}});
                 if(draws && draws.length > 0) {
@@ -54,7 +57,7 @@ export async function GET(request: NextRequest) {
                   }, {status: 200});
                 } else {
                   return NextResponse.json({
-                    message: "query error ....",
+                    message: "No draw found ....",
                   }, {status: 500});
                 }
             } else {

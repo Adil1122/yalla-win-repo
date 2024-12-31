@@ -7,6 +7,7 @@ import QRCode from "react-qr-code";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link';
+import { formatDate } from '@/libs/common'
 
 const GameProduct = ({ params } : {params: { id: string; }}) => {
 
@@ -59,10 +60,10 @@ const GameProduct = ({ params } : {params: { id: string; }}) => {
             <div className="flex flex-col flex-grow">
                 <div className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
                     {
-                        invoice.length > 0 &&
+                        /*invoice.length > 0 &&
                         <Link href={"/admin/shop-management/view/" + invoice[0].user_id}>
                             <FontAwesomeIcon size="xl" icon={faArrowLeft} />
-                        </Link>
+                        </Link>*/
                     }
                     
                     <div className="cursor-pointer text-head-3 font-medium">View Details</div>
@@ -165,7 +166,12 @@ const GameProduct = ({ params } : {params: { id: string; }}) => {
                         <div className="mx-auto w-fit">
                             <img src="/assets/images/logo.svg" alt="" />
                         </div>
-                        <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">Yalla 4</div>
+                        <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">
+                            {
+                                invoice.length > 0 &&
+                                invoice[0].gameInInvoice[0].name
+                            }
+                        </div>
                         <div className="flex flex-col px-8 lg:px-12 font-light text-sm lg:text-size-2 text-black my-4 lg:my-8 gap-6">
                             <div className="w-fit mx-auto">
                                 <img className="max-h-[100px] lg:max-h-[200px]" src="/assets/images/keychain.svg" alt="" />
@@ -173,52 +179,105 @@ const GameProduct = ({ params } : {params: { id: string; }}) => {
                             <div className="flex flex-col gap-2 lg:gap-4">
                                 <div className="flex justify-between">
                                 <div>Order Number</div>
-                                <div>37319082192</div>
+                                <div>
+                                {
+                                    invoice.length > 0 &&
+                                    invoice[0].invoice_number
+                                }
+                                </div>
                                 </div>
                                 <div className="flex justify-between">
                                 <div>Game Name</div>
-                                <div>Yalla 3</div>
+                                <div>
+                                {
+                                    invoice.length > 0 &&
+                                    invoice[0].gameInInvoice[0].name
+                                }
+                                </div>
                                 </div>
                                 <div className="flex justify-between">
                                 <div>VAT %</div>
-                                <div>12</div>
+                                <div>
+                                {
+                                    invoice.length > 0 &&
+                                    invoice[0].vat
+                                }
+                                </div>
                                 </div>
                                 <div className="flex justify-between">
                                 <div>Total Amount</div>
-                                <div>123 AED</div>
+                                <div>
+                                {
+                                    invoice.length > 0 &&
+                                    invoice[0].total_amount + ' AED'
+                                }
+                                </div>
                                 </div>
                                 <div className="flex justify-between">
                                 <div>Order Date</div>
-                                <div>28 July, 2024 8:22 PM</div>
+                                <div>
+                                    {
+                                        invoice.length > 0 &&
+                                        formatDate(invoice[0].invoice_date)
+                                    }
+                                </div>
                                 </div>
                                 <div className="flex justify-between">
                                 <div>Order Status</div>
-                                <div className="text-success">Active</div>
+                                <div className="text-success">
+                                {
+                                    invoice.length > 0 &&
+                                    invoice[0].invoice_status
+                                }
+                                </div>
                                 </div>
                             </div>
                             
                             <div className="grid grid-cols-4 lg:grid-cols-4 mt-4 lg:text-size-1 text-xs">
                                 <div className="flex flex-col gap-2 items-center">
                                 <div className="font-medium lg:font-bold uppercase">Numbers</div>
-                                <div className="font-light">7498</div>
+                                { tickets.map((ticket: any) => (
+                                    <div key={ticket.ticket_number} className="font-light">{ticket.ticket_number}</div>
+                                ))}
                                 </div>
                                 <div className="flex flex-col gap-2 items-center">
                                 <div className="font-medium lg:font-bold uppercase">Straight</div>
-                                <div className="font-light">1</div>
+                                { tickets.map((ticket: any) => (
+                                    <div key={ticket.ticket_number} className="font-light">{ticket.ticket_type === 'Straight' ? "1" : "0"}</div>
+                                ))}
                                 </div>
                                 <div className="flex flex-col gap-2 items-center">
                                 <div className="font-medium lg:font-bold uppercase">Rumble</div>
-                                <div className="font-light">1</div>
+                                { tickets.map((ticket: any) => (
+                                    <div key={ticket.ticket_number} className="font-light">{ticket.ticket_type === 'Rumble' ? "1" : "0"}</div>
+                                ))}
                                 </div>
                                 <div className="flex flex-col gap-2 items-center">
                                 <div className="font-medium lg:font-bold uppercase">Chance</div>
-                                <div className="font-light">1</div>
+                                { tickets.map((ticket: any) => (
+                                    <div key={ticket.ticket_number} className="font-light">{ticket.ticket_type === 'Chance' ? "1" : "0"}</div>
+                                ))}
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-col items-center gap-2 mt-4">
-                            <img src="/assets/images/barcode.svg" alt="" />
-                            <div className="font-light text-sm lg:text-size-2">73817298172891</div>
+                          <QRCode 
+                           value={
+                                invoice.length > 0 ?
+                                invoice[0].invoice_number
+                                : 
+                                ''
+                            }
+                           style={{ height: "auto", width: "100px" }}
+                            />
+                           <div className="font-light text-sm lg:text-size-2">
+                            {
+                                invoice.length > 0 ?
+                                invoice[0].invoice_number
+                                : 
+                                ''
+                            }
+                           </div>
                         </div>
                     </>
                     )}

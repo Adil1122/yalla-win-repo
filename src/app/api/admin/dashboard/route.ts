@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Invoice from "@/models/InvoiceModel";
 import { getGraphResult, getStartEndDates } from "@/libs/common";
+import User from "@/models/UserModel";
 
 export async function GET(request: Request) {
    try {
@@ -56,10 +57,19 @@ export async function GET(request: Request) {
          .sort({ 'createdAt': -1 })
          .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date']);
 
+      var merchants = await User.find({
+         $and: [
+            {role: 'merchant'},
+            {initial_coords: {$ne: null}}
+         ]
+      }).select(['name', 'initial_coords'])   
+
 
       return NextResponse.json({
          messge: "Query success ....",
-         graph_result: getGraphResult(records, start_date, end_date, schedule)
+         graph_result: getGraphResult(records, start_date, end_date, schedule),
+         //records: records,
+         merchants: merchants
       }, {status: 200});
 
    } catch (error) {

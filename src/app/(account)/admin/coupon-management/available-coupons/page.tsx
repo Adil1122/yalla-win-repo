@@ -5,6 +5,7 @@ import { faChevronLeft, faChevronRight, faCommentAlt, faEye, faImage, faPencil, 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
 import Notification from "@/components/notificationWidget"
+import { SwitchComponent } from "@/components/SwitchComponent";
 
 type Tab = 'shop' | 'app' | 'website'
 
@@ -14,10 +15,22 @@ export default function AdminAvailableCoupons() {
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false)
    const [toggled, setToggled] = useState(false)
+   const [shopMachineToggle, setShopMachineToggle] = useState(false)
+   const [settings, setSettings] = useState<any>({})
    var coupon_type:any = 'shop';
+
+   const handleShopMachineToggle = (value: boolean) => {
+      setShopMachineToggle(value);
+      var auto_generated = value === true ? 1 : 0
+      updateForm({ auto_generated: auto_generated })
+      if(auto_generated === 1) {
+         updateForm({ coupon_code: '' })
+      }
+   };
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+      setShopMachineToggle(false)
       coupon_type = tab;
       getCoupons();
    }
@@ -44,6 +57,7 @@ export default function AdminAvailableCoupons() {
       date_only: "",
       time_only: "",
       date: "",
+      auto_generated: 0,
 
       coupon_code_error: "",
       price_error: "",
@@ -60,6 +74,7 @@ export default function AdminAvailableCoupons() {
          date_only: "",
          time_only: "",
          date: "",
+         auto_generated: 0,
 
          coupon_code_error: "",
          price_error: "",
@@ -83,12 +98,16 @@ export default function AdminAvailableCoupons() {
 
       } else {
 
+         var togg = content.coupon.auto_generated === 0 ? false : true
+         setShopMachineToggle(togg)
+
          setForm({
             coupon_code: content.coupon.coupon_code,
             price: content.coupon.price,
             date_only: content.coupon.date_only,
             time_only: content.coupon.time_only,
             date: content.coupon.date,
+            auto_generated: content.coupon.auto_generated,
       
             coupon_code_error: "",
             price_error: "",
@@ -97,7 +116,9 @@ export default function AdminAvailableCoupons() {
             server_error: "",
             server_success: ""
          });
+
          setModalIsOpen(true);
+
       }
    }
 
@@ -120,9 +141,11 @@ export default function AdminAvailableCoupons() {
       var is_error = false;
 
       // Validation logic
-      if(!isNumber(form.coupon_code) || form.coupon_code.length !== 12) {
-         err['coupon_code_error'] = 'Coupon Code must be 12 Digits Number';
-         is_error = true;
+      if(form.auto_generated === 0) {
+         if(!isNumber(form.coupon_code) || form.coupon_code.length !== 12) {
+            err['coupon_code_error'] = 'Coupon Code must be 12 Digits Number';
+            is_error = true;
+         }
       }
 
       if (form.price === '') {
@@ -167,6 +190,7 @@ export default function AdminAvailableCoupons() {
          formData.append('time_only', form.time_only);
          formData.append('date', form.date_only + " " + form.time_only);
          formData.append('type', activeTab);
+         formData.append('auto_generated', form.auto_generated + '');
 
          var url = '/api/admin/coupon-management/available-coupons';
          var method = 'POST';
@@ -231,6 +255,7 @@ export default function AdminAvailableCoupons() {
             setShopCouponsCount(content.shop_coupons_count)
             setAppCouponsCount(content.app_coupons_count)
             setWebCouponsCount(content.web_coupons_count)
+            setSettings(content.settings)
             getCoupons();
          }
       } catch (error) {
@@ -287,7 +312,21 @@ export default function AdminAvailableCoupons() {
          coupon_type = activeTab;
          getTotalRecords();
       }
-   } 
+   }
+   
+   var enableCoupon = async() => {
+      let response = await fetch('/api/admin/coupon-management/available-coupons/extras?id=' + settings._id + '&type=' + activeTab, {
+         method: 'PUT',
+      });
+
+      var content = await response.json();
+
+      if(!response.ok) {
+
+      } else {
+         setSettings(content.settings)
+      }
+   }
 
    var totalPages = 0;
    var [currentPage, setCurrentPage] = useState(1);
@@ -334,6 +373,18 @@ export default function AdminAvailableCoupons() {
                   <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'app' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('app')}>App Coupons</div>
                   <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'website' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('website')}>Website Coupons</div>
                </div>
+
+               <div className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
+                  Enable / Disable
+                  <div className="w-[25px] h-[16px] lg:w-[30px] lg:h-[17px] relative rounded-xl border border-white flex items-center justify-center cursor-pointer" onClick={() => enableCoupon()}>
+                     <div className={`bg-white w-[5px] h-[5px] lg:w-[10px] lg:h-[10px] rounded-full transform transition-all duration-500 ease-in-out ${
+                        (activeTab === 'shop' && settings.show_coupons_shop === '1') || 
+                        (activeTab === 'app' && settings.show_coupons_app === '1') || 
+                        (activeTab === 'website' && settings.show_coupons_web === '1')  ? 
+                        'translate-x-[-5px] lg:translate-x-[-6px]' : 'translate-x-[5px] lg:translate-x-[7px]'}`}></div>
+                  </div>
+               </div>
+
                <button type="button" onClick={() => openCreatePopup()} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                   <FontAwesomeIcon size="lg" icon={faPlus} />
                   <div className="capitalize font-medium text-size-2">Add New Coupon</div>
@@ -485,21 +536,40 @@ export default function AdminAvailableCoupons() {
                      <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
                   </div>
                </div>
-               <div className="flex flex-col gap-6">
-                  <div className="flex flex-col gap-4">
-                     <div className="text-darkone text-size-4">Coupon Code</div>
-                     <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
-                        value={form.coupon_code}
-                        onChange={(e) => updateForm({ coupon_code: e.target.value })} />
-                     </div>
-                     {
-                        form.coupon_code_error !== '' && (
-                           <span style={{color: "red"}}>{form.coupon_code_error}</span>
-                        )
-                     }
 
+               <div>
+                  <div className="flex">
+                     <h2 className="text-head-1 text-darkone">
+                     Auto Generated
+                     </h2>
+                     <div className="ml-auto">
+                     <SwitchComponent
+                        isEnabled={shopMachineToggle}
+                        onToggle={handleShopMachineToggle}
+                        label=""
+                     />
+                     </div>
                   </div>
+               </div>
+               <div className="flex flex-col gap-6">
+                  {
+                     form.auto_generated === 0 &&
+                     <div className="flex flex-col gap-4">
+                        <div className="text-darkone text-size-4">Coupon Code</div>
+                        <div className="text-darkone text-size-2 border border-lightone rounded">
+                           <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
+                           value={form.coupon_code}
+                           onChange={(e) => updateForm({ coupon_code: e.target.value })} />
+                        </div>
+                        {
+                           form.coupon_code_error !== '' && (
+                              <span style={{color: "red"}}>{form.coupon_code_error}</span>
+                           )
+                        }
+
+                     </div>
+                  }
+                  
                   <div className="flex flex-col gap-4">
                      <div className="text-darkone text-size-4">Price</div>
                      <div className="text-darkone text-size-2 border border-lightone rounded">
