@@ -167,7 +167,7 @@ export default function Header() {
                   </div>
             }
          </div>
-         <div className="hidden lg:flex flex-row items-center gap-8 lg:text-size-1 lg-mid:text-size-3">
+         <div className="hidden md:flex flex-row items-center gap-8 lg:text-size-1 lg-mid:text-size-3">
 
             { loggedIn &&
             <>
@@ -190,7 +190,7 @@ export default function Header() {
             }
             
          </div>
-         <div className="ml-auto lg:hidden cursor-pointer">
+         <div className="ml-auto md:hidden cursor-pointer">
             <Bars3Icon className="w-[45px]" />
          </div>
       </section>

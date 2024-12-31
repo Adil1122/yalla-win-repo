@@ -121,12 +121,12 @@ export default function UserDashboard() {
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow px-12 py-20">
          <div className="flex flex-col gap-10 lg:gap-16 w-full h-full">
-            <div className="bg-white rounded-lg flex flex-col items-center justify-center py-12 px-6">
-               <div className="flex items-center gap-2">
+            <div className="bg-white rounded-lg flex flex-col items-center justify-center py-12 px-6 gap-6 md:gap-0">
+               <div className="flex flex-col md:flex-row items-center gap-2">
                   <div className="text-darkone text-head-3 lg:text-head-5 whitespace-nowrap">Current Balance:</div>
                   <div className="font-semibold text-darkone text-head-3 lg:text-head-8 text-themeone whitespace-nowrap">AED {parseFloat(wallet.amount + '').toFixed(2)}</div>
                </div>
-               <div className="flex items-center font-light text-darkone extra-small:text-size-2 extra-small:whitespace-nowrap text-size-3 gap-2">
+               <div className="flex flex-col md:flex-row items-center font-light text-darkone extra-small:text-size-2 extra-small:whitespace-nowrap text-size-3 gap-2">
                   <div>Last Update:</div>
                   <div>{wallet.last_updated}</div>
                </div>

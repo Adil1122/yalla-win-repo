@@ -208,7 +208,7 @@ export default function DashboardTopBar() {
                {isUser && (
                   <div className="flex items-center px-1 lg:px-4 py-2 gap-1 lg:gap-2 border border-themeone rounded-lg text-sm lg:text-size-2 cursor-pointer">
                      <div>Account ID :</div>
-                     <div className="text-themeone">{loggedInUser.qr_code}</div>
+                     <div className="text-themeone">{loggedInUser.qr_code.slice(0, 10)}</div>
                   </div>
                )}
                {isUser && (
