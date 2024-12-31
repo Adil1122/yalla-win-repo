@@ -62,10 +62,10 @@ const Cart = ({ params } : {params: { id: string; }}) => {
           <div className="flex flex-col flex-grow">
               <div className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
                     {
-                        invoice.length > 0 &&
+                        /*invoice.length > 0 &&
                         <Link href={"/admin/shop-management/view/" + invoice[0].user_id}>
                             <FontAwesomeIcon size="xl" icon={faArrowLeft} />
-                        </Link>
+                        </Link>*/
                     }
                   <div className="cursor-pointer text-head-3 font-medium">View Details</div>
               </div>

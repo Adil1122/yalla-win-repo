@@ -418,7 +418,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                  <Link
-                                    href={"/admin/shop-management/game-invoice/" + rec._id}
+                                    href={"/admin/shop-management/game-invoice/" + rec._id} target='_blank'
                                     className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2"
                                  >
                                     Invoice
@@ -463,7 +463,7 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
                               <td>
                                  <div className="flex items-center justify-center gap-2">
                                  <Link
-                                    href={"/admin/shop-management/prize-invoice/" + rec._id}
+                                    href={"/admin/shop-management/prize-invoice/" + rec._id} target='_blank'
                                     className="flex items-center justify-center px-3 border-[2px] bg-white text-themeone font-bold border-themeone rounded py-2"
                                  >
                                     Invoice
