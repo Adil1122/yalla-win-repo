@@ -159,7 +159,7 @@ const Cart = ({ params } : {params: { id: string; }}) => {
                     <div className="mx-auto w-fit">
                     <img src="/assets/images/logo.svg" alt="" />
                     </div>
-                    <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">Yalla 4</div>
+                    <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">Order Details</div>
                     <div className="flex flex-col px-6 lg:px-12 font-light text-sm lg:text-size-2 text-black my-4 lg:my-8 gap-6">
                     <div className="w-fit mx-auto">
                         <img className="max-h-[100px] lg:max-h-[200px]" src="/assets/images/keychain.svg" alt="" />
