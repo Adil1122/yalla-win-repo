@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import Modal from "./Modal"
+import Modal from "./SingleMachineModal"
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
-import { useProgress, Html, Environment } from "@react-three/drei"
+import { useProgress, Html, Environment, OrbitControls } from "@react-three/drei"
 
 function Loader() {
   const { progress } = useProgress()
@@ -100,10 +100,11 @@ export default function Scene({ modelRef, textures, animationType, onAnimationEn
 
    return (
       <div className="flex items-center justify-center flex-grow w-full h-full">
-         <Canvas ref={canvasRef} camera={{ position: [-2, 0, 4], fov: 75 }} gl={{ antialias: true }} dpr={[1, 2]} className="relative h-svh">
+         <Canvas ref={canvasRef} camera={{ position: [-5, 0, 0], fov: 75 }} gl={{ antialias: true }} dpr={[1, 2]} className="relative h-svh">
             <Suspense fallback={<Loader />}>
                <Environment files="/assets/animations/env.hdr" background backgroundBlurriness={0.2} />
-               <Modal ref={modelRef} texturess={textures} animationType={animationType} onLoaded={() => setIsModelLoaded(true)} onEnded={handleEnded} />
+               <Modal ref={modelRef} texturess={textures} animationType={animationType} machineNumber={1} onLoaded={() => setIsModelLoaded(true)} onEnded={handleEnded} />
+               <OrbitControls enablePan={false} enableZoom={true} />
             </Suspense>
          </Canvas>
       </div>

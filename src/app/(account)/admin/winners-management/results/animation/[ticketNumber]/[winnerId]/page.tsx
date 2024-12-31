@@ -12,7 +12,7 @@ interface WinnerProps {
 export default function AdminWinnerVideo() {
 
    const [winner, setWinner] = useState<any>(null)
-   const modelRef = useRef<any>(null)
+   const modelRef = useRef<(HTMLDivElement | null)[]>([])
    const { ticketNumber, winnerId } = useParams()
    const [textures, setTextures] = useState<any>(null)
    const [isUploading, setIsUploading] = useState<boolean>(false)
@@ -65,7 +65,7 @@ export default function AdminWinnerVideo() {
 
    const handleAnimationEnd = async (blob: any) => {
 
-      setIsUploading(true)
+      //setIsUploading(true)
 
       try {
          const formData = new FormData()
@@ -81,7 +81,7 @@ export default function AdminWinnerVideo() {
             throw new Error("Failed to upload video")
          }
 
-         router.push(`/admin/winners-management/results`)
+         //router.push(`/admin/winners-management/results`)
       } catch (error) {
          alert(`Error uploading video:` + error)
       }
@@ -96,7 +96,7 @@ export default function AdminWinnerVideo() {
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
          {winner && !isUploading && (
             <div className="flex flex-col gap-6 max-h-[600px] max-w-[800px] h-full flex-grow bg-black">
-               <Scene modelRef={modelRef} textures={textures} animationType="yalla_6" onAnimationEnd={handleAnimationEnd} />
+               <Scene modelRef={modelRef} textures={textures} animationType="yalla_4" onAnimationEnd={handleAnimationEnd} />
             </div>
          )}
 
