@@ -1,11 +1,127 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 //import {APIProvider, Map} from '@vis.gl/react-google-maps'
 import Link from 'next/link'
 import GoogleMap from '@/components/GoogleMap'
 
 export default function ContactPage() {
+
+   var [form, setForm] = useState({
+      first_name: "",
+      last_name: "",
+      email: "",
+      topic: "",
+      message: "",
+
+      first_name_error: "",
+      last_name_error: "",
+      email_error: "",
+      topic_error: "",
+      message_error: ""
+   });
+
+   function isValidateErrorForm() {
+      var err = {
+         first_name_error: "",
+         last_name_error: "",
+         email_error: "",
+         topic_error: "",
+         message_error: ""
+      };
+      var is_error = false;
+
+      // Validation logic
+      if (form.first_name === '') {
+         err['first_name_error'] = 'First Name is Required';
+         is_error = true;
+      }
+
+      if (form.last_name === '') {
+         err['last_name_error'] = 'Last Name is Required';
+         is_error = true;
+      }
+
+      if (form.email === '') {
+         err['email_error'] = 'Email is Required';
+         is_error = true;
+      }
+
+      if (form.topic === '') {
+         err['topic_error'] = 'Topic is Required';
+         is_error = true;
+      }
+
+      if (form.message === '') {
+         err['message_error'] = 'Message is Required';
+         is_error = true;
+      }
+
+      setForm((prev) => {
+         return { ...prev, ...err };
+      });
+
+      console.log('is_error: ', is_error)
+
+      return is_error;
+   }
+
+   async function onSubmit(e: any) {
+      e.preventDefault();
+      if (!isValidateErrorForm()) {
+         let formData = new FormData();
+         formData.append('first_name', form.first_name);
+         formData.append('last_name', form.last_name);
+         formData.append('email', form.email);
+         formData.append('topic', form.topic);
+         formData.append('message', form.message);
+
+         var url = '/api/user/contact-us';
+         var method = 'POST';
+
+         try {
+            let response = await fetch(url, {
+               method: method,
+               body: formData
+            });
+
+            var content = await response.json()
+
+            if (!response.ok) {
+               alert(content.messge)
+            } else {
+               alert(content.messge)
+            }
+            resetForm()
+         } catch (error) {
+            alert(content.messge)
+            resetForm()
+         }
+      }
+   }
+
+   function updateForm(value: any) {
+      console.log(value)
+      return setForm((prev) => {
+         return { ...prev, ...value };
+      });
+   }
+
+   function resetForm() {
+      setForm({
+         first_name: "",
+         last_name: "",
+         email: "",
+         topic: "",
+         message: "",
+   
+         first_name_error: "",
+         last_name_error: "",
+         email_error: "",
+         topic_error: "",
+         message_error: ""
+      });
+   }
    
    return (
       <section className="flex flex-col flex-grow h-full w-full bg-gradient-to-r from-themeone to-themetwo">
@@ -14,42 +130,77 @@ export default function ContactPage() {
                <div className="relative flex flex-col w-full lg:w-[55%] lg:gap-6 gap-3 lg:text-size-4 text-size-2">
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
                      <div className="flex flex-col gap-3 flex-1">
-                        <label htmlFor="first-name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
+                        <label htmlFor="first_name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
                            <span className="font-medium text-white">First Name</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
-                           <input id="first_name" name="first_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name" />
+                           <input id="first_name" name="first_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name"
+                           value={form.first_name}
+                           onChange={(e) => updateForm({ first_name: e.target.value })} />
                         </div>
+
+                        {
+                           form.first_name_error !== '' && (
+                              <span style={{color: "red"}}>{form.first_name_error}</span>
+                           )
+                        }
+
                      </div>
                      <div className="flex flex-col gap-3 flex-1">
                         <label htmlFor="last_name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
                            <span className="font-medium text-white">Last Name</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
-                           <input id="first_name" name="first_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name" />
+                           <input id="last_name" name="last_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name"
+                           value={form.last_name}
+                           onChange={(e) => updateForm({ last_name: e.target.value })} />
                         </div>
+
+                        {
+                           form.last_name_error !== '' && (
+                              <span style={{color: "red"}}>{form.last_name_error}</span>
+                           )
+                        }
+
                      </div>
                   </div>
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
                      <div className="flex flex-col gap-3 flex-1">
-                        <label htmlFor="first-name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
+                        <label htmlFor="email" className="text-theme-topo-1 flex items-end gap-2 ml-2">
                            <span className="font-medium text-white">Email</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
-                           <input id="first_name" name="first_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name" />
+                           <input id="email" name="email" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="Email"
+                           value={form.email}
+                           onChange={(e) => updateForm({ email: e.target.value })} />
                         </div>
+
+                        {
+                           form.email_error !== '' && (
+                              <span style={{color: "red"}}>{form.email_error}</span>
+                           )
+                        }
+
                      </div>
                   </div>
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
                      <div className="flex flex-col gap-3 flex-1">
-                        <label htmlFor="first-name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
+                        <label htmlFor="topic" className="text-theme-topo-1 flex items-end gap-2 ml-2">
                            <span className="font-medium text-white">Topic</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
-                           <select id="country_code" name="country_code" className="w-full focus:ring-0 border-none bg-transparent text-size-3 outline-none focus:outline-none cursor-pointer">
+                           <select id="topic" name="topic" className="w-full focus:ring-0 border-none bg-transparent text-size-3 outline-none focus:outline-none cursor-pointer" value={form.topic} onChange={(e) => updateForm({ topic: e.target.value })}>
+                              <option value="">Select Inquiry</option>
                               <option value="971">General Inquiry</option>
                            </select>
                         </div>
+
+                        {
+                           form.topic_error !== '' && (
+                              <span style={{color: "red"}}>{form.topic_error}</span>
+                           )
+                        }
+
                      </div>
                   </div>
                </div>
@@ -70,15 +221,25 @@ export default function ContactPage() {
                <div className="flex flex-col gap-4 lg:w-[55%] lg:gap-8 gap-3 lg:text-size-4 text-size-2">
                   <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
                      <div className="flex flex-col gap-3 flex-1">
-                        <label htmlFor="first-name" className="text-theme-topo-1 flex items-end gap-2 ml-2">
+                        <label htmlFor="message" className="text-theme-topo-1 flex items-end gap-2 ml-2">
                            <span className="font-medium text-white">Message</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 lg:py-6 py-4 shadow-custom-1 relative flex">
-                           <textarea className="w-full h-[250px] focus:ring-0 focus:outline-none border-none bg-transparent resize-none"></textarea>
+                           <textarea className="w-full h-[250px] focus:ring-0 focus:outline-none border-none bg-transparent resize-none" id="message" name="message"
+                           onChange={(e) => updateForm({ message: e.target.value })}>
+                              {form.message}
+                           </textarea>
                         </div>
+
+                        {
+                           form.message_error !== '' && (
+                              <span style={{color: "red"}}>{form.message_error}</span>
+                           )
+                        }
+
                      </div>
                   </div>
-                  <button className="text-center text-themeone font-medium py-3 bg-white rounded-standard">Submit</button>
+                  <button className="text-center text-themeone font-medium py-3 bg-white rounded-standard" onClick={onSubmit}>Submit</button>
                </div>
                <div className="flex lg:hidden rounded-standard flex-col gap-8 mt-10">
                   {/*<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}>
