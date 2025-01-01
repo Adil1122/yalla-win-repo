@@ -151,7 +151,7 @@ export default function ContactPage() {
                            <span className="font-medium text-white">Last Name</span>
                         </label>
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
-                           <input id="last_name" name="last_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="First Name"
+                           <input id="last_name" name="last_name" className="w-full border-none placeholder:font-normal bg-transparent text-theme-topo-1 font-semibold outline-none focus:outline-none focus:ring-0" type="text" placeholder="Last Name"
                            value={form.last_name}
                            onChange={(e) => updateForm({ last_name: e.target.value })} />
                         </div>
