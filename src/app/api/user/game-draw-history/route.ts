@@ -3,6 +3,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 // @ts-ignore
 import Invoice from "@/models/InvoiceModel";
 import { total_records_limit, getStartEndDates } from "@/libs/common";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
 
@@ -93,7 +94,8 @@ export async function PATCH(request: NextRequest) {
         var end_date = dates['end_date']
         var user_id = searchparams.get('user_id') + '';
 
-        console.log(today)
+        //console.log('start_date: ', start_date)
+        //console.log('end_date: ', end_date)
 
         const invoices = await Invoice
               .aggregate([
@@ -107,7 +109,7 @@ export async function PATCH(request: NextRequest) {
                                     $lt: new Date(end_date)
                                 }
                             },
-                            {user_id: user_id}
+                            {user_id: new mongoose.Types.ObjectId(user_id)}
                         ]
 
                       },
@@ -141,7 +143,10 @@ export async function PATCH(request: NextRequest) {
         
         return NextResponse.json({
             message: "query successful ....",
-            invoices: invoices
+            invoices: invoices,
+            start_date: start_date,
+            end_date: end_date,
+            schedule: schedule
             }, {status: 200});
         
 
