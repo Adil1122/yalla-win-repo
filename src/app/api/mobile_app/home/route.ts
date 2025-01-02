@@ -18,7 +18,6 @@ export async function GET(request: any) {
         var yalla_3_obj = await Game.find({name: 'Yalla 3'}).select('_id').limit(1)
         var yalla_4_obj = await Game.find({name: 'Yalla 4'}).select('_id').limit(1)
         var yalla_6_obj = await Game.find({name: 'Yalla 6'}).select('_id').limit(1)
-        console.log('yalla_3_obj', yalla_3_obj)
 
         const game_winners = await Winner
         .aggregate([

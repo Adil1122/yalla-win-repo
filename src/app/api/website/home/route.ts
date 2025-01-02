@@ -17,6 +17,10 @@ export async function GET(request: any) {
         var searchparams = new URLSearchParams(url.searchParams);
         var search = searchparams.get('search') + '';
 
+        var yalla_3_obj = await Game.find({name: 'Yalla 3'}).select('_id').limit(1)
+        var yalla_4_obj = await Game.find({name: 'Yalla 4'}).select('_id').limit(1)
+        var yalla_6_obj = await Game.find({name: 'Yalla 6'}).select('_id').limit(1)
+
         /*const upcoming_draws = await Draw
             .aggregate([
                 {
@@ -129,80 +133,87 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(1);
 
-        const game_winners_today = await Winner
-        .aggregate([
-            {
-               $match: {
-                  $and: [
-                     {
-                        $or: [
-                           { game_id: new mongoose.Types.ObjectId("66b7739a5be99f25dc381535") },
-                           { game_id: new mongoose.Types.ObjectId("66b773b15be99f25dc381536") },
-                           { game_id: new mongoose.Types.ObjectId("66b773c55be99f25dc381537") },
-                        ]
-                     },
-                     {
-                        createdAt: {
-                           $gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                           $lt: new Date(new Date().setHours(23, 59, 59, 999))
+        var game_winners_today = []
+
+        if(yalla_3_obj.length > 0 && yalla_4_obj.length > 0 && yalla_6_obj.length > 0) {
+
+            game_winners_today = await Winner
+            .aggregate([
+                {
+                $match: {
+                    $and: [
+                        {
+                            $or: [
+                            { game_id: yalla_3_obj[0]._id },
+                            { game_id: yalla_4_obj[0]._id },
+                            { game_id: yalla_6_obj[0]._id },
+                            ]
+                        },
+                        {
+                            createdAt: {
+                            $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                            $lt: new Date(new Date().setHours(23, 59, 59, 999))
+                            }
+                        },
+                        {
+                            animation_video: { $ne: null }
                         }
-                     },
-                     {
-                        animation_video: { $ne: null }
-                     }
-                  ]
-               }
-            },
-            {
+                    ]
+                }
+                },
+                {
+                    $lookup: {
+                        from: 'games',
+                        localField: "game_id",
+                        foreignField: "_id",
+                        as: "winnersWithGames",
+                    }
+                },
+                {
                 $lookup: {
-                    from: 'games',
+                    from: 'draws',
                     localField: "game_id",
-                    foreignField: "_id",
-                    as: "winnersWithGames",
+                    foreignField: "game_id",
+                    as: "winnersWithDraws",
+                }
+            },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: "user_id",
+                        foreignField: "_id",
+                        as: "winnersWithUsers",
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'tickets',
+                        localField: "ticket_id",
+                        foreignField: "_id",
+                        as: "winnersWithTickets",
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: "product_id",
+                        foreignField: "_id",
+                        as: "winnersWithProducts",
+                    }
+                },
+                {
+                $group: {
+                    _id: "$game_id",
+                    latestWinner: { $last: "$$ROOT" }
                 }
             },
             {
-               $lookup: {
-                   from: 'draws',
-                   localField: "game_id",
-                   foreignField: "game_id",
-                   as: "winnersWithDraws",
-               }
-           },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: "user_id",
-                    foreignField: "_id",
-                    as: "winnersWithUsers",
-                }
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: "product_id",
-                    foreignField: "_id",
-                    as: "winnersWithProducts",
-                }
-            },
-            {
-               $group: {
-                   _id: "$game_id",
-                   latestWinner: { $last: "$$ROOT" }
-               }
-           },
-           {
-               $replaceRoot: { newRoot: "$latestWinner" }
-           }
-        ]).sort({'winning_date': -1});
+                $replaceRoot: { newRoot: "$latestWinner" }
+            }
+            ]).sort({'winning_date': -1});
+
+        }
+        
 
         const product_winners = await Winner
         .aggregate([
@@ -241,80 +252,72 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(4);
 
-        const yalla_3_top_winner = await Winner
-        .aggregate([
-            {
-                //$match: { game_name: 'Yalla 3' },
-                $match:
-                    {
-                        $and: [ 
-                            { game_name: 'Yalla 3' },  
-                            {
-                        $or: [ 
-                            {game_name: { $regex: '.*' + search + '.*', $options: 'i' }}
-                        ]}]
+        var yalla_3_top_winner = []
+        if(yalla_3_obj.length > 0) {
+            yalla_3_top_winner = await Winner
+            .aggregate([
+                {
+                    $match:
+                        {
+                            game_id: yalla_3_obj[0]._id
+                        }
+                },
+                {
+                    $lookup: {
+                        from: 'tickets',
+                        localField: "ticket_id",
+                        foreignField: "_id",
+                        as: "winnersWithTickets",
                     }
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
                 }
-            }
 
-        ]).sort({'winning_date': -1}).limit(1);
+            ]).sort({'winning_date': -1}).limit(1);
+        }
 
 
-        const yalla_4_top_winner = await Winner
-        .aggregate([
-            {
-                //$match: { game_name: 'Yalla 4' },
-                $match:
-                    {
-                        $and: [ 
-                            { game_name: 'Yalla 4' },  
-                            {
-                        $or: [ 
-                            {game_name: { $regex: '.*' + search + '.*', $options: 'i' }}
-                        ]}]
+        var yalla_4_top_winner = []
+        if(yalla_4_obj.length > 0) {
+            yalla_4_top_winner = await Winner
+            .aggregate([
+                {
+                    //$match: { game_name: 'Yalla 4' },
+                    $match:
+                        {
+                            game_id: yalla_4_obj[0]._id
+                        }
+                },
+                {
+                    $lookup: {
+                        from: 'tickets',
+                        localField: "ticket_id",
+                        foreignField: "_id",
+                        as: "winnersWithTickets",
                     }
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
                 }
-            }
-        ]).sort({'winning_date': -1}).limit(1);
+            ]).sort({'winning_date': -1}).limit(1);
+        }
 
-        const yalla_6_top_winner = await Winner
-        .aggregate([
-            {
-                //$match: { game_name: 'Yalla 6' },
-                $match:
-                    {
-                        $and: [ 
-                            { game_name: 'Yalla 6' },  
-                            {
-                        $or: [ 
-                            {game_name: { $regex: '.*' + search + '.*', $options: 'i' }}
-                        ]}]
+        var yalla_6_top_winner = []
+        if(yalla_6_obj.length > 0) {
+            yalla_6_top_winner = await Winner
+            .aggregate([
+                {
+                    $match:
+                        {
+                            game_id: yalla_6_obj[0]._id
+                        }
+                },
+                {
+                    $lookup: {
+                        from: 'tickets',
+                        localField: "ticket_id",
+                        foreignField: "_id",
+                        as: "winnersWithTickets",
                     }
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
-                }
-            },
-            
-        ]).sort({'winning_date': -1}).limit(1);
+                },
+                
+            ]).sort({'winning_date': -1}).limit(1);
+        }
 
         const products_with_game = await Product
             .aggregate([
