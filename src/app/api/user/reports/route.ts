@@ -8,24 +8,28 @@ export async function GET(request: any) {
    await connectMongoDB()
    //var invoice_type: any = 'game'
 
-   const dailyReport = await getReportBySchedule('game', 'daily')
+   var url = new URL(request.url);
+   var searchparams = new URLSearchParams(url.searchParams);
+   var user_id = searchparams.get('user_id') + '';
+
+   const dailyReport = await getReportBySchedule('game', 'daily', user_id)
    const updatedDailyReport = transformDailyReport(dailyReport);
-   const productDailyReport = await getReportBySchedule('prize', 'daily')
+   const productDailyReport = await getReportBySchedule('prize', 'daily', user_id)
    const updatedProductDailyReport = transformDailyReport(productDailyReport);
 
-   const monthlyReport = await getReportBySchedule('game', 'monthly')
+   const monthlyReport = await getReportBySchedule('game', 'monthly', user_id)
    const transformedMonthlyReport = transformMonthlyReport(monthlyReport)
-   const prizeMonthlyReport = await getReportBySchedule('prize', 'monthly')
+   const prizeMonthlyReport = await getReportBySchedule('prize', 'monthly', user_id)
    const transformedPrizeMonthlyReport = transformMonthlyReport(prizeMonthlyReport)
    
-   const weeklyReport = await getReportBySchedule('game', 'weekly')
+   const weeklyReport = await getReportBySchedule('game', 'weekly', user_id)
    const transformedWeeklyReport = transformWeeklyData(weeklyReport)
-   const productWeeklyReport = await getReportBySchedule('prize', 'weekly')
+   const productWeeklyReport = await getReportBySchedule('prize', 'weekly', user_id)
    const transformedProductWeeklyReport = transformWeeklyData(productWeeklyReport)
 
-   const tillDateReport = await getReportBySchedule('game', 'till_date')
+   const tillDateReport = await getReportBySchedule('game', 'till_date', user_id)
    const transformedTillDateReport = transformWeeklyData(tillDateReport)
-   const productTillDateReport = await getReportBySchedule('prize', 'till_date')
+   const productTillDateReport = await getReportBySchedule('prize', 'till_date', user_id)
    const transformedProductTillDateReport = transformWeeklyData(productTillDateReport)
 
    try {
@@ -71,7 +75,7 @@ export async function GET(request: any) {
    }
 }
 
-const getReportBySchedule = async (invoice_type: any, schedule: any) => {
+const getReportBySchedule = async (invoice_type: any, schedule: any, user_id: any) => {
 
    var dates = getStartEndDates(schedule)
    var start_date = dates.start_date
@@ -84,7 +88,8 @@ const getReportBySchedule = async (invoice_type: any, schedule: any) => {
             $lt: new Date(end_date)
          }
       },
-      { invoice_type: invoice_type }
+      { invoice_type: invoice_type },
+      {user_id: user_id}
    ]
 
    const records = await Invoice

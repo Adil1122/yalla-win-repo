@@ -42,7 +42,7 @@ const WinnerCard: React.FC<WinnerCardProps> = ({ name, prizeAmount, ticketNumber
                      <div className="font-light">{date}</div>
                   </div>
                </div>
-               <Link href={href} className="text-white shadow-custom-1 rounded-full px-12 py-4 bg-themeone mt-4 lg:mt-0 font-medium whitespace-nowrap">Try Your Luck</Link>
+               <Link href={'/winners'} className="text-white shadow-custom-1 rounded-full px-12 py-4 bg-themeone mt-4 lg:mt-0 font-medium whitespace-nowrap">Try Your Luck</Link>
             </div>
          </div>   
       </>

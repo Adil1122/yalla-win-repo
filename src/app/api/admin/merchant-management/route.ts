@@ -10,7 +10,9 @@ export async function POST(request: Request) {
     try {
         await connectMongoDB();
         const data = await request.formData();
-        var name:any = data.get('name');
+        var first_name:any = data.get('first_name');
+        var last_name:any = data.get('last_name');
+        var name:any = first_name + ' ' + last_name;
         var eid:any = data.get('eid');
         var email:any = data.get('email');
         var mobile:any = data.get('mobile');
@@ -24,6 +26,8 @@ export async function POST(request: Request) {
         var password:any = data.get('password');
         let bcrypt_password = await bcrypt.hash(password, 8);
         let newDocument = {
+            first_name: first_name,
+            last_name: last_name,
             name: name,
             eid: eid,
             email: email,
@@ -91,7 +95,9 @@ export async function PUT(request: Request) {
             }, {status: 500});
         } else {
             const data = await request.formData();
-            var name:any = data.get('name');
+            var first_name:any = data.get('first_name');
+            var last_name:any = data.get('last_name');
+            var name:any = first_name + ' ' + last_name;
             var eid:any = data.get('eid');
             var email:any = data.get('email');
             var mobile:any = data.get('mobile');
@@ -106,6 +112,8 @@ export async function PUT(request: Request) {
             let bcrypt_password = await bcrypt.hash(password, 8);
             let updates = {
                 $set: {
+                    first_name: first_name,
+                    last_name: last_name,
                     name: name,
                     eid: eid,
                     email: email,

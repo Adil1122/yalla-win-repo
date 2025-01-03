@@ -99,7 +99,9 @@ export default function AdminMerchantManagement() {
   var [id, setId] = useState("");
 
   var [form, setForm] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
+    //name: "",
     eid: "",
     mobile: "",
     email: "",
@@ -112,7 +114,8 @@ export default function AdminMerchantManagement() {
     city: "",
     area: "",
 
-    name_error: "",
+    first_name_error: "",
+    last_name_error: "",
     eid_error: "",
     mobile_error: "",
     email_error: "",
@@ -130,7 +133,9 @@ export default function AdminMerchantManagement() {
 
   function openCreatePopup() {
     setForm({
-      name: "",
+      first_name: "",
+      last_name: "",
+      //name: "",
       eid: "",
       mobile: "",
       email: "",
@@ -143,7 +148,8 @@ export default function AdminMerchantManagement() {
       city: "",
       area: "",
 
-      name_error: "",
+      first_name_error: "",
+      last_name_error: "",
       eid_error: "",
       mobile_error: "",
       password_error: "",
@@ -174,7 +180,9 @@ export default function AdminMerchantManagement() {
     } else {
       setForm({
 
-        name: content.result.name,
+        first_name: content.result.first_name,
+        last_name: content.result.last_name,
+        //name: content.result.name,
         eid: content.result.eid,
         mobile: content.result.mobile,
         email: content.result.email,
@@ -187,7 +195,8 @@ export default function AdminMerchantManagement() {
         city: content.result.city,
         area: content.result.area,
 
-        name_error: "",
+        first_name_error: "",
+        last_name_error: "",
         eid_error: "",
         mobile_error: "",
         password_error: "",
@@ -215,7 +224,9 @@ export default function AdminMerchantManagement() {
 
   function isValidateErrorForm() {
     var err = {
-      name_error: "",
+      first_name_error: "",
+      last_name_error: "",
+      //name_error: "",
       eid_error: "",
       mobile_error: "",
       email_error: "",
@@ -231,8 +242,13 @@ export default function AdminMerchantManagement() {
     var is_error = false;
 
     // Validation logic
-    if (form.name === "") {
-      err["name_error"] = "Name is Required";
+    if (form.first_name === "") {
+      err["first_name_error"] = "First Name is Required";
+      is_error = true;
+    }
+
+    if (form.last_name === "") {
+      err["last_name_error"] = "Last Name is Required";
       is_error = true;
     }
 
@@ -297,7 +313,8 @@ export default function AdminMerchantManagement() {
     e.preventDefault();
     if (!isValidateErrorForm()) {
       let formData = new FormData();
-      formData.append("name", form.name);
+      formData.append("first_name", form.first_name);
+      formData.append("last_name", form.last_name);
       formData.append("eid", form.eid);
       formData.append("mobile", form.mobile);
       formData.append("email", form.email);
@@ -803,21 +820,37 @@ export default function AdminMerchantManagement() {
             </div>
           </div>
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="flex flex-col gap-4">
-                <div className="text-darkone text-size-4">Name</div>
+                <div className="text-darkone text-size-4">First Name</div>
                 <div className="text-darkone text-size-2 border border-lightone rounded">
                   <input
                     className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
                     type="text"
-                    value={form.name}
-                    onChange={(e) => updateForm({ name: e.target.value })}
+                    value={form.first_name}
+                    onChange={(e) => updateForm({ first_name: e.target.value })}
                   />
                 </div>
-                {form.name_error !== "" && ( 
-                  <span style={{ color: "red" }}>{form.name_error}</span>
+                {form.first_name_error !== "" && ( 
+                  <span style={{ color: "red" }}>{form.first_name_error}</span>
                 )}
               </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="text-darkone text-size-4">Last Name</div>
+                <div className="text-darkone text-size-2 border border-lightone rounded">
+                  <input
+                    className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]"
+                    type="text"
+                    value={form.last_name}
+                    onChange={(e) => updateForm({ last_name: e.target.value })}
+                  />
+                </div>
+                {form.last_name_error !== "" && ( 
+                  <span style={{ color: "red" }}>{form.last_name_error}</span>
+                )}
+              </div>
+
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
