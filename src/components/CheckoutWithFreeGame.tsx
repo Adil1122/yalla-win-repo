@@ -431,10 +431,7 @@ interface CheckoutWithFreeGameProps {
                               <div>Ticket Price</div>
                               <div>4.45 AED</div>
                            </div>*/}
-                           <div className="flex justify-between">
-                              <div>Game Name</div>
-                              <div>{game_name}</div>
-                           </div>
+                           
                            <div className="flex justify-between">
                               <div>VAT %</div>
                               <div>{product.vat}</div>
