@@ -283,7 +283,7 @@ export default function Home() {
          <ResultsSection yalla_3_top_winner={section.yalla_3_top_winner} yalla_4_top_winner={section.yalla_4_top_winner} yalla_6_top_winner={section.yalla_6_top_winner} game_winners={section.game_winners} product_winners={section.product_winners} />
          
          <section className="flex flex-col mb-6 mt-12 lg:my-12 gap-12">
-            <h2 className="font-noto-sans-black text-center uppercase text-white text-big-five lg:text-large-head">Lets get you started</h2>
+            <h2 className="font-noto-sans-black text-center uppercase text-white text-head-4 lg:text-large-head">Lets get you started</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 relative py-8 lg:py-20 px-8 lg:px-24 bg-light-background backdrop-blur-64 gap-6 lg:gap-12">
                <AccountCard title="How to enter and win" subTitle="Start dreaming with us and win prizes" iconImage="/assets/images/trophy.svg" detailsLink="/accounts/how-to-enter-and-win" />
                <AccountCard title="How to shop" subTitle="Fill your carts and make your dreams come true" iconImage="/assets/images/shopping-cart-boxes.svg" detailsLink="/accounts/how-to-shop" />
@@ -299,7 +299,7 @@ export default function Home() {
          </section>
          { section.products_with_game.length > 0 && (
             <section className="flex flex-col m-0 lg:my-12 gap-6 lg:gap-12">
-               <h2 className="font-noto-sans-black text-center uppercase text-white text-big-five lg:text-large-head">Buy products with free raffle games</h2>
+               <h2 className="font-noto-sans-black text-center uppercase text-white text-head-4 lg:text-large-head">Buy products with free raffle games</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative py-8 lg:py-20 px-8 lg:px-24 bg-light-background backdrop-blur-64 gap-8 lg:gap-12">
                <Suspense>   
                   { 
@@ -316,7 +316,7 @@ export default function Home() {
          
          { section.products_with_prize.length > 0 && (
             <section className="flex flex-col my-6 gap-6 lg:gap-12">
-               <h2 className="font-noto-sans-black text-center uppercase text-white text-big-five lg:text-large-head">Buy products with free mega prize</h2>
+               <h2 className="font-noto-sans-black text-center uppercase text-white text-head-4 lg:text-large-head">Buy products with free mega prize</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 relative py-8 lg:py-20 px-8 lg:px-24 gap-8 lg:gap-12 bg-light-background backdrop-blur-64">
                <Suspense> 
                   { 
@@ -333,9 +333,9 @@ export default function Home() {
 
          { (section.game_winners.length > 0 || section.product_winners.length > 0) && (
             <section className="flex flex-col mt-0 mb-6 lg:my-12 gap-6 lg:gap-12">
-               <h2 className="font-noto-sans-black text-center uppercase text-white text-big-five lg:text-large-head">Latest Winners</h2>
+               <h2 className="font-noto-sans-black text-center uppercase text-white text-head-4 lg:text-large-head">Latest Winners</h2>
                <div className="flex flex-col items-center bg-light-background backdrop-blur-64 pb-8 lg:py-12">
-                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 relative py-8 lg:py-12 px-8 lg:px-36 gap-8 lg:gap-12 w-full">
+                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 relative py-8 lg:py-12 px-0 lg:px-36 gap-8 lg:gap-12 w-full align-center">
                      
                         { 
                         section.game_winners.map((winner: any) => (

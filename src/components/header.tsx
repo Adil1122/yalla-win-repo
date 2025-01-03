@@ -14,10 +14,12 @@ import 'animate.css'
 import { useAuth } from '@/components/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
 import getDaysHoursMinsSecs from '@/libs/common';
+import Drawer from "./drawer"
 
 export default function Header() {
    
    const [isSearching, setIsSearching] = useState<boolean>(false);
+   const [mobileDrawerVisible, setMobileDrawerVisible] = useState<boolean>(false);
    const [showSearching, setShowSearching] = useState<boolean>(false);
    const [search, setSearch] = useState("");
    const [search_results, setSearchResults] = useState([]);
@@ -111,7 +113,17 @@ export default function Header() {
    const logout = () => {
       setLoggedIn(false);
       localStorage.removeItem('yalla_logged_in_user');
+      setMobileDrawerVisible(false);
       router.push('/');
+   }
+
+   const toggleMobileDrawer = () => {
+      setMobileDrawerVisible(!mobileDrawerVisible)
+   }
+
+   const handleMobileNav = (link: string) => {
+      setMobileDrawerVisible(false)
+      router.push(link)
    }
    
 
@@ -120,6 +132,9 @@ export default function Header() {
    
    const activeClass = "font-medium text-themeone bg-white rounded-standard px-[24px] py-[2px]";
    const inactiveClass = "animate__animated";
+   
+   const activeClassMobile = "font-medium text-head-1 text-left text-themeone bg-white rounded-standard py-[2px]";
+   const inactiveClassMobile = "text-head-1 text-left";
 
    return (
       <section className="flex flex-row items-center justify-between">
@@ -190,9 +205,41 @@ export default function Header() {
             }
             
          </div>
-         <div className="ml-auto md:hidden cursor-pointer">
+         <div onClick={toggleMobileDrawer} className="ml-auto md:hidden cursor-pointer">
             <Bars3Icon className="w-[45px]" />
          </div>
+         <Drawer open={mobileDrawerVisible} setOpen={setMobileDrawerVisible}>
+            <div className="flex flex-col flex-grow h-full max-h-screen overflow-y-auto">
+
+               <div className="flex items-center justify-center my-5 lg:my-9">
+                  <Link href="/"><img className="max-h-[80px] lg:max-h-auto" src="/assets/images/logo.svg" alt="" /></Link>
+               </div>
+               <div className="flex flex-col gap-4 ml-6 my-12">
+                  <button onClick={() => handleMobileNav('/')} className={pathname === '/' ? activeClassMobile : inactiveClassMobile}>Home</button>
+                  <button onClick={() => handleMobileNav('about-us')} className={pathname === '/about-us' ? activeClassMobile : inactiveClassMobile}>About</button>
+                  <button onClick={() => handleMobileNav('shop')} className={pathname === '/shop' ? activeClassMobile : inactiveClassMobile}>Shop</button>
+                  <button onClick={() => handleMobileNav('accounts')} className={pathname === '/accounts' ? activeClassMobile : inactiveClassMobile}>Accounts</button>
+                  <button onClick={() => handleMobileNav('rules-and-prices')} className={pathname === '/rules-and-prices' ? activeClassMobile : inactiveClassMobile}>Rules & prices</button>
+                  <button onClick={() => handleMobileNav('winners')} className={pathname === '/winners' ? activeClassMobile : inactiveClassMobile}>Winners</button>
+               </div>
+               {loggedIn &&
+                  <div className="mt-12 mx-auto w-fit">
+                     <button onClick={() => logout()} className="flex items-center gap-2 border border-black rounded-full px-6 py-2 text-md mb-8">
+                        <img src="/assets/dashboard/logout.svg" alt="" />
+                        <div className="font-medium text-lg">Logout</div>
+                     </button>
+                  </div>
+               }
+               {!loggedIn &&
+                  <div className="mt-12 mx-auto w-fit">
+                     <button onClick={() => {handleMobileNav ('login')}} className="flex items-center gap-2 border border-black rounded-full px-6 py-2 text-md mb-8">
+                        <div className="font-medium text-lg">Login</div>
+                     </button>
+                  </div>
+               }
+            </div>
+         </Drawer>
       </section>
+
    )
 }

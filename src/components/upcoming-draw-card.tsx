@@ -78,14 +78,14 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
             <div ref={swiperDrawRef} className="swiper-custom flex w-full">
                <div className="swiper-wrapper">
                   <div className="swiper-slide">
-                     <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-9 lg:mb-12">Upcoming Game Draw</h2>
+                     <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-6 lg:text-head-9 lg:mb-12">Upcoming Game Draw</h2>
                      <div className="flex flex-col gap-3 lg:gap-12 mt-6">
 
 
                      { 
                         game_Draws.map((draw: any, index: any) => (
                         <div key={draw._id} className="flex flex-col lg:flex-row items-center lg:items-start gap-2 lg:gap-4 justify-between w-full">
-                           <div className="text-white text-head-3 lg:text-head-9 font-semibold ">{draw.game_name}</div>
+                           <div className="text-white text-head-1 lg:text-head-9 font-semibold ">{draw.game_name}</div>
                            <div className="flex flex-row gap-4">
                               <div className="flex flex-col gap-1 items-center">
                                  <div className="font-luckiest-guy bg-white w-[50px] h-[43px] flex items-center justify-center rounded text-themetwo text-head-9 pt-2">{game_timers[draw._id].days}</div>

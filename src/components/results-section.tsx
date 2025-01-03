@@ -44,7 +44,7 @@ interface ResultsSectionProps {
          { (yalla_6_top_winner.length > 0 || yalla_4_top_winner.length > 0 || yalla_6_top_winner.length > 0
             || game_winners.length > 0 || product_winners.length > 0)  &&
          <aside className="flex flex-col gap-3 lg:gap-6 lg:w-[65%] px-4 lg:px-28 py-6 bg-white rounded-standard">
-               <h2 className="font-noto-sans text-center uppercase text-themeone text-big-one lg:text-extra-large-head font-semibold">Results</h2>
+               <h2 className="font-noto-sans text-center uppercase text-themeone text-head-7 lg:text-extra-large-head font-semibold">Results</h2>
                <div className="flex flex-row justify-between gap-4">
                   <div className="flex flex-col items-start justify-between font-medium gap-4 mt-1"> 
                      { yalla_6_top_winner.length > 0 &&
