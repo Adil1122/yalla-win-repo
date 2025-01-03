@@ -14,12 +14,52 @@ import AccountCard from "@/components/account-card"
 const ProductGameCard = lazy(() => import("@/components/product-with-game-card"));
 const ProductPrizeCard = lazy(() => import("@/components/product-with-prize-card"));
 const ResultsSection = lazy(() => import("@/components/results-section"));
-//const WinnerCard = lazy(() => import("@/components/winner-card"));
+import Modal from '@/components/modal'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTimes } from "@fortawesome/free-solid-svg-icons"
 
 export default function Home() {
 
    const swiperMainRef = useRef(null)
    const swiperDrawRef = useRef(null)
+   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+   const [animationFile, setAnimationFile] = useState<string>('')
+   const [iframeSrc, setIframeSrc] = useState<string>('')
+
+   const checkAnimationTime = (winner: any, game: string) => {
+      
+      if (game == '3') {
+         const now = new Date()
+         if (now.getHours() === 22 && now.getMinutes() === 0) {
+            setAnimationFile(winner.animation_video)
+         }
+      } else if (game == '4') {
+         const now = new Date()
+         if (now.getHours() === 22 && now.getMinutes() === 5) {
+            setAnimationFile(winner.animation_video)
+         }
+      } else if (game == '6') {
+         const now = new Date()
+         if (now.getHours() === 22 && now.getMinutes() === 10) {
+            setAnimationFile(winner.animation_video)
+         }
+      }
+   }
+
+   useEffect(() => {
+      if (modalIsOpen && animationFile && animationFile != '') {
+         
+         setIframeSrc(`https://drive.google.com/file/d/${animationFile}/preview`)
+      }
+   }, [modalIsOpen])
+
+   useEffect(() => {
+
+      if (animationFile) {
+
+         setModalIsOpen(true)
+      }
+   }, [animationFile])
 
    const [section, setSection] = useState({
       //upcoming_draws: {},
@@ -33,12 +73,13 @@ export default function Home() {
       yalla_4_top_winner: [],
       yalla_6_top_winner: [],
       home_page_banners: [],
+      game_winners_today: [],
       todayWinners: 0,
       previousWinners: 0
     });
 
     var [start, setStart] = useState(0);
-   
+
    useEffect(() => {
 
       if (swiperMainRef.current) {
@@ -91,7 +132,7 @@ export default function Home() {
             method: "GET",
             });
             const content = await response.json();
-            console.log(content)
+            //console.log(content)
 
             if(response.ok) {
 
@@ -105,7 +146,7 @@ export default function Home() {
                   productsWithPrize[i]['quantity_to_select'] = 1;
                 }
 
-                console.log('productsWithPrize: ', productsWithPrize)
+                //console.log('productsWithPrize: ', productsWithPrize)
 
                setSection((prev) => {
                   return { ...prev, ...{
@@ -121,10 +162,32 @@ export default function Home() {
                      yalla_6_top_winner: Array.from(content.yalla_6_top_winner),
                      todayWinners: content.todayWinners,
                      previousWinners: content.previousWinners,
-                     home_page_banners: Array.from(content.home_page_banners)
+                     home_page_banners: Array.from(content.home_page_banners),
+                     game_winners_today: Array.from(content.game_winners_today)
                   } };
                 });
                 localStorage.setItem('yalla_search', '')
+
+                const todayWinners = Array.from(content.game_winners_today)
+                if (todayWinners.length) {
+
+                  todayWinners.forEach((winner: any) => {
+                     
+                     if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 3') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '3')
+                        }, 60000)
+                     } else if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 4') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '4')
+                        }, 60000)
+                     } else if (winner && winner.winnersWithGames && winner.winnersWithGames.length && winner.winnersWithGames[0].name == 'Yalla 6') {
+                        setInterval(() => {
+                           checkAnimationTime(winner, '6')
+                        }, 60000)
+                     }
+                  })
+                }
             } else {
                localStorage.setItem('yalla_search', '')
             }
@@ -304,7 +367,7 @@ export default function Home() {
                      <img src="/assets/images/trophy-filled-icon.svg" alt="" />
                   </div>
                   <div className="text-themeone font-medium text-head-8">{section.todayWinners}</div>
-                  <button className="capitalize underline text-darkone text-size-4">Today Winners</button>
+                  <Link href={'/winners'} className="capitalize underline text-darkone text-size-4">Today Winners</Link>
                </div>
                <div className="flex flex-col items-center justify-center bg-white rounded-standard py-8">
                   <div className="mb-6">
@@ -318,7 +381,7 @@ export default function Home() {
                      <img src="/assets/images/trophy-filled-icon.svg" alt="" />
                   </div>
                   <div className="text-themeone font-medium text-head-8">{section.previousWinners}</div>
-                  <button className="capitalize underline text-darkone text-size-4">Previous results</button>
+                  <Link href={'/winners'} className="capitalize underline text-darkone text-size-4">Previous results</Link>
                </div>
             </div>
             <img className="absolute top-[10%] left-[2%]" src="/assets/images/star.svg" alt="" />
@@ -326,6 +389,21 @@ export default function Home() {
             <img className="absolute -bottom-[8%] left-[60%]" src="/assets/images/star.svg" alt="" />
             <img className="absolute top-[30%] right-[2%]" src="/assets/images/star.svg" alt="" />
          </section>
+
+         {modalIsOpen && (
+            <Modal open={true} onClose={() => setModalIsOpen(false)}>
+               <div className="flex flex-col justify-center gap-12 px-12 w-full lg:min-w-[800px] h-[700px]">
+                  <div className="flex items-center justify-between w-full">
+                     <div onClick={() => setModalIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] ml-auto rounded-full flex items-center justify-center">
+                        <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
+                     </div>
+                  </div>
+                  <div className="flex flex-col gap-6 h-full flex-grow bg-black">
+                     <iframe width="100%" height="100%" frameBorder="0" allow="autoplay" title="Video" className="w-full h-full" src={iframeSrc}></iframe>
+                  </div>
+               </div>
+            </Modal>
+         )}
       </div>
    )
 }

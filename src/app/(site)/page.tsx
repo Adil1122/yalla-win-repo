@@ -367,7 +367,7 @@ export default function Home() {
                      <img src="/assets/images/trophy-filled-icon.svg" alt="" />
                   </div>
                   <div className="text-themeone font-medium text-head-8">{section.todayWinners}</div>
-                  <button className="capitalize underline text-darkone text-size-4">Today Winners</button>
+                  <Link href={'/winners'} className="capitalize underline text-darkone text-size-4">Today Winners</Link>
                </div>
                <div className="flex flex-col items-center justify-center bg-white rounded-standard py-8">
                   <div className="mb-6">
@@ -381,7 +381,7 @@ export default function Home() {
                      <img src="/assets/images/trophy-filled-icon.svg" alt="" />
                   </div>
                   <div className="text-themeone font-medium text-head-8">{section.previousWinners}</div>
-                  <button className="capitalize underline text-darkone text-size-4">Previous results</button>
+                  <Link href={'/winners'} className="capitalize underline text-darkone text-size-4">Previous results</Link>
                </div>
             </div>
             <img className="absolute top-[10%] left-[2%]" src="/assets/images/star.svg" alt="" />

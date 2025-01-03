@@ -397,7 +397,8 @@ export async function GET(request: any) {
 
             const previousWinners = await Winner.find({
                 winning_date: {
-                    $lt : (new Date).setHours(0, 0, 0, 0), 
+                    //$lt : (new Date).setHours(0, 0, 0, 0), 
+                    $lt: new Date(today)
                 } 
             }).countDocuments(); 
 
