@@ -190,6 +190,14 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
         {
             "day": "6-8 PM",
             "sales": 0
+        },
+        {
+            "day": "8-10 PM",
+            "sales": 0
+        },
+        {
+            "day": "10-12 PM",
+            "sales": 0
         }
     ]
     var daily_order_data = daily_data
@@ -253,6 +261,21 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                         total_daily_sales += data_sales[i].amount
                         time_matched = true
                     }
+
+                    if(time_int >= 8 && time_int < 10) {
+                        daily_data[6].sales += data_sales[i].amount - 1
+                        daily_order_data[6].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
+                    if(time_int >= 10 && time_int < 12) {
+                        daily_data[7].sales += data_sales[i].amount - 1
+                        daily_order_data[7].sales ++
+                        total_daily_sales += data_sales[i].amount
+                        time_matched = true
+                    }
+
                     if(time_matched = true) {
                         var user_id = data_sales[i].user_id.toString()
                         if(daily_user_ids.indexOf(user_id) === -1) {
