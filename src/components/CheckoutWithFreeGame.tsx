@@ -64,7 +64,7 @@ interface CheckoutWithFreeGameProps {
             router.push('/');
          }
        } else {
-           router.push('login');
+           router.push('/login');
        }
    }, []);
 
