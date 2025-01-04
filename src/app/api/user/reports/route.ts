@@ -97,7 +97,7 @@ const getReportBySchedule = async (invoice_type: any, schedule: any, user_id: an
          $and: queryConditions
       })
       .sort({ 'createdAt': -1 })
-      .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date'])
+      .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date', 'createdAt'])
 
    return getGraphResult(records, start_date, end_date, schedule).data
 }

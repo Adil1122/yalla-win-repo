@@ -139,16 +139,16 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
     var user_ids: any = [];
     var total_sales: any = 0
     for(var i = 0; i < records.length; i++) {
-        let date = new Date(records[i].invoice_date);
+        /*let date = new Date(records[i].invoice_date);
         let timezoneOffset = date.getTimezoneOffset();
         let pstOffset = -300; // this is the offset for the Pacific Standard Time timezone
-        let adjustedTime = new Date(date.getTime() + (pstOffset + timezoneOffset) * 60 * 1000);
+        let adjustedTime = new Date(date.getTime() + (pstOffset + timezoneOffset) * 60 * 1000);*/
 
         data_sales.push({
             user_id: records[i].user_id,
-            date: new Date(records[i].invoice_date).toISOString().slice(0, 10),
+            date: new Date(records[i].createdAt).toISOString().slice(0, 10),
             amount: records[i].total_amount,
-            time: getTime(new Date(records[i].invoice_date))
+            time: getTime(new Date(records[i].createdAt))
         })
 
         var user_id = records[i].user_id.toString()
