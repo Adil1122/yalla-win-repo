@@ -145,6 +145,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
         let adjustedTime = new Date(date.getTime() + (pstOffset + timezoneOffset) * 60 * 1000);*/
 
         data_sales.push({
+            _id: records[i]._id,
             user_id: records[i].user_id,
             date: new Date(records[i].createdAt).toISOString().slice(0, 10),
             amount: records[i].total_amount,
@@ -234,7 +235,7 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
                     }
                 } else if(time.includes('PM')) {
 
-                    if(time_int >= 12 && time_int < 2) {
+                    if((time_int >= 12 || time_int >= 1) && time_int < 2) {
                         daily_data[2].sales += data_sales[i].amount - 1
                         daily_order_data[2].sales ++
                         total_daily_sales += data_sales[i].amount
@@ -328,12 +329,14 @@ export function getGraphResult(records: any, start_date: any, end_date: any, sch
         }
 
     }
+
     return {
         data: data,
         orders_data: orders_data,
         total_users: user_ids.length,
         total_sales: total_sales,
-        data_sales: data_sales
+        data_sales: data_sales,
+        //records: records
     };
 }
 
