@@ -66,6 +66,7 @@ export async function PATCH(request: NextRequest) {
         var dates: any = getStartEndDates(schedule)
         var start_date = dates['start_date']
         var end_date = dates['end_date']
+        var user_id = searchparams.get('user_id') + ''
 
         console.log(today)
 
@@ -80,7 +81,8 @@ export async function PATCH(request: NextRequest) {
                                     $lt: new Date(end_date)
                                 }
                             },
-                            {cart_product_details: {$ne: null}}
+                            {cart_product_details: {$ne: null}},
+                            {user_id: new mongoose.Types.ObjectId(user_id)}
                         ]
                   }
               ).sort({'createdAt': -1}).skip(0).limit(total_records_limit);
