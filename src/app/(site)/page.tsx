@@ -74,6 +74,8 @@ export default function Home() {
       yalla_6_top_winner: [],
       home_page_banners: [],
       game_winners_today: [],
+      game_draw_ids: [],
+      prize_draw_ids: [],
       todayWinners: 0,
       previousWinners: 0
     });
@@ -148,6 +150,18 @@ export default function Home() {
 
                 //console.log('productsWithPrize: ', productsWithPrize)
 
+                var game_draws_object: any = Array.from(content.game_draws)
+                var prize_draws_object: any = Array.from(content.prize_draws)
+                var game_draw_ids: any = []
+                var prize_draw_ids: any = []
+                for(var i = 0; i < game_draws_object.length; i++) {
+                  game_draw_ids.push(game_draws_object[i].product_id)
+                }
+
+                for(var i = 0; i < prize_draws_object.length; i++) {
+                  prize_draw_ids.push(prize_draws_object[i].product_id)
+                }
+
                setSection((prev) => {
                   return { ...prev, ...{
                      //upcoming_draws: Array.from(content.upcoming_draws),
@@ -163,7 +177,9 @@ export default function Home() {
                      todayWinners: content.todayWinners,
                      previousWinners: content.previousWinners,
                      home_page_banners: Array.from(content.home_page_banners),
-                     game_winners_today: Array.from(content.game_winners_today)
+                     game_winners_today: Array.from(content.game_winners_today),
+                     game_draw_ids: Array.from(game_draw_ids),
+                     prize_draw_ids: Array.from(prize_draw_ids)
                   } };
                 });
                 localStorage.setItem('yalla_search', '')
@@ -304,7 +320,8 @@ export default function Home() {
                <Suspense>   
                   { 
                      section.products_with_game.map((product: any) => (
-                        product.productWithGame.length > 0 && (
+                        // @ts-ignore
+                        product.productWithGame.length > 0 && section.game_draw_ids.includes(product._id) && (
                            <ProductGameCard key={product._id + product.productWithGame[0]._id} productId={product._id} name={product.name} gameName={ product.productWithGame[0].name } price={'AED ' + product.price} vat={product.vat} buyLink={"/buy/product/game/" + product._id} productImageLink={product.image} quantity={product.quantity_to_select} setGameProductQuantity={setGameProductQuantity} />
                         )
                      ))
@@ -321,7 +338,8 @@ export default function Home() {
                <Suspense> 
                   { 
                      section.products_with_prize.map((product: any) => (
-                        product.productWithPrize.length > 0 && (
+                        // @ts-ignore
+                        product.productWithPrize.length > 0 && section.prize_draw_ids.includes(product._id) && (
                            <ProductPrizeCard key={product._id + product.productWithPrize[0]._id} name={product.name} prizeName={product.productWithPrize.name} price={'AED' + product.price} vat={product.vat} detailLink={"/product/" + product._id} checkoutLink={"/buy/product/prize/" + product._id} productImageLink={product.image} prizeImageLink={product.productWithPrize[0].image} productId={product._id} quantity={product.quantity_to_select} setPrizeProductQuantity={setPrizeProductQuantity}/>
                         )
                      ))
