@@ -67,7 +67,7 @@ type InvoiceTab = 'invoice' | 'ticket'
             method: "GET",
             });
             const content = await response.json();
-            //console.log(content)
+            console.log('content: ', content)
 
             if(!response.ok) {
                
@@ -78,7 +78,6 @@ type InvoiceTab = 'invoice' | 'ticket'
             }
          
       } catch (error) {
-         
       }
    }
 
@@ -110,20 +109,23 @@ type InvoiceTab = 'invoice' | 'ticket'
 
        var product_details:any = [];
        for(var i = 0; i < result.length; i++) {
-         total = total + (result[i].quantity * result[i].productInBasket[0].price);
-         product_details.push({
-            product_id: result[i].productInBasket[0]._id,
-            product_name: result[i].productInBasket[0].name,
-            product_image: result[i].productInBasket[0].image,
-            product_quantity: result[i].quantity,
-            product_price: result[i].productInBasket[0].price,
-            total_amount: result[i].quantity * result[i].productInBasket[0].price,
+         if(result[i].productInBasket.length > 0 && result[i].prizeInBasket.length > 0) {
+            total = total + (result[i].quantity * result[i].productInBasket[0].price);
+            product_details.push({
+               product_id: result[i].productInBasket[0]._id,
+               product_name: result[i].productInBasket[0].name,
+               product_image: result[i].productInBasket[0].image,
+               product_quantity: result[i].quantity,
+               product_price: result[i].productInBasket[0].price,
+               total_amount: result[i].quantity * result[i].productInBasket[0].price,
 
-            prize_id: result[i].prizeInBasket[0]._id,
-            prize_name: result[i].prizeInBasket[0].name,
-            prize_image: result[i].prizeInBasket[0].image,
-            prize_price: result[i].prizeInBasket[0].price,
-         })
+               prize_id: result[i].prizeInBasket[0]._id,
+               prize_name: result[i].prizeInBasket[0].name,
+               prize_image: result[i].prizeInBasket[0].image,
+               prize_price: result[i].prizeInBasket[0].price,
+            })
+         }
+         
        }
 
        var qr_code = Date.now() + Math.random() + '';
