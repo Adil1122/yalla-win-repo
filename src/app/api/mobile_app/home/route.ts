@@ -185,28 +185,14 @@ export async function GET(request: any) {
                     }
                 ]
             }).select(['_id', 'product_id']).sort({'draw_date': -1}).limit(4);
-        
 
-        var products_with_game = []
-
-        if(game_draws.length > 0) {
-
-            var game_product_ids = []
-
-            for(var i = 0; i < game_draws.length; i++) {
-                game_product_ids.push(game_draws[i].product_id)
-            }
-
-            console.log('game_product_ids: ', game_product_ids)
-
-            products_with_game = await Product
+        var products_with_game = await Product
             .aggregate([
                 {
                     $match:
                     {
 
                         $and: [ 
-                            //{ _id: { $in: game_product_ids } }, 
                             { game_id: { $ne: null } }, 
                             {
                                 game_name: {
@@ -231,27 +217,14 @@ export async function GET(request: any) {
                     },
                 }
             ]).sort({'name': 1}).limit(3);
-        }
 
-        var products_with_prize = []
         
-        if(prize_draws.length > 0) {
-
-            var prize_product_ids = []
-
-            for(var i = 0; i < prize_draws.length; i++) {
-                prize_product_ids.push(prize_draws[i].product_id)
-            }
-
-            console.log('prize_product_ids: ', prize_product_ids)
-
-            products_with_prize = await Product
+        var products_with_prize = await Product
             .aggregate([
                 {
                     $match:
                     {
                         $and: [ 
-                            //{_id: {$in: prize_product_ids}},
                             { prize_id: { $ne: null } },  
                             {
                         $or: [ 
@@ -269,8 +242,7 @@ export async function GET(request: any) {
                         as: "productWithPrize",
                     },
                 }
-            ]).sort({'name': 1}).limit(4);
-        }    
+            ]).sort({'name': 1}).limit(4);  
 
 
             
@@ -278,6 +250,8 @@ export async function GET(request: any) {
             messge: "mobile app query successful ....",
             game_winners: game_winners,
             product_winners: product_winners,
+            game_draws: game_draws,
+            prize_draws: prize_draws,
             products_with_game: products_with_game,
             products_with_prize: products_with_prize,
             yalla_3_top_winner: yalla_3_top_winner,
