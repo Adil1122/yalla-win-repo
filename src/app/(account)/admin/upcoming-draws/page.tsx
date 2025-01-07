@@ -435,6 +435,7 @@ export default function AdminUpDrawsManagement() {
                <table className="w-full">
                   <thead>
                      <tr className="bg-white">
+                        <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">Product Name</th>
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-bl rounded-tl">{activeTabTwo === 'games' ? 'Game Name' : 'Prize Name'}</th>
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th> 
                         <th scope="col" className="px-3 py-5 lg:px-8 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Time</th>
@@ -445,7 +446,8 @@ export default function AdminUpDrawsManagement() {
                   {
                      records.map((record: any) => (
                      <tr key={record._id}>
-                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.draw_type === 'games' ? record.game_name : record.prize_name}</td>
+                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.productWithDraw.length > 0 ? record.productWithDraw[0].name : ''}</td>
+                        <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.draw_type === 'games' ? (record.gameWithDraw.length > 0 ? record.gameWithDraw[0].name : '') : (record.prizeWithDraw.length > 0 ? record.prizeWithDraw[0].name : '')}</td>
                         <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.date_only}</td>
                         <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{record.time_only}</td>
                         <td>

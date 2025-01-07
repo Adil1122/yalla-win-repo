@@ -201,6 +201,14 @@ export async function GET(request: Request) {
                     foreignField: "_id",
                     as: "productWithDraw",
                 }
+            },
+            {
+                $lookup: {
+                    from: 'prizes',
+                    localField: "prize_id",
+                    foreignField: "_id",
+                    as: "prizeWithDraw",
+                }
             }
         ]).sort({'createdAt': -1}).skip(skip).limit(limit);
 
