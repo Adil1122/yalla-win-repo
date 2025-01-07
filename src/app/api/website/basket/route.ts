@@ -85,11 +85,6 @@ export async function POST(request: NextRequest) {
 
     var product = await Product.findOne({_id: product_id}).select(['_id', 'prize_id']);
 
-    return NextResponse.json({
-      message: "successful query ....",
-      product: product
-    }, {status: 200});
-
 
     let basketDocument = {
         product_id: product_id, 
