@@ -206,7 +206,7 @@ export async function GET(request: any) {
                     {
 
                         $and: [ 
-                            { _id: { $in: game_product_ids } }, 
+                            //{ _id: { $in: game_product_ids } }, 
                             { game_id: { $ne: null } }, 
                             {
                                 game_name: {
@@ -251,7 +251,7 @@ export async function GET(request: any) {
                     $match:
                     {
                         $and: [ 
-                            {_id: {$in: prize_product_ids}},
+                            //{_id: {$in: prize_product_ids}},
                             { prize_id: { $ne: null } },  
                             {
                         $or: [ 
