@@ -161,21 +161,65 @@ export async function GET(request: any) {
                 
             ]).sort({'winning_date': -1}).limit(1);
         }
+
+        const game_draws = await Draw
+              .find({
+                        $and: [
+                            {draw_type: 'games'},
+                            {
+                                draw_date: {
+                                    $gt : new Date(),
+                                }
+                            }
+                        ]}
+                ).select(['_id', 'product_id']).sort({'draw_date': -1}).limit(3);
+
+        const prize_draws = await Draw
+            .find({
+                $and: [
+                    {draw_type: 'products'},
+                    {
+                        draw_date: {
+                            $gt : new Date(),
+                        }
+                    }
+                ]
+            }).select(['_id', 'product_id']).sort({'draw_date': -1}).limit(4);
         
 
-        const products_with_game = await Product
+        var products_with_game = []
+
+        if(game_draws.length > 0) {
+
+            var game_product_ids = []
+
+            for(var i = 0; i < game_draws.length; i++) {
+                game_product_ids.push(game_draws[i].product_id)
+            }
+
+            console.log('game_product_ids: ', game_product_ids)
+
+            products_with_game = await Product
             .aggregate([
                 {
                     $match:
                     {
-                       $and: [
-                        {game_id: { $ne: null }},
-                        {
-                            game_name: {
-                                //$in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
-                                $in : ['Yalla 3', 'Yalla 4', 'Yalla 6'], 
-                            }
-                        }]
+
+                        $and: [ 
+                            { _id: { $in: game_product_ids } }, 
+                            { game_id: { $ne: null } }, 
+                            {
+                                game_name: {
+                                    //$in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
+                                    $in : ['Yalla 3', 'Yalla 4', 'Yalla 6'], 
+                                }
+                            }, 
+                            {
+                        $or: [ 
+                            {name: { $regex: '.*' + search + '.*', $options: 'i' }},
+                            {price: { $regex: '.*' + search + '.*', $options: 'i' }},
+                            {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
+                        ]}]
                     }
                 },
                 {
@@ -186,14 +230,35 @@ export async function GET(request: any) {
                         as: "productWithGame",
                     },
                 }
-            ]).sort({'createdAt': -1}).limit(3);
+            ]).sort({'name': 1}).limit(3);
+        }
 
-        const products_with_prize = await Product
+        var products_with_prize = []
+        
+        if(prize_draws.length > 0) {
+
+            var prize_product_ids = []
+
+            for(var i = 0; i < prize_draws.length; i++) {
+                prize_product_ids.push(prize_draws[i].product_id)
+            }
+
+            console.log('prize_product_ids: ', prize_product_ids)
+
+            products_with_prize = await Product
             .aggregate([
                 {
                     $match:
                     {
-                        prize_id: { $ne: null }
+                        $and: [ 
+                            {_id: {$in: prize_product_ids}},
+                            { prize_id: { $ne: null } },  
+                            {
+                        $or: [ 
+                            {name: { $regex: '.*' + search + '.*', $options: 'i' }},
+                            {price: { $regex: '.*' + search + '.*', $options: 'i' }},
+                            {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
+                        ]}]
                     }
                 },
                 {
@@ -204,7 +269,8 @@ export async function GET(request: any) {
                         as: "productWithPrize",
                     },
                 }
-            ]).sort({'createdAt': -1}).limit(4);
+            ]).sort({'name': 1}).limit(4);
+        }    
 
 
             
