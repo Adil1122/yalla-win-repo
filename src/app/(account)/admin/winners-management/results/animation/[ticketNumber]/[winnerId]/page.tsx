@@ -65,7 +65,7 @@ export default function AdminWinnerVideo() {
 
    const handleAnimationEnd = async (blob: any) => {
 
-      //setIsUploading(true)
+      setIsUploading(true)
 
       try {
          const formData = new FormData()
@@ -81,7 +81,7 @@ export default function AdminWinnerVideo() {
             throw new Error("Failed to upload video")
          }
 
-         //router.push(`/admin/winners-management/results`)
+         router.push(`/admin/winners-management/results`)
       } catch (error) {
          alert(`Error uploading video:` + error)
       }

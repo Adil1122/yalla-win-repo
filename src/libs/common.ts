@@ -25,6 +25,10 @@ export default function getDaysHoursMinsSecs(date1: any, date2: any) {
     }
 }
 
+export const getTimeZone = () : string => {
+   return 'Asia/Dubai'
+}
+
 export function formatDate(dateString: string): string {
    const date = new Date(dateString);
    const options: Intl.DateTimeFormatOptions = {

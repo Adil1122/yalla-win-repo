@@ -1,18 +1,21 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { faCloudUpload, faPlay, faShare, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faChevronRight, faCloudUpload, faPlay, faShare, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from '@/components/modal'
 import { formatDate, formatDateOnly, formatISODate } from '@/libs/common'
 import { useRouter } from 'next/navigation'
 import SocialShare from '@/components/SocialShare'
+import usePagination from '@/hooks/usePagination'
+import { icon } from '@fortawesome/fontawesome-svg-core'
 
 type Tab = 'results' | 'images' | 'videos'
 type TabTwo = 'app' | 'shop' | 'web'
 
 export default function AdminWinnerResults() {
 
+   const itemsPerPage = 10
    const [activeTabTwo, setActiveTabTwo] = useState<Tab>('results')
    const [gameWinners, setGameWinners] = useState<any>([])
    const [ticketNumber, setTicketNumber] = useState<any>()
@@ -24,8 +27,10 @@ export default function AdminWinnerResults() {
    const [toggleShop, setToggledShop] = useState<boolean>(false)
    const [toggleWeb, setToggledWeb] = useState<boolean>(false)
    const router = useRouter()
+   const {currentPage, totalPages, currentRecords, setPagination } = usePagination({ items: gameWinners, itemsPerPage: itemsPerPage });
    
    const handleTabTwoChange = (tab: Tab) => {
+      setPagination(1)
       setActiveTabTwo(tab)
    }
 
@@ -179,16 +184,33 @@ export default function AdminWinnerResults() {
                            </tr>
                         </thead>
                         <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                           {gameWinners.map((winner: any, index: number) => (
+                        {currentRecords.map((winner: any, index: number) => (
                            <tr key={index}>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.GameDetails.name}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{`${winner.UserDetails.first_name} ${winner.UserDetails.last_name}`}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails.ticket_number}</td>
-                              <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                              {winner.GameDetails.name}
+                           </td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                              {`${winner.UserDetails.first_name} ${winner.UserDetails.last_name}`}
+                           </td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                              {winner.TicketDetails.ticket_number}
+                           </td>
+                           <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
+                              {formatDate(winner.winning_date)}
+                           </td>
                            </tr>
-                           ))}
+                        ))}
                         </tbody>
                      </table>
+                     <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
+                        <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage > 1 && setPagination(currentPage - 1)}>
+                           <FontAwesomeIcon size="1x" icon={faChevronLeft} />
+                        </div>
+
+                        <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage < totalPages && setPagination(currentPage + 1)}>
+                           <FontAwesomeIcon size="1x" icon={faChevronRight} />
+                        </div>
+                     </div>
                      <table className="w-full mt-12">
                         <thead>
                            <tr className="bg-white">
@@ -209,7 +231,6 @@ export default function AdminWinnerResults() {
                            ))}
                         </tbody>
                      </table>
-                     
                   </>
                )}
                
@@ -237,7 +258,7 @@ export default function AdminWinnerResults() {
                               </tr>
                            </thead>
                            <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                              {gameWinners.map((winner: any, index: number) => (
+                              {currentRecords.map((winner: any, index: number) => (
                               <tr key={index}>
                                  <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.GameDetails.name}</td>
                                  <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails.ticket_number}</td>
@@ -258,6 +279,15 @@ export default function AdminWinnerResults() {
                               ))}
                            </tbody>
                         </table>
+                        <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
+                           <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage > 1 && setPagination(currentPage - 1)}>
+                              <FontAwesomeIcon size="1x" icon={faChevronLeft} />
+                           </div>
+
+                           <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage < totalPages && setPagination(currentPage + 1)}>
+                              <FontAwesomeIcon size="1x" icon={faChevronRight} />
+                           </div>
+                        </div>
                      </>
                   </div>
                )}

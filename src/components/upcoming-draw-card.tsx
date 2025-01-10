@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import Swiper from "swiper"
 import { Pagination } from "swiper/modules"
 import "swiper/css"
-import getDaysHoursMinsSecs, {formatISODate} from '@/libs/common'
+import getDaysHoursMinsSecs, {formatISODate, getTimeZone} from '@/libs/common'
 
 interface UpcomingDrawProps {
    game_draws: any;
@@ -19,7 +19,8 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
    const [prize_timers, setPrizeTimers] = useState<any>([]);
 
    const setTimings = (gameDraws: any, prizeDraws: any) => {
-      var current_date = new Date();
+      var current_date = new Date(new Date().toLocaleString("en-US", {timeZone: getTimeZone()}));
+      console.log(current_date);
 
       var temp_game_timers: any = [];
       for(var i = 0; i < gameDraws.length; i++) {

@@ -33,6 +33,7 @@ export default function AdminShopManagement() {
   const [searchType, setSearchType] = useState<SearchScope>("countries");
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [modalTwoIsOpen, setModalTwoIsOpen] = useState<boolean>(false);
+  const [deleteShop, setDeleteShop] = useState<any>(0);
   const [modalThreeIsOpen, setModalThreeIsOpen] = useState<boolean>(false);
   const [shopMachineToggle, setShopMachineToggle] = useState(false);
 
@@ -61,8 +62,29 @@ export default function AdminShopManagement() {
   }
 
   const handleDelete = (id: string | number) => {
+      setDeleteShop(id);
     setModalTwoIsOpen(true);
   };
+
+  const handleDeleteShop = async () => {
+
+   if (deleteShop) {
+      let response = await fetch('/api/admin/shop-management?id=' + deleteShop, {
+         method: 'DELETE',
+      });
+      var content = await response.json();
+
+      setModalTwoIsOpen(false)
+
+      if(!response.ok) {
+
+      } else {
+         getShops()
+      }
+   }
+
+   setDeleteShop(0)
+  }
 
   const habdleScheduleTabChange = (tab: ScheduleTab) => {
     schedule = tab;
@@ -558,7 +580,7 @@ export default function AdminShopManagement() {
                 <td>
                   <div className="flex items-center justify-center gap-2">
                     <Link
-                      href={"shop-management/view/" + shop._id}
+                      href={"shop-management/view/" + shop.merchant_id}
                       className="text-white flex items-center justify-center px-3 border-[2px] border-white rounded py-2"
                     >
                       <FontAwesomeIcon size="lg" icon={faEye} />
@@ -786,7 +808,7 @@ export default function AdminShopManagement() {
             >
               Cancel
             </button>
-            <button className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">
+            <button onClick={handleDeleteShop} className="text-white text-head-1 font-medium text-center px-10 py-2 bg-gradient-to-r from-themeone to-themetwo w-fit rounded">
               Delete
             </button>
           </div>
