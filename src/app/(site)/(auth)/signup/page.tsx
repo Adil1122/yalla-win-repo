@@ -230,6 +230,7 @@ export default function SignUpPage() {
                   });
                } else if (response.status === 200) {
                   localStorage.setItem('otp_number', content.otp);
+                  localStorage.setItem('otp_type', form.notification_type);
                   localStorage.setItem('otp_user', JSON.stringify(content.result));
                   router.push("/verify-otp");
                }

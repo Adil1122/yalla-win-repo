@@ -23,24 +23,25 @@ export async function GET(request: NextRequest) {
             limit = parseInt(searchparams.get('limit') + '');
             skip = parseInt(searchparams.get('skip') + '');
         }
+        var user_id = searchparams.get('user_id') + '';
 
         const invoices = await Invoice
-              .find(
+         .find(
+            {
+               $and: [
+                  {invoice_type: 'prize'},
+                  {draws: { $ne: null } },
+                  { user_id: new mongoose.Types.ObjectId(user_id) },
+                  {cart_product_details: {$ne: null}},
                   {
-                        $and: [
-                            {invoice_type: 'prize'},
-                            {
-                                createdAt: {
-                                    $lt : new Date(today), 
-                                    //$lt: new Date(tomorrow)
-                                }
-                            },
-                            {cart_product_details: {$ne: null}}
-                        ]
+                     createdAt: {
+                        $lt : new Date(today)
+                     }
                   }
-              ).sort({'createdAt': -1}).skip(skip).limit(limit);
+               ]
+            },
+         ).sort({'createdAt': -1});
 
-        
         return NextResponse.json({
             message: "query successful ....",
             invoices: invoices
@@ -105,18 +106,30 @@ export async function OPTIONS(request: NextRequest) {
     try {
         await connectMongoDB();
         let today = new Date().toISOString().slice(0, 10)
-        const invoice_count = await Invoice.find({
-            $and: [
-                {invoice_type: 'prize'},
-                {
-                    createdAt: {
-                        $lt : new Date(today), 
-                        //$lt: new Date(tomorrow)
-                    }
-                },
-                {cart_product_details: {$ne: null}}
-            ]
-        }).countDocuments()
+        var url = new URL(request.url);
+        var searchparams = new URLSearchParams(url.searchParams);
+        var user_id = searchparams.get('user_id') + '';
+        const count = await Invoice.aggregate([
+         {
+            $match: {
+               $and: [
+                     { invoice_type: 'prize' },
+                     {cart_product_details: {$ne: null}},
+                     { user_id: new mongoose.Types.ObjectId(user_id) },
+                     {
+                        createdAt: {
+                              $lt : new Date(today)
+                          }
+                      }
+               ],
+            },
+         },
+         {
+            $count: "totalCount",
+         },
+      ]);
+      
+      const invoice_count = count.length > 0 ? count[0].totalCount : 0;
 
         return NextResponse.json({
             message: "query successful ....",

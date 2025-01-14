@@ -32,20 +32,30 @@ export async function POST(request: NextRequest) {
     try {
 
     let draw = await Draw.find(
-        {game_id: game_id},
-        {draw_type: 'games'}
+      {
+         game_id: game_id,
+         draw_type: 'games'
+      },
+      {
+         _id: 1,           
+         draw_date: 1      
+      }
     ).sort({'draw_date': -1}).limit(1);
 
     let user = await User.findOne(user_condition).select(['_id', 'city', 'country', 'role'])
 
     if(draw && draw.length > 0) {
 
+      console.log(draw[0])
         let draw_id = draw[0]._id.toString();
+        let draw_date = draw[0].draw_date;
+        console.log(draw_date)
         let invoiceDocument = {
             game_id: game_id,
             product_id: product_id, 
             user_id: user._id.toString(), 
             draw_id: draw_id,
+            draw_date: new Date(draw_date),
             invoice_number: invoice_number, 
             invoice_date: invoice_date, 
             vat: vat, 
@@ -56,6 +66,7 @@ export async function POST(request: NextRequest) {
             user_country: user.country,
             platform: platform
         }
+        console.log(invoiceDocument)
 
         let invoiceResult = await Invoice.create(invoiceDocument);
 

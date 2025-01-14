@@ -223,7 +223,10 @@ export default function Header() {
                   <button onClick={() => handleMobileNav('winners')} className={pathname === '/winners' ? activeClassMobile : inactiveClassMobile}>Winners</button>
                </div>
                {loggedIn &&
-                  <div className="mt-12 mx-auto w-fit">
+                  <div className="mt-12 mx-auto w-fit flex gap-4">
+                     <button onClick={() => {handleMobileNav (dashboardUrl)}} className="flex items-center gap-2 bg-themeone text-white border border-themeone rounded-full px-6 py-2 text-md mb-8">
+                        <div className="font-medium text-lg">Dashboard</div>
+                     </button>
                      <button onClick={() => logout()} className="flex items-center gap-2 border border-black rounded-full px-6 py-2 text-md mb-8">
                         <img src="/assets/dashboard/logout.svg" alt="" />
                         <div className="font-medium text-lg">Logout</div>
@@ -231,9 +234,12 @@ export default function Header() {
                   </div>
                }
                {!loggedIn &&
-                  <div className="mt-12 mx-auto w-fit">
+                  <div className="mt-12 flex gap-4 mx-auto w-fit">
                      <button onClick={() => {handleMobileNav ('login')}} className="flex items-center gap-2 border border-black rounded-full px-6 py-2 text-md mb-8">
                         <div className="font-medium text-lg">Login</div>
+                     </button>
+                     <button onClick={() => {handleMobileNav ('signup')}} className="flex items-center gap-2 bg-themeone text-white border border-themeone rounded-full px-6 py-2 text-md mb-8">
+                        <div className="font-medium text-lg">Signup</div>
                      </button>
                   </div>
                }

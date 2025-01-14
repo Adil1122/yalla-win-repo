@@ -7,6 +7,7 @@ const invoiceSchema = new Schema (
         game_id: {type: mongoose.Types.ObjectId, ref: 'Game', required: false},
         user_id: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
         draw_id: {type: mongoose.Types.ObjectId, ref: 'Draw', required: false},
+        draw_date: {type: Date, required: false},
         invoice_number: {type: String, required: true},
         vat: {type: String, required: false},
         total_amount: {type: Number, required: true},

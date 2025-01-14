@@ -23,10 +23,9 @@ export async function GET(request: NextRequest) {
               .aggregate([
                   {
                       $match: { 
-                        //user_id: new mongoose.Types.ObjectId(user_id), game_id: {$ne: null}
                         $and: [
-                            {user_id: new mongoose.Types.ObjectId(user_id)}, 
-                            {game_id: {$ne: null}}
+                           {user_id: new mongoose.Types.ObjectId(user_id)}, 
+                           {game_id: {$ne: null}}
                         ]
                       },
                   },
@@ -46,14 +45,22 @@ export async function GET(request: NextRequest) {
                             as: "drawInWinner",
                         },
                    },
-                   {
+                     {
                         $lookup: {
-                            from: "invoices",
-                            localField: "invoice_id",
-                            foreignField: "_id",
-                            as: "invoiceInWinner",
-                        },
-                   },
+                           from: "tickets",
+                           localField: "ticket_id",
+                           foreignField: "_id",
+                           as: "ticketInWinner",
+                        }
+                     },
+                     {
+                        $lookup: {
+                           from: "invoices",
+                           localField: "invoice_id",
+                           foreignField: "_id",
+                           as: "invoiceInWinner",
+                        }
+                     },
                    {
                         $lookup: {
                             from: "games",

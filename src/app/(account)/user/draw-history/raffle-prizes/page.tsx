@@ -5,10 +5,15 @@ import React, { useEffect, useState } from 'react'
 import { formatISODate } from '@/libs/common'
 import Link from 'next/link'
 import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { userAgent } from 'next/server'
+import usePagination from '@/hooks/usePagination'
 
 export default function UserDrawHistoryRafflePrize() {
 
+   const itemsPerPage = 10
    const [invoices, setInvoices] = useState([]);
+   var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+   const {currentPage, totalPages, currentRecords, setPagination } = usePagination({ items: invoices, itemsPerPage: itemsPerPage });
 
    useEffect(() => {
       //getInvoices();
@@ -19,28 +24,30 @@ export default function UserDrawHistoryRafflePrize() {
    var [invoice_count, setInvoiceCount] = useState(0);
 
    const getInvoiceCount = async() => {
-      try {
-         let response = await fetch("/api/user/prize-draw-history", {
-            method: "OPTIONS",
-         });
-         const content = await response.json();
-         //console.log(content)
+      // try {
+      //    let response = await fetch("/api/user/prize-draw-history?user_id="+user._id, {
+      //       method: "OPTIONS",
+      //    });
+      //    const content = await response.json();
+      //    //console.log(content)
 
-         if(!response.ok) {
+      //    if(!response.ok) {
 
-         } else {
-            setInvoiceCount(content.invoice_count)
-            console.log('content.invoice_count: ', content.invoice_count)
-            getInvoices()
-         }
-      } catch (error) {
+      //    } else {
+      //       setInvoiceCount(content.invoice_count)
+      //       console.log('content.invoice_count: ', content.invoice_count)
+      //       getInvoices()
+      //    }
+      // } catch (error) {
          
-      }
+      // }
+
+      getInvoices()
    }
 
    const getInvoices = async() => {
       try {
-         let response = await fetch("/api/user/prize-draw-history?skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
+         let response = await fetch("/api/user/prize-draw-history?user_id="+user._id+"&platform_type=web", {
             method: "GET",
          });
          const content = await response.json();
@@ -49,24 +56,26 @@ export default function UserDrawHistoryRafflePrize() {
          if(!response.ok) {
 
          } else {
-            
             var temp: any = [];
             for(var i = 0; i < content.invoices.length; i++) {
+               console.log(content.invoices.length)
                
                if(content.invoices[i].cart_product_details !== null && content.invoices[i].cart_product_details !== '') {
+                  console.log(content.invoices[i])
                   var products = JSON.parse(content.invoices[i].cart_product_details);
                   var draws = JSON.parse(content.invoices[i].draws);
-                  var date = formatISODate(new Date(draws[0].draw_date));
+                  
                   var s_no = (i + 1) < 10 ? '0' + (i + 1) : i + 1;
                   console.log('cart_product_detailsjjj: ', content.invoices[i].cart_product_details)
                   for(var j = 0; j < products.length; j++) {
+                     var date = formatISODate(new Date(draws[j].draw_date));
                      var inv = {
                         invoice_id: content.invoices[i]._id,
                         invoice_number: content.invoices[i].invoice_number,
                         product_name: products[j].product_name,
                         product_image: products[j].product_image,
                         draw_date: date.fomattedDate,
-                        invoice_status: content.invoices[i].invoice_status,
+                        invoice_status: 'Announced',
 
                         prize_id: products[j].prize_id ? products[j].prize_id : 'None',
                         prize_name: products[j].prize_name ? products[j].prize_name : 'None',
@@ -86,33 +95,6 @@ export default function UserDrawHistoryRafflePrize() {
       } catch (error) {
          
       }
-   }
-
-   var totalPages = 0;
-   var [currentPage, setCurrentPage] = useState(1);
-   var [recordsPerPage, setRecordsPerPages] = useState(5);
-   totalPages = invoice_count;
-   var pages = [];
-   var show_pages: any = [];
-   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
-      pages.push(i);
-      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
-         show_pages.push(i);
-      }
-   }
-   console.log('pages: ', pages)
-
-   function setPagination(current_page: any) {
-      if(current_page < 1) {
-         current_page = 1;
-      }
-
-      if(current_page > pages.length) {
-         current_page = pages.length
-      }
-      skip = recordsPerPage * (current_page - 1);
-      getInvoices()
-      setCurrentPage(current_page);
    }
 
    return (
@@ -137,8 +119,8 @@ export default function UserDrawHistoryRafflePrize() {
                </thead>
                <tbody className="divide-y divide-lightthree">
                { 
-                  invoices.map((invoice: any) => (
-                     <tr key={invoice._id}>
+                  currentRecords.map((invoice: any) => (
+                     <tr key={invoice.s_no}>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">{invoice.s_no}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{invoice.product_name}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1">
@@ -158,34 +140,18 @@ export default function UserDrawHistoryRafflePrize() {
                }
                </tbody>
             </table>
-         </div>
+            {currentRecords.length && (
 
-         <div className="font-poppins-medium mt-12 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-
-            {
-               pages.length > 0 &&
-               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
+            <div className="font-poppins-medium ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
+               <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage > 1 && setPagination(currentPage - 1)}>
                   <FontAwesomeIcon size="1x" icon={faChevronLeft} />
                </div>
-            }
 
-            {
-               pages.map((page: any) => (
-                  show_pages.includes(page) && (
-                     page === currentPage ?
-                     <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                     :
-                     <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                  ) 
-            ))}
-
-            {
-               pages.length > 0 &&
-               <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
+               <div className={`px-4 py-2 flex items-center justify-center cursor-pointer ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={() => currentPage < totalPages && setPagination(currentPage + 1)}>
                   <FontAwesomeIcon size="1x" icon={faChevronRight} />
                </div>
-            }
-
+            </div>
+            )}
          </div>
 
       </section>

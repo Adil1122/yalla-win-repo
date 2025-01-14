@@ -85,7 +85,7 @@ const ProductPrizeCard: React.FC<ProductPrizeCardProps> = ({ name, prizeName, pr
                      <Button onClick={() => addToBasket()}  className="capitalize text-white 2xl:text-size-4 text-center rounded-full bg-themeone px-4 py-2 w-fit mx-auto cursor-pointer whitespace-nowrap">Add to Cart</Button>
                   </div>
                </div>
-               <div className={`w-full absolute top-7 right-5 2xl:top-0 2xl:right-0 2xl:relative max-w-[100px] h-[100px] max-h-[70px] 2xl:max-w-[200px] 2xl:h-[290px] ml-auto shadow-custom-1 bg-center bg-cover bg-no-repeat rounded 2xl:rounded-none 2xl:rounded-tr-standard 2xl:rounded-br-standard shadow-custom-1`} style={{backgroundImage: `url(${prizeImageLink})`}}></div>
+               <div className={`w-full absolute top-7 right-5 2xl:top-0 2xl:right-0 2xl:relative max-w-[100px] h-[100px] max-h-[70px] lg:max-h-full 2xl:max-w-[200px] 2xl:h-[290px] ml-auto shadow-custom-1 bg-center bg-cover bg-no-repeat rounded 2xl:rounded-none 2xl:rounded-tr-standard 2xl:rounded-br-standard shadow-custom-1`} style={{backgroundImage: `url(${prizeImageLink})`}}></div>
             </div>
          </div>  
       </>

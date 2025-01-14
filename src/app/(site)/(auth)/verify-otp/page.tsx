@@ -10,7 +10,12 @@ import { useAuth } from '@/components/AuthContext';
 export default function VerifyOTPPage() { 
 
     const router = useRouter()
+   const [showNotification, setShowNotification] = useState<boolean>(false);
+   const [notificationMessage, setNotificationMessage] = useState<string>('');
     const { setLoggedIn } = useAuth();
+    var otp = localStorage.getItem('otp_number') as string;
+    var otpType = localStorage.getItem('otp_type') as string;
+    var otp_user = localStorage.getItem('otp_user') as any;
 
    const [form, setForm] = useState({
       otp: "",
@@ -27,8 +32,7 @@ export default function VerifyOTPPage() {
     async function onSubmit(e: any) {
       e.preventDefault();
       try {
-         var otp = localStorage.getItem('otp_number');
-         var otp_user = localStorage.getItem('otp_user');
+   
          console.log(otp, form.otp)
          if(form.otp === otp) {
             var otp_user_object = JSON.parse(otp_user + '');
@@ -74,6 +78,38 @@ export default function VerifyOTPPage() {
       }
     }
 
+    const resendOtp =  async () => {
+
+      let formData = new FormData();
+         formData.append('type', otpType);
+         formData.append('email', JSON.parse(otp_user).email);
+
+         try {
+            let response = await fetch("api/website/resend-otp", {
+               method: "POST",
+               body: formData
+            });
+            const content = await response.json();
+
+            if (!response.ok) {
+               setForm((prev) => {
+                  return { ...prev, server_error: `HTTP error! status: ${response.status}` };
+               });
+            } else {
+               if (response.status === 200) {
+                  
+                  localStorage.setItem('otp_number', content.otp);
+                  setShowNotification(true)
+                  setNotificationMessage('Otp Resent successfully!')
+               }
+            }
+         } catch (error) {
+            setForm((prev) => {
+               return { ...prev, server_error: `A problem occurred with your fetch operation: ${error}` };
+            });
+         }
+   }
+
 
    return (
       <div className="flex flex-row flex-grow h-full w-full bg-gradient-to-r shadow-custom-1 from-themeone to-themetwo px-8 lg:px-12 py-12 lg:py-36 gap-6 font-inter-regular">
@@ -104,12 +140,20 @@ export default function VerifyOTPPage() {
             <div className="flex flex-col mt-auto">  
                <div className="text-center text-themeone text-size-2 lg:text-size-3 rounded-full shadow-custom-1 py-4 bg-white mt-12 font-semibold cursor-pointer" onClick={onSubmit}>Verify</div>
             </div>
+            <div className="flex flex-row gap-4 ml-auto">
+                  <div>Verification code not recieved?</div>
+                  <div onClick={resendOtp} className="underline text-black cursor-pointer">Resend code</div>
+            </div>
          </div>
          <div className={`hidden lg:block lg:w-[45%] flex-grow relative bg-[url("/assets/images/signup.svg")] bg-center bg-cover bg-no-repeat rounded-3xl`}></div>
 
          { form.server_error !== '' && 
             <Notification message="Server Error" description={form.server_error} type='error'  close={() => {setForm((prev: any) => ({ ...prev, server_error: '' }))}} />  
          } 
+
+         { showNotification && 
+            <Notification message="Success ..." description={notificationMessage} type='success' close={() => setShowNotification(false)} />  
+         }
       </div>
    )
 }
