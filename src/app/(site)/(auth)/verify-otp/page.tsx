@@ -148,7 +148,7 @@ export default function VerifyOTPPage() {
             </div>
             <div className="flex flex-row gap-4 ml-auto">
                   <div>Verification code not recieved?</div>
-                  <div onClick={resendOtp} className="underline text-black cursor-pointer">Resend code</div>
+                  <div onClick={() => resendOtp} className="underline text-black cursor-pointer">Resend code</div>
             </div>
          </div>
          <div className={`hidden lg:block lg:w-[45%] flex-grow relative bg-[url("/assets/images/signup.svg")] bg-center bg-cover bg-no-repeat rounded-3xl`}></div>
