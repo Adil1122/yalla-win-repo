@@ -8,7 +8,6 @@ import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faIma
 
 export default function UserDrawHistoryRaffleGame() {
    const [invoices, setInvoices] = useState([]);
-   var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
 
    useEffect(() => {
       //getInvoices();
@@ -19,6 +18,9 @@ export default function UserDrawHistoryRaffleGame() {
    var [invoice_count, setInvoiceCount] = useState(0);
 
    const getInvoiceCount = async() => {
+
+      var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+
       try {
          let response = await fetch("/api/user/game-draw-history?user_id="+user._id, {
             method: "OPTIONS",
@@ -39,6 +41,8 @@ export default function UserDrawHistoryRaffleGame() {
    }
 
    const getInvoices = async() => {
+
+      var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
       try {
          let response = await fetch("/api/user/game-draw-history?user_id="+user._id+"&skip=" + skip + "&limit=" + recordsPerPage + "&platform_type=web", {
             method: "GET",

@@ -12,7 +12,6 @@ export default function UserDrawHistoryRafflePrize() {
 
    const itemsPerPage = 10
    const [invoices, setInvoices] = useState([]);
-   var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
    const {currentPage, totalPages, currentRecords, setPagination } = usePagination({ items: invoices, itemsPerPage: itemsPerPage });
 
    useEffect(() => {
@@ -46,6 +45,9 @@ export default function UserDrawHistoryRafflePrize() {
    }
 
    const getInvoices = async() => {
+
+      var user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
+      
       try {
          let response = await fetch("/api/user/prize-draw-history?user_id="+user._id+"&platform_type=web", {
             method: "GET",
