@@ -13,9 +13,7 @@ export default function VerifyOTPPage() {
    const [showNotification, setShowNotification] = useState<boolean>(false);
    const [notificationMessage, setNotificationMessage] = useState<string>('');
     const { setLoggedIn } = useAuth();
-    var otp = localStorage.getItem('otp_number') as string;
-    var otpType = localStorage.getItem('otp_type') as string;
-    var otp_user = localStorage.getItem('otp_user') as any;
+    
 
    const [form, setForm] = useState({
       otp: "",
@@ -33,6 +31,10 @@ export default function VerifyOTPPage() {
       e.preventDefault();
       try {
    
+         var otp = localStorage.getItem('otp_number') as string;
+         var otpType = localStorage.getItem('otp_type') as string;
+         var otp_user = localStorage.getItem('otp_user') as any;
+
          console.log(otp, form.otp)
          if(form.otp === otp) {
             var otp_user_object = JSON.parse(otp_user + '');
@@ -79,6 +81,10 @@ export default function VerifyOTPPage() {
     }
 
     const resendOtp =  async () => {
+
+      var otp = localStorage.getItem('otp_number') as string;
+      var otpType = localStorage.getItem('otp_type') as string;
+      var otp_user = localStorage.getItem('otp_user') as any;
 
       let formData = new FormData();
          formData.append('type', otpType);
