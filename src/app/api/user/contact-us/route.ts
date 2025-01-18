@@ -4,7 +4,7 @@ import sendMail from "@/libs/send_email";
 export async function POST(request: any) {
     try {
         let {first_name, last_name, email, topic, message} = await request.json();
-        sendMail(email, topic, 'Hi ' + first_name + ' ' + last_name, message);
+        await sendMail(email, topic, 'Hi ' + first_name + ' ' + last_name, message);
 
         return NextResponse.json({
             messge: "Email successfully sent ....",
