@@ -19,9 +19,10 @@ export async function POST(request: Request) {
       var otp_type = data.get('type');
       var email = data.get('email') as string;
       var otp_number = Math.floor(Math.random() * 90000) + 10000;
+      let emailResult : any = ''
 
       if(otp_type === 'email') {
-         sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
+         emailResult = sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
       }
 
       if(otp_type === 'sms') {
@@ -34,7 +35,8 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
          messge: "OTP resent ....",
-         otp: otp_number
+         otp: otp_number,
+         email: emailResult
       }, {status: 200});
    } catch (err) {
       console.error(err);
