@@ -22,7 +22,8 @@ export async function POST(request: Request) {
       let emailResult : any = ''
 
       if(otp_type === 'email') {
-         emailResult = sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
+         emailResult = 'email_sent'
+         sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
       }
 
       if(otp_type === 'sms') {
