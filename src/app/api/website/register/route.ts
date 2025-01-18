@@ -27,6 +27,7 @@ export async function POST(request: Request) {
           console.log(getMAC())
 
           var qr_code:any = Date.now() + Math.random();
+          let emailResult : any = ''
 
           
           var first_name = data.get('first_name');
@@ -91,11 +92,11 @@ export async function POST(request: Request) {
             user_type: user_type
           };
           
-          //let result = await User.create(newDocument);
+          let result = await User.create(newDocument);
           var otp = Math.floor(Math.random() * 90000) + 10000;
 
           if(notification_type === 'email') {
-            sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp + '</b>');
+            emailResult = await sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp + '</b>');
           }
 
           if(notification_type === 'sms') {
@@ -110,7 +111,8 @@ export async function POST(request: Request) {
 
           return NextResponse.json({
             messge: "User successfully registered ....",
-            result: [],
+            result: result,
+            email: emailResult,
             otp: otp
           }, {status: 200});
         }

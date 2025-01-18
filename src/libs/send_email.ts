@@ -36,6 +36,7 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   });
 
   console.log("Message sent: %s", info.messageId);
+  return info
   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 
