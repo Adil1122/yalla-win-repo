@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import sendMail from "@/libs/send_email";
+import sendEmail from "@/libs/send_email";
 import connectMongoDB from '@/libs/mongoosdb';
 import User from '@/models/UserModel'; // Assuming you have a User model
 
@@ -21,7 +21,7 @@ export async function POST(request: any) {
             const resetLink = `${process.env.BASE_URL}reset-password/${user._id.toString()}`;
 
             // Send reset password email
-            await sendMail(email, 'Your Reset Password link', '', `<a href="${resetLink}">Reset Password</a>`);
+            await sendEmail(email, 'Your Reset Password link', '', `<a href="${resetLink}">Reset Password</a>`);
 
             return NextResponse.json({ message: "An email sent to reset your password ..." }, { status: 200 });
         } else {

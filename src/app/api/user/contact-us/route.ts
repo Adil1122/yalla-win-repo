@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import sendMail from "@/libs/send_email";
+import sendEmail from "@/libs/send_email";
 
 export async function POST(request: any) {
     try {
         let {first_name, last_name, email, topic, message} = await request.json();
-        await sendMail(email, topic, 'Hi ' + first_name + ' ' + last_name, message);
+        await sendEmail(email, topic, 'Hi ' + first_name + ' ' + last_name, message);
 
         return NextResponse.json({
             messge: "Email successfully sent ....",
