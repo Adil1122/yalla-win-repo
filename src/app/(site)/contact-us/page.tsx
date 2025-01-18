@@ -191,7 +191,7 @@ export default function ContactPage() {
                         <div className="bg-white rounded-lg px-5 py-4 shadow-custom-1 relative flex">
                            <select id="topic" name="topic" className="w-full focus:ring-0 border-none bg-transparent text-size-3 outline-none focus:outline-none cursor-pointer" value={form.topic} onChange={(e) => updateForm({ topic: e.target.value })}>
                               <option value="">Select Inquiry</option>
-                              <option value="971">General Inquiry</option>
+                              <option value="General Inquiry">General Inquiry</option>
                            </select>
                         </div>
 
