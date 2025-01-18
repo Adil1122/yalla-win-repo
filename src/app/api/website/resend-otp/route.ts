@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import sendEmail from "@/libs/send_email";
 import getDistance from "@/libs/get_distance";
 // @ts-ignore
 import getMAC, { isMAC } from 'getmac';
@@ -10,6 +9,7 @@ import connectMongoDB from "@/libs/mongoosdb";
 import { put } from '@vercel/blob';
 import createMessage from "@/libs/send_sms";
 import createWhatsAppMessage from "@/libs/send_whatsapp_message";
+import sendEmail from "@/libs/send_email";
 
 export async function POST(request: Request) {
     
@@ -22,8 +22,7 @@ export async function POST(request: Request) {
       let emailResult : any = ''
 
       if(otp_type === 'email') {
-         emailResult = 'email_sent'
-         sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
+         emailResult = await sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
       }
 
       if(otp_type === 'sms') {
