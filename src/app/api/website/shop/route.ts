@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
+import Game from "@/models/GameModel";
+import mongoose from "mongoose";
 
 import Product from "@/models/ProductModel";
 //import Draw from "@/models/DrawModel";
@@ -7,8 +9,13 @@ import Winner from "@/models/WinnerModel";
 
 export async function GET(request: any) {
 
+   
     try {
         await connectMongoDB();
+
+        var yalla_3_obj = await Game.find({name: 'Yalla 3'}).select('_id').limit(1)
+        var yalla_4_obj = await Game.find({name: 'Yalla 4'}).select('_id').limit(1)
+        var yalla_6_obj = await Game.find({name: 'Yalla 6'}).select('_id').limit(1)
 
         /*const upcoming_draws = await Draw
             .aggregate([
@@ -96,16 +103,30 @@ export async function GET(request: any) {
         ]).sort({'winning_date': -1}).limit(10);
 
         const products_with_game = await Product
-            .aggregate([
+        .aggregate([
+            {
+                $match:
                 {
-                    $lookup: {
-                        from: "games",
-                        localField: "game_id",
-                        foreignField: "_id",
-                        as: "productWithGame",
-                    },
+
+                    $and: [ 
+                        { game_id: { $ne: null } }, 
+                        { status: "Active" }, 
+                        {
+                            game_id: {
+                                $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
+                            }
+                        }]
                 }
-            ]).sort({'createdAt': -1}).limit(10);
+            },
+            {
+                $lookup: {
+                    from: "games",
+                    localField: "game_id",
+                    foreignField: "_id",
+                    as: "productWithGame",
+                },
+            }
+        ]).sort({'name': 1}).limit(3);
 
         const products_with_prize = await Product
             .aggregate([
@@ -119,53 +140,72 @@ export async function GET(request: any) {
                 }
             ]).sort({'createdAt': -1}).limit(10);
 
-            const yalla_3_top_winner = await Winner
-        .aggregate([
-            {
-                $match: { game_name: 'Yalla 3' },
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
-                }
+            var yalla_3_top_winner = []
+            if(yalla_3_obj.length > 0) {
+                yalla_3_top_winner = await Winner
+                .aggregate([
+                    {
+                        $match:
+                            {
+                                game_id: yalla_3_obj[0]._id
+                            }
+                    },
+                    {
+                        $lookup: {
+                            from: 'tickets',
+                            localField: "ticket_id",
+                            foreignField: "_id",
+                            as: "winnersWithTickets",
+                        }
+                    }
+    
+                ]).sort({'winning_date': -1}).limit(1);
             }
-
-        ]).sort({'winning_date': -1}).limit(1);
-
-
-        const yalla_4_top_winner = await Winner
-        .aggregate([
-            {
-                $match: { game_name: 'Yalla 4' },
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
-                }
+    
+    
+            var yalla_4_top_winner = []
+            if(yalla_4_obj.length > 0) {
+                yalla_4_top_winner = await Winner
+                .aggregate([
+                    {
+                        //$match: { game_name: 'Yalla 4' },
+                        $match:
+                            {
+                                game_id: yalla_4_obj[0]._id
+                            }
+                    },
+                    {
+                        $lookup: {
+                            from: 'tickets',
+                            localField: "ticket_id",
+                            foreignField: "_id",
+                            as: "winnersWithTickets",
+                        }
+                    }
+                ]).sort({'winning_date': -1}).limit(1);
             }
-        ]).sort({'winning_date': -1}).limit(1);
-
-        const yalla_6_top_winner = await Winner
-        .aggregate([
-            {
-                $match: { game_name: 'Yalla 6' },
-            },
-            {
-                $lookup: {
-                    from: 'tickets',
-                    localField: "ticket_id",
-                    foreignField: "_id",
-                    as: "winnersWithTickets",
-                }
-            },
-            
-        ]).sort({'winning_date': -1}).limit(1);
+    
+            var yalla_6_top_winner = []
+            if(yalla_6_obj.length > 0) {
+                yalla_6_top_winner = await Winner
+                .aggregate([
+                    {
+                        $match:
+                            {
+                                game_id: yalla_6_obj[0]._id
+                            }
+                    },
+                    {
+                        $lookup: {
+                            from: 'tickets',
+                            localField: "ticket_id",
+                            foreignField: "_id",
+                            as: "winnersWithTickets",
+                        }
+                    },
+                    
+                ]).sort({'winning_date': -1}).limit(1);
+            }
 ;    
 
 

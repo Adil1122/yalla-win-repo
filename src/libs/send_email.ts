@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
   //port: 465,
   //secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: 'khansahib7090@gmail.com',
-    pass: 'kfun qbaa mwpi slno',
+    user: 'sheikh.muhammad.hanif.99@gmail.com',
+    pass: 'uofzwigbesydchwx',
   },
 
   // credentials for local
@@ -27,9 +27,9 @@ async function sendEmail(to: String, subject: String, text: String, html: String
   const info = await transporter.sendMail({
     from: {
         name: "Yalla Win",
-        address: 'khansahib7090@gmail.com'
+        address: 'sheikh.muhammad.hanif.99@gmail.com'
     }, // sender address
-    to: [to], // list of receivers
+    to: to, // list of receivers
     subject: subject, // Subject line
     text: text, // plain text body
     html: html, // html body

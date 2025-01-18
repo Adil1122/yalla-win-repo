@@ -329,9 +329,8 @@ export async function GET(request: any) {
                             { game_id: { $ne: null } }, 
                             { status: "Active" }, 
                             {
-                                game_name: {
-                                    //$in : [new mongoose.Types.ObjectId('66b7739a5be99f25dc381535'), new mongoose.Types.ObjectId('66b773b15be99f25dc381536'), new mongoose.Types.ObjectId('66b773c55be99f25dc381537')], 
-                                    $in : ['Yalla 3', 'Yalla 4', 'Yalla 6'], 
+                                game_id: {
+                                    $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
                                 }
                             }, 
                             {

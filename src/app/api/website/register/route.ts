@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import sendMail from "@/libs/send_email";
+import sendEmail from "@/libs/send_email";
 import getDistance from "@/libs/get_distance";
 // @ts-ignore
 import getMAC, { isMAC } from 'getmac';
@@ -91,11 +91,11 @@ export async function POST(request: Request) {
             user_type: user_type
           };
           
-          let result = await User.create(newDocument);
+          //let result = await User.create(newDocument);
           var otp = Math.floor(Math.random() * 90000) + 10000;
 
           if(notification_type === 'email') {
-            sendMail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp + '</b>');
+            sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp + '</b>');
           }
 
           if(notification_type === 'sms') {
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
 
           return NextResponse.json({
             messge: "User successfully registered ....",
-            result: result,
+            result: [],
             otp: otp
           }, {status: 200});
         }

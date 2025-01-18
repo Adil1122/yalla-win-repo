@@ -110,7 +110,7 @@ interface CheckoutWithFreeGameProps {
    function validateTickets() {
       var validated = true;
 
-      for(var i = 1; i <= quantity; i++) {
+      for(var i = 1; i <= quantity*qty_multiple; i++) {
          
          var ticket_number: any = localStorage.getItem('ticket_number_' + i);
          if(ticket_number !== null) {
@@ -155,7 +155,7 @@ interface CheckoutWithFreeGameProps {
 
       if(localStorage.getItem('yalla_logged_in_user') !== null && validated) {
          try {
-
+            
             var logged_in_user = JSON.parse(localStorage.getItem('yalla_logged_in_user') + '');
 
             console.log(logged_in_user._id);

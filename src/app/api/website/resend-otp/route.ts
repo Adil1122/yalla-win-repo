@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import sendMail from "@/libs/send_email";
+import sendEmail from "@/libs/send_email";
 import getDistance from "@/libs/get_distance";
 // @ts-ignore
 import getMAC, { isMAC } from 'getmac';
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       var otp_number = Math.floor(Math.random() * 90000) + 10000;
 
       if(otp_type === 'email') {
-         sendMail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
+         sendEmail(email, 'OTP Verification', '', 'Your OTP for Yalla Win Sign Up is <b>' + otp_number + '</b>');
       }
 
       if(otp_type === 'sms') {

@@ -334,9 +334,9 @@ interface TicketCardProps {
                      <div className="flex flex-row lg:items-center lg:mx-auto ml-4 lg:ml-auto">
                         <div className="sm:flex sm:items-center sm:space-x-5 sm:space-y-0">
                            {gameTypes.map((item) => (
-                              <div key={item.id} className="flex items-center">
-                                 <input id={item.id} value={item.value} name={"game-type-" + s_no} type="radio" className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" onClick={() => changeGameType(item.title)} />
-                                 <label htmlFor={item.id} className="ml-3 block text-size-1 lg:text-size-3 font-light leading-6 text-black">
+                              <div key={"game-type-"+s_no+"_"+item.id} className="flex items-center">
+                                 <input id={"game-type-"+s_no+"_"+item.id} value={item.value} name={"game-type-" + s_no} type="radio" className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" onClick={() => changeGameType(item.title)} />
+                                 <label htmlFor={"game-type-"+s_no+"_"+item.id} className="ml-3 block text-size-1 lg:text-size-3 font-light leading-6 text-black">
                                     {item.title}
                                  </label>
                               </div>
