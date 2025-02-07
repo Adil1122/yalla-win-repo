@@ -59,6 +59,7 @@ export default function AdminGameProdManagement() {
 
       product_name: "",
       product_price: "",
+      product_vat: "",
       product_status: "",
       product_date: "",
       product_description: "",
@@ -73,6 +74,7 @@ export default function AdminGameProdManagement() {
       product_description_error: "",
       product_name_error: "",
       product_price_error: "",
+      product_vat_error: "",
       product_status_error: "",
       product_date_error: "",
       prize_name_error: "",
@@ -99,6 +101,7 @@ export default function AdminGameProdManagement() {
          product_description_error: "",
          product_name_error: "",
          product_price_error: "",
+         product_vat_error: "",
          product_status_error: "",
          product_date_error: "",
          prize_name_error: "",
@@ -153,6 +156,11 @@ export default function AdminGameProdManagement() {
          err['product_price_error'] = 'Product Price is Required';
          is_error = true;
       }
+      
+      if (form.product_vat === '') {
+         err['product_vat_error'] = 'Product VAT is Required';
+         is_error = true;
+      }
 
       if (form.product_status === '') {
          err['product_status_error'] = 'Product Status is Required';
@@ -197,6 +205,7 @@ export default function AdminGameProdManagement() {
 
          product_name: "",
          product_price: "",
+         product_vat: "",
          product_status: "",
          product_date: "",
          product_description: "",
@@ -211,6 +220,7 @@ export default function AdminGameProdManagement() {
          product_description_error: "",
          product_name_error: "",
          product_price_error: "",
+         product_vat_error: "",
          product_status_error: "",
          product_date_error: "",
          prize_name_error: "",
@@ -242,6 +252,7 @@ export default function AdminGameProdManagement() {
       var data: any = {
          product_name: content.product.name,
          product_price: content.product.price,
+         product_vat: content.product.vat,
          product_status: content.product.status,
          product_date: content.product.date ? new Date(content.product.date).toISOString().slice(0, 10) : '',
          product_description: content.product.description,
@@ -253,6 +264,7 @@ export default function AdminGameProdManagement() {
          product_description_error: "",
          product_name_error: "",
          product_price_error: "",
+         product_vat_error: "",
          product_status_error: "",
          product_date_error: "",
          prize_name_error: "",
@@ -325,6 +337,7 @@ export default function AdminGameProdManagement() {
 
          formData.append('product_name', form.product_name);
          formData.append('product_price', form.product_price);
+         formData.append('product_vat', form.product_vat);
          formData.append('product_status', form.product_status);
          formData.append('product_date', form.product_date);
          formData.append('type', activeTab);
@@ -560,6 +573,7 @@ export default function AdminGameProdManagement() {
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Product</th> 
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Image</th>
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Starting Price</th>
+                              <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">VAT</th>
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Status</th>
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date</th>
                               <th scope="col" className="w-[14%] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Action</th>
@@ -584,6 +598,7 @@ export default function AdminGameProdManagement() {
                                  <img className="max-w-[60px] mx-auto" src={product.image} alt="" />
                               </td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">AED {product.price}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.vat}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{product.status}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(product.date)}</td>
                               <td>
@@ -804,19 +819,37 @@ export default function AdminGameProdManagement() {
                         </div>
                      </div>
                   </div>
-                  <div className="flex flex-col gap-4">
-                     <div className="text-darkone text-size-4">Starting Price</div>
-                     <div className="text-darkone text-size-2 border border-lightone rounded">
-                        <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" min="1" type="number"
-                        value={form.product_price}
-                        onChange={(e) => updateForm({ product_price: e.target.value })} />
-                     </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                     {
-                        form.product_price_error !== '' && (
-                           <span style={{color: "red"}}>{form.product_price_error}</span>
-                        )
-                     }
+                     <div className="flex flex-col gap-4">
+                        <div className="text-darkone text-size-4">Starting Price</div>
+                        <div className="text-darkone text-size-2 border border-lightone rounded">
+                           <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" min="1" type="number"
+                           value={form.product_price}
+                           onChange={(e) => updateForm({ product_price: e.target.value })} />
+                        </div>
+
+                        {
+                           form.product_price_error !== '' && (
+                              <span style={{color: "red"}}>{form.product_price_error}</span>
+                           )
+                        }
+                     </div>
+                     
+                     <div className="flex flex-col gap-4">
+                        <div className="text-darkone text-size-4">VAT</div>
+                        <div className="text-darkone text-size-2 border border-lightone rounded">
+                           <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
+                           value={form.product_vat}
+                           onChange={(e) => updateForm({ product_vat: e.target.value })} />
+                        </div>
+
+                        {
+                           form.product_vat_error !== '' && (
+                              <span style={{color: "red"}}>{form.product_vat_error}</span>
+                           )
+                        }
+                     </div>
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                      <div className="flex flex-col gap-4">
@@ -968,6 +1001,21 @@ export default function AdminGameProdManagement() {
                               {
                                  form.product_price_error !== '' && (
                                     <span style={{color: "red"}}>{form.product_price_error}</span>
+                                 )
+                              }
+                           </div>
+                           
+                           <div className="flex flex-col gap-2">
+                              <div className="text-darkone text-size-4">VAT</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text"
+                                 value={form.product_vat}
+                                 onChange={(e) => updateForm({ product_vat: e.target.value })} />
+                              </div>
+
+                              {
+                                 form.product_vat_error !== '' && (
+                                    <span style={{color: "red"}}>{form.product_vat_error}</span>
                                  )
                               }
                            </div>

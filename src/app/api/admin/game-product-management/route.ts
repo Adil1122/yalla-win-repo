@@ -22,6 +22,7 @@ export async function POST(request: Request) {
 
             var product_name:any = data.get('product_name');
             var product_price:any = data.get('product_price');
+            var product_vat:any = data.get('product_vat');
             var product_image:any = data.get('product_image');
             var product_status:any = data.get('product_status');
             var product_date:any = data.get('product_date');
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
                         name: product_name,
                         description: game_description,
                         price: parseFloat(product_price),
+                        vat: product_vat,
                         status: product_status,
                         date: product_date,
                         image: blob ? blob.url : '',
@@ -109,6 +111,7 @@ export async function POST(request: Request) {
             var product_name:any = data.get('product_name');
             var product_description: any = data.get('product_description');
             var product_price:any = data.get('product_price');
+            var product_vat:any = data.get('product_vat');
             var product_image:any = data.get('product_image');
             var product_status:any = data.get('product_status');
             var product_date:any = data.get('product_date');
@@ -128,6 +131,7 @@ export async function POST(request: Request) {
                 name: product_name,
                 description: product_description,
                 price: parseFloat(product_price),
+                vat: product_vat,
                 status: product_status,
                 date: product_date,
                 image: blob ? blob.url : '',
@@ -183,6 +187,7 @@ export async function PUT(request: Request) {
 
                 var product_name:any = data.get('product_name');
                 var product_price:any = data.get('product_price');
+                var product_vat:any = data.get('product_vat');
                 var product_image:any = data.get('product_image');
                 var product_status:any = data.get('product_status');
                 var product_date:any = data.get('product_date');
@@ -213,6 +218,7 @@ export async function PUT(request: Request) {
                             name: product_name,
                             description: game_description,
                             price: parseFloat(product_price),
+                            vat: product_vat,
                             status: product_status,
                             date: product_date,
                             image: blob ? blob.url : product.image,
@@ -242,6 +248,7 @@ export async function PUT(request: Request) {
                 var product_name:any = data.get('product_name');
                 var product_description: any = data.get('product_description');
                 var product_price:any = data.get('product_price');
+                var product_vat:any = data.get('product_vat');
                 var product_image:any = data.get('product_image');
                 var product_status:any = data.get('product_status');
                 var product_date:any = data.get('product_date');
@@ -260,6 +267,7 @@ export async function PUT(request: Request) {
                         name: product_name,
                         description: product_description,
                         price: parseFloat(product_price),
+                        vat: product_vat,
                         status: product_status,
                         date: product_date,
                         image: blob ? blob.url : product.image,
