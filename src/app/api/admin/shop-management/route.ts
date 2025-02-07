@@ -15,60 +15,62 @@ export async function POST(request: Request) {
         var location:any = data.get('location');
         var machine_id:any = data.get('machine_id');
         var registeration_date:any = data.get('registeration_date');
-        var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
-
-        if(merchant) {
-            let newDocument : any = {
-                name: name,
-                merchant_id: merchant_id,
-                location: location,
-                registeration_date: registeration_date,
-                city: merchant.city,
-                country: merchant.country,
-            }
-
-            if (machine_id && machine_id !== '') {
-               newDocument.machine_id = machine_id;
-            }
-    
-            let result = await Shop.create(newDocument);
-
-            var merchantUpdate : any = {
-                $set: {
-                    shop_id: result._id
-                }
-            }
-
-            if (machine_id && machine_id !== '') {
-               merchantUpdate.$set.machine_id = machine_id;
-            }
-
-            var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
-    
-            var machineUpdateResult = null
-            if (machine_id && machine_id !== '') {
-
-               var machineUpdate = {
-                   $set: {
-                       merchant_id: merchant_id,
-                       shop_id: result._id
-                   }
-               }
-               machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
-            }
-    
-            return NextResponse.json({
-                messge: "Shop created successfully ....",
-                result: result,
-                merchantUpdateResult: merchantUpdateResult,
-                machineUpdateResult: machineUpdateResult
-            }, {status: 200});
-        } else {
-            return NextResponse.json({
-                messge: "Merchant not found ....",
-            }, {status: 500});
+        
+        let newDocument : any = {
+           name: name,
+           location: location,
+           registeration_date: registeration_date
+         }
+         
+         if (machine_id && machine_id !== '') {
+            newDocument.machine_id = machine_id;
+         }
+         
+         if (merchant_id && merchant_id !== '') {
+            var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+            newDocument.merchant_id = merchant_id;
+            newDocument.city = merchant.city;
+            newDocument.country = merchant.country;
         }
 
+        let result = await Shop.create(newDocument);
+
+        let merchantUpdateResult : any = null
+        let merchantUpdate : any = null
+
+        if (merchant_id && merchant_id !== '') {
+           
+           merchantUpdate = {
+               $set: {
+                   shop_id: result._id
+               }
+           }
+
+           if (machine_id && machine_id !== '') {
+              merchantUpdate.$set.machine_id = machine_id;
+           }
+
+           merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
+        }
+
+        var machineUpdateResult = null
+        if (machine_id && machine_id !== '') {
+
+           var machineUpdate = {
+               $set: {
+                   merchant_id: merchant_id,
+                   shop_id: result._id
+               }
+           }
+           machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
+        }
+
+        return NextResponse.json({
+            messge: "Shop created successfully ....",
+            result: result,
+            merchantUpdateResult: merchantUpdateResult,
+            machineUpdateResult: machineUpdateResult
+        }, {status: 200});
     } catch (error) {
       console.log(error)
         return NextResponse.json({

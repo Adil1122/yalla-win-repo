@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         var area:any = data.get('area');
         var password:any = data.get('password');
         let bcrypt_password = await bcrypt.hash(password, 8);
-        let newDocument = {
+        let newDocument : any = {
             first_name: first_name,
             last_name: last_name,
             name: name,
@@ -34,8 +34,6 @@ export async function POST(request: Request) {
             password: bcrypt_password,
             password_text: password,
             mobile: mobile,
-            shop_id: shop_id,
-            machine_id: machine_id,
             profit_percentage: parseFloat(profit_percentage),
             registeration_date: registeration_date,
             role: 'merchant',
@@ -48,23 +46,35 @@ export async function POST(request: Request) {
         }
         //console.log(newDocument)
 
+        if (machine_id && machine_id != '') {
+         newDocument.machine_id = machine_id;
+         newDocument.shop_id = shop_id;
+        }
+
         let result = await User.create(newDocument);
 
-        var shopUpdate = {
+        var shopUpdate : any = {
             $set: {
-                merchant_id: result._id,
-                machine_id: machine_id
+                merchant_id: result._id
             }
         }
+
+        if (machine_id && machine_id !== '') {
+         shopUpdate.$set.machine_id = machine_id;
+         }
         var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
 
-        var machineUpdate = {
-            $set: {
-                merchant_id: result._id,
-                shop_id: shop_id
-            }
+        var machineUpdateResult = null
+        if (machine_id && machine_id !== '') {
+
+           var machineUpdate = {
+               $set: {
+                   merchant_id: result._id,
+                   shop_id: shop_id
+               }
+           }
+           machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
         }
-        var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
 
 
 
@@ -76,6 +86,7 @@ export async function POST(request: Request) {
         }, {status: 200});
 
     } catch (error) {
+      console.log(error)
         return NextResponse.json({
             messge: "Merchant could not be created ....",
         }, {status: 500});

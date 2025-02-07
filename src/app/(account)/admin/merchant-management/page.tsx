@@ -271,18 +271,18 @@ export default function AdminMerchantManagement() {
       is_error = true;
     }
 
-    if (form.shop_id === "") {
-      err["shop_id_error"] = "Shop is Required";
-      is_error = true;
-    }
+   //  if (form.shop_id === "") {
+   //    err["shop_id_error"] = "Shop is Required";
+   //    is_error = true;
+   //  }
     if (form.profit_percentage === "") {
       err["profit_percentage_error"] = "Profit % is Required";
       is_error = true;
     }
-    if (form.machine_id === "") {
-      err["machine_id_error"] = "Machine Id is Required";
-      is_error = true;
-    }
+   //  if (form.machine_id === "") {
+   //    err["machine_id_error"] = "Machine Id is Required";
+   //    is_error = true;
+   //  }
     if (form.registration_date === "") {
       err["registration_date_error"] = "Date is Required";
       is_error = true;
