@@ -24,7 +24,7 @@ const UserAccountAddCredit = () => {
    const [selectedPaymentMode, setSelectedPaymentMode] = useState<PaymentMode>('card')
    const paymentModes = [
       {id: 'card', name: 'Pay Via Card'},
-      {id: 'coupon', name: 'Pay Via Coupon'},
+      //{id: 'coupon', name: 'Pay Via Coupon'},
    ]
 
    const handleToggle = () => {
