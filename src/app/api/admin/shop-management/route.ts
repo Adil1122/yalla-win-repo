@@ -18,33 +18,44 @@ export async function POST(request: Request) {
         var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
 
         if(merchant) {
-            let newDocument = {
+            let newDocument : any = {
                 name: name,
                 merchant_id: merchant_id,
                 location: location,
-                machine_id: machine_id,
                 registeration_date: registeration_date,
                 city: merchant.city,
                 country: merchant.country,
             }
+
+            if (machine_id && machine_id !== '') {
+               newDocument.machine_id = machine_id;
+            }
     
             let result = await Shop.create(newDocument);
 
-            var merchantUpdate = {
+            var merchantUpdate : any = {
                 $set: {
-                    shop_id: result._id,
-                    machine_id: machine_id
-                }
-            }
-            var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
-    
-            var machineUpdate = {
-                $set: {
-                    merchant_id: merchant_id,
                     shop_id: result._id
                 }
             }
-            var machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
+
+            if (machine_id && machine_id !== '') {
+               merchantUpdate.$set.machine_id = machine_id;
+            }
+
+            var merchantUpdateResult = await User.updateOne({_id: merchant_id}, merchantUpdate);
+    
+            var machineUpdateResult = null
+            if (machine_id && machine_id !== '') {
+
+               var machineUpdate = {
+                   $set: {
+                       merchant_id: merchant_id,
+                       shop_id: result._id
+                   }
+               }
+               machineUpdateResult = await Machine.updateOne({_id: machine_id}, machineUpdate);
+            }
     
             return NextResponse.json({
                 messge: "Shop created successfully ....",
@@ -59,6 +70,7 @@ export async function POST(request: Request) {
         }
 
     } catch (error) {
+      console.log(error)
         return NextResponse.json({
             messge: "Shop could not be created ....",
         }, {status: 500});

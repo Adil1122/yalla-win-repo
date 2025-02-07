@@ -102,43 +102,50 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(10);
 
-        const products_with_game = await Product
-        .aggregate([
-            {
-                $match:
-                {
+        var products_with_game = []
+        var products_with_prize = []
 
-                    $and: [ 
-                        { game_id: { $ne: null } }, 
-                        { status: "Active" }, 
-                        {
-                            game_id: {
-                                $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
-                            }
-                        }]
-                }
-            },
-            {
-                $lookup: {
-                    from: "games",
-                    localField: "game_id",
-                    foreignField: "_id",
-                    as: "productWithGame",
-                },
-            }
-        ]).sort({'name': 1}).limit(3);
+        if(yalla_3_obj.length > 0 && yalla_4_obj.length > 0 && yalla_6_obj.length > 0) {
 
-        const products_with_prize = await Product
-            .aggregate([
-                {
-                    $lookup: {
-                        from: "prizes",
-                        localField: "prize_id",
-                        foreignField: "_id",
-                        as: "productWithPrize",
-                    },
-                }
-            ]).sort({'createdAt': -1}).limit(10);
+           products_with_game = await Product
+           .aggregate([
+               {
+                   $match:
+                   {
+   
+                       $and: [ 
+                           { game_id: { $ne: null } }, 
+                           { status: "Active" }, 
+                           {
+                               game_id: {
+                                   $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
+                               }
+                           }]
+                   }
+               },
+               {
+                   $lookup: {
+                       from: "games",
+                       localField: "game_id",
+                       foreignField: "_id",
+                       as: "productWithGame",
+                   },
+               }
+           ]).sort({'name': 1}).limit(3);
+   
+           products_with_prize = await Product
+               .aggregate([
+                   {
+                       $lookup: {
+                           from: "prizes",
+                           localField: "prize_id",
+                           foreignField: "_id",
+                           as: "productWithPrize",
+                       },
+                   }
+               ]).sort({'createdAt': -1}).limit(10);
+        }
+
 
             var yalla_3_top_winner = []
             if(yalla_3_obj.length > 0) {
@@ -225,7 +232,7 @@ export async function GET(request: any) {
     } catch (error) {
         return NextResponse.json({
             messge: "query error ....",
-            error: error
+            error: error instanceof Error ? error.message : JSON.stringify(error)
           }, {status: 500});
     }
 

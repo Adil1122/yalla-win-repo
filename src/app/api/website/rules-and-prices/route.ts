@@ -18,6 +18,6 @@ export async function GET(request: any) {
             yalla_6_product_id: yalla_6_product[0]._id,
             }, {status: 200});
     } catch (error) {
-        
+      return NextResponse.json({error: error instanceof Error ? error.message : JSON.stringify(error)}, {status: 500});
     }
 }

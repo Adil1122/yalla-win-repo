@@ -1,6 +1,6 @@
 'use client'
 
-import { faChevronRight, faImage, faPlay, faPlus, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faChevronLeft, faImage, faPlay, faPlus, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useRef, useState, ChangeEvent, useEffect } from 'react'
 import Modal from '@/components/modal'
@@ -46,10 +46,28 @@ export default function AdminUpdatesSection() {
          setHbCurrentPage((prevPage) => prevPage + 1)
       }
    }
+
+   const handleHomeBannersPrev = () => {
+      if (hbCurrentPage > 0) {
+         setHbCurrentPage((prevPage) => prevPage - 1);
+      }
+   }
    
    const handleMobileHomeBannersNext = () => {
       if ((mhbCurrentPage + 1) * itemsPerPage < mobileomeBanners.length) {
          setMhbCurrentPage((prevPage) => prevPage + 1)
+      }
+   }
+   
+   const handleMobileHomeBannersPrev = () => {
+      if (mhbCurrentPage > 0) {
+         setHbCurrentPage((prevPage) => prevPage - 1);
+      }
+   }
+   
+   const handleWinnersVideosPrev = () => {
+      if (wvCurrentPage > 0) {
+         setHbCurrentPage((prevPage) => prevPage - 1);
       }
    }
    
@@ -221,6 +239,9 @@ export default function AdminUpdatesSection() {
                         </button>
                      </div>
                   ))}
+                  <button onClick={handleHomeBannersPrev} type="button" className="absolute -right-12 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
+                     <FontAwesomeIcon icon={faChevronLeft} size="lg" className="text-white" /> 
+                  </button>
                   <button onClick={handleHomeBannersNext} type="button" className="absolute -right-24 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
                      <FontAwesomeIcon icon={faChevronRight} size="lg" className="text-white" /> 
                   </button>
@@ -252,6 +273,9 @@ export default function AdminUpdatesSection() {
                         </button>
                      </div>
                   ))}
+                  <button onClick={handleMobileHomeBannersPrev} type="button" className="absolute -right-12 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
+                     <FontAwesomeIcon icon={faChevronLeft} size="lg" className="text-white" /> 
+                  </button>
                   <button onClick={handleMobileHomeBannersNext} type="button" className="absolute -right-24 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
                      <FontAwesomeIcon icon={faChevronRight} size="lg" className="text-white" /> 
                   </button>
@@ -279,6 +303,9 @@ export default function AdminUpdatesSection() {
                         <button onClick={() => handleRemove(item.id)} type="button" className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white py-1.5 px-6 rounded-standard text-themeone text-size-4">Remove</button>
                      </div>
                   ))}
+                  <button onClick={handleWinnersVideosPrev} type="button" className="absolute -right-12 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
+                     <FontAwesomeIcon icon={faChevronLeft} size="lg" className="text-white" /> 
+                  </button>
                   <button onClick={handleWinnersVideosNext} type="button" className="absolute -right-24 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] bg-transparent border-[3px] border-white p-2 flex items-center justify-center rounded-full">
                      <FontAwesomeIcon icon={faChevronRight} size="lg" className="text-white" /> 
                   </button>

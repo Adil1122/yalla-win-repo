@@ -20,11 +20,10 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
 
    const setTimings = (gameDraws: any, prizeDraws: any) => {
       var current_date = new Date(new Date().toLocaleString("en-US", {timeZone: getTimeZone()}));
-      console.log(current_date);
 
       var temp_game_timers: any = [];
       for(var i = 0; i < gameDraws.length; i++) {
-         var draw_date = new Date(gameDraws[i].draw_date);
+         var draw_date = new Date(gameDraws[i].date_only + ' '+gameDraws[i].time_only);
          var draw_times = getDaysHoursMinsSecs(current_date, draw_date);
          temp_game_timers[gameDraws[i]._id] = draw_times;
       }

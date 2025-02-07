@@ -319,62 +319,68 @@ export async function GET(request: any) {
             ]).sort({'winning_date': -1}).limit(1);
         }
 
-        var products_with_game = await Product
-            .aggregate([
-                {
-                    $match:
-                    {
+        var products_with_game = []
+        var products_with_prize = []
 
-                        $and: [ 
-                            { game_id: { $ne: null } }, 
-                            { status: "Active" }, 
-                            {
-                                game_id: {
-                                    $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
-                                }
-                            }, 
-                            {
-                        $or: [ 
-                            {name: { $regex: '.*' + search + '.*', $options: 'i' }},
-                            {price: { $regex: '.*' + search + '.*', $options: 'i' }},
-                            {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
-                        ]}]
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "games",
-                        localField: "game_id",
-                        foreignField: "_id",
-                        as: "productWithGame",
-                    },
-                }
-            ]).sort({'name': 1}).limit(3);
+        if(yalla_3_obj.length > 0 && yalla_4_obj.length > 0 && yalla_6_obj.length > 0) {
 
-        var products_with_prize = await Product
-            .aggregate([
-                {
-                    $match:
-                    {
-                        $and: [ 
-                            { prize_id: { $ne: null } },  
-                            {
-                        $or: [ 
-                            {name: { $regex: '.*' + search + '.*', $options: 'i' }},
-                            {price: { $regex: '.*' + search + '.*', $options: 'i' }},
-                            {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
-                        ]}]
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "prizes",
-                        localField: "prize_id",
-                        foreignField: "_id",
-                        as: "productWithPrize",
-                    },
-                }
-            ]).sort({'name': 1}).limit(4);   
+           products_with_game = await Product
+               .aggregate([
+                   {
+                       $match:
+                       {
+   
+                           $and: [ 
+                               { game_id: { $ne: null } }, 
+                               { status: "Active" }, 
+                               {
+                                   game_id: {
+                                       $in : [new mongoose.Types.ObjectId(yalla_3_obj[0]._id), new mongoose.Types.ObjectId(yalla_4_obj[0]._id), new mongoose.Types.ObjectId(yalla_6_obj[0]._id)], 
+                                   }
+                               }, 
+                               {
+                           $or: [ 
+                               {name: { $regex: '.*' + search + '.*', $options: 'i' }},
+                               {price: { $regex: '.*' + search + '.*', $options: 'i' }},
+                               {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
+                           ]}]
+                       }
+                   },
+                   {
+                       $lookup: {
+                           from: "games",
+                           localField: "game_id",
+                           foreignField: "_id",
+                           as: "productWithGame",
+                       },
+                   }
+               ]).sort({'name': 1}).limit(3);
+   
+           products_with_prize = await Product
+               .aggregate([
+                   {
+                       $match:
+                       {
+                           $and: [ 
+                               { prize_id: { $ne: null } },  
+                               {
+                           $or: [ 
+                               {name: { $regex: '.*' + search + '.*', $options: 'i' }},
+                               {price: { $regex: '.*' + search + '.*', $options: 'i' }},
+                               {vat: { $regex: '.*' + search + '.*', $options: 'i' }},
+                           ]}]
+                       }
+                   },
+                   {
+                       $lookup: {
+                           from: "prizes",
+                           localField: "prize_id",
+                           foreignField: "_id",
+                           as: "productWithPrize",
+                       },
+                   }
+               ]).sort({'name': 1}).limit(4);   
+        }
 
 
             let today = new Date().toISOString().slice(0, 10)
@@ -428,7 +434,7 @@ export async function GET(request: any) {
     } catch (error) {
         return NextResponse.json({
             messge: "query error ....",
-            error: error
+            error: error instanceof Error ? error.message : JSON.stringify(error)
           }, {status: 500});
     }
 
