@@ -16,6 +16,8 @@ export async function GET(request: Request) {
       const userCity = searchparams.get('user_city') + ''
       const userCountry = searchparams.get('user_country') + ''
       const userArea = searchparams.get('user_area') + ''
+      const startDateTime = searchparams.get('start_date_time') + ''
+      const endDateTime = searchparams.get('end_date_time') + ''
       const estimatedAmount = searchparams.get('amount') + ''
       const gameId = searchparams.get('game_id') + ''
       const productId = searchparams.get('product_id') + ''
@@ -27,7 +29,7 @@ export async function GET(request: Request) {
       const search : string = searchparams.get('search') + ''
    
       await connectMongoDB()
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType, search)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, startDateTime, endDateTime, platformType, search)
       const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
       const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
       const finalResults = filteredResults.slice(skip, skip + limit)
@@ -76,6 +78,8 @@ export async function OPTIONS(request: Request) {
       const userCity = searchparams.get('user_city') + ''
       const userCountry = searchparams.get('user_country') + ''
       const userArea = searchparams.get('user_area') + ''
+      const startDateTime = searchparams.get('start_date_time') + ''
+      const endDateTime = searchparams.get('end_date_time') + ''
       const estimatedAmount = searchparams.get('amount') + ''
       const gameId = searchparams.get('game_id') + ''
       const productId = searchparams.get('product_id') + ''
@@ -87,7 +91,7 @@ export async function OPTIONS(request: Request) {
       const search : string = searchparams.get('search') + ''
    
       await connectMongoDB()
-      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, platformType, search)
+      const pipeline = getPipeline(gameId, productId, estimatedAmount, userCity, userCountry, userArea, startDateTime, endDateTime, platformType, search)
       const records = gameId && gameId !== '' && gameId !== 'null' ? await TicketModel.aggregate(pipeline) : await InvoiceModel.aggregate(pipeline)
       const {filteredResults, totalExpectedAmount} = getFilteredResults(records, gameId, productId, parseInt(estimatedAmount), percent, userCountry, userCity, userArea, gameType)
 
@@ -106,7 +110,7 @@ export async function OPTIONS(request: Request) {
    
 }
 
-const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string, platformType: string, search: string) => {
+const getPipeline = (gameId: string, productId: string, estimatedAmount: string, userCity: string, userCountry: string, userArea: string, startDateTime: string, endDateTime: string, platformType: string, search: string) => {
 
    let result : any = []
    if (gameId && gameId !== '' && gameId !== 'null') {
@@ -171,6 +175,10 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                "InvoiceDetails.game_id": new mongoose.Types.ObjectId(gameId),
                ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
                ...(search && search != 'null' && search != '' ? { "ticket_number": search } : {}),
+               "createdAt": {
+                  $gte: new Date(startDateTime + ":00.000Z"),
+                  $lte: new Date(endDateTime + ":00.000Z")
+               }
             }
          },
          {
@@ -219,6 +227,10 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                invoice_type: "prize",
                ...(search && search != 'null' && search != '' ? { "invoice_number": search } : {}),
                ...(platformType && platformType != 'all' && platformType != 'null' && platformType != '' ? { "UserDetails.user_type": platformType } : {}),
+               "createdAt": {
+                  $gte: new Date(startDateTime),
+                  $lte: new Date(endDateTime)
+               }
             }
          },
          {

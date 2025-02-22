@@ -7,6 +7,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import IBarChart from '@/components/dashboard/IBarChart'
 import Modal from '@/components/modal'
 import { useRouter } from "next/navigation"
+import { getTimeFromTimezone } from '@/libs/common'
 
 type WinnerType = 'game' | 'prize'
 
@@ -20,6 +21,9 @@ export default function AdminSelectWinners() {
    const [allProducts, setAllProducts] = useState<any>([])
    const [totalSalesAmount, setTotalSalesAmount] = useState<number>(0)
    const schedule = 'weekly'
+
+   const [startDateTime, setStartDateTime] = useState<string>(getTimeFromTimezone(-1, 23, 30))
+   const [endDateTime, setEndDateTime] = useState<string>(getTimeFromTimezone(0, 23, 30))
 
    const handleAnnouneWinner = (action: WinnerType) => {
       setNewWinnerType(action)
@@ -176,6 +180,20 @@ export default function AdminSelectWinners() {
                               <div className="text-darkone text-size-4">People %</div>
                               <div className="text-darkone text-size-2 border border-lightone rounded">
                                  <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="text" name="people_percent" />
+                              </div>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+                           <div className="flex flex-col gap-4">
+                              <div className="text-darkone text-size-4">Start Date / Time</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="datetime-local" required name="start_date_time" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} />
+                              </div>
+                           </div>
+                           <div className="flex flex-col gap-4">
+                              <div className="text-darkone text-size-4">End Date / Time</div>
+                              <div className="text-darkone text-size-2 border border-lightone rounded">
+                                 <input className="bg-transparent text-darkone ml-1 border-0 focus:outline-none focus:ring-0 w-full h-[40px]" type="datetime-local" required name="end_date_time" value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} />
                               </div>
                            </div>
                         </div>

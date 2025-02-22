@@ -9,11 +9,14 @@ import Draw from "@/models/DrawModel";
 import User from "@/models/UserModel";
 import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
+import { getTimeOfTimezone } from "@/libs/common";
 export async function POST(request: NextRequest) {
 
   //try {
     await connectMongoDB();
 
+    const currentDateTime = getTimeOfTimezone()
+    
     let {
         game_id, 
         product_id,
@@ -75,7 +78,8 @@ export async function POST(request: NextRequest) {
         if(invoiceResult && invoiceResult._id) {
 
             for(var i = 0; i < ticket_details.length; i++) {
-                ticket_details[i]["invoice_id"] = invoiceResult._id;
+                ticket_details[i]["invoice_id"] = invoiceResult._id
+                ticket_details[i]["createdAt"] = currentDateTime + ":00.000Z"
             }
 
             let ticketResult = await Ticket.insertMany(ticket_details);

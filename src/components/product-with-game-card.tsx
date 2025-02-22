@@ -4,6 +4,7 @@ import React, { MouseEventHandler } from 'react'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/navigation';
+import { priceExclusiveVat } from '@/libs/common';
 
 interface ProductGameCardProps {
    productId: String; 
@@ -36,7 +37,7 @@ const ProductGameCard: React.FC<ProductGameCardProps> = ({ productId, name, game
                <div className="text-darkone text-size-2 xl:text-size-4 2xl:text-head-2 font-medium">{name}</div>
                <div className="flex flex-row gap-2">
                   <div className="text-darkone text-size-2 xl:text-size-4 2xl:text-head-2">Price:</div>
-                  <div className="font-medium text-themeone text-size-2 xl:text-size-4 2xl:text-head-2">{price}</div>
+                  <div className="font-medium text-themeone text-size-2 xl:text-size-4 2xl:text-head-2">AED {priceExclusiveVat(price, vat)}</div>
                </div>
                <div className="flex flex-row gap-2">
                   <div className="text-darkone text-size-2 xl:text-size-4 2xl:text-head-2">VAT:</div>

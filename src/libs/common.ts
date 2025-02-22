@@ -31,24 +31,66 @@ export default function getDaysHoursMinsSecs(date1: any, date2: any) {
 }
 
 
+export const getTimeFromTimezone = (offsetDays: number, hour: number, minute: number) => {
+   const date = new Date()
+
+   // Adjust the date by offsetDays (negative for past, positive for future)
+   date.setDate(date.getDate() + offsetDays)
+   date.setHours(hour, minute, 0, 0) // Set time (HH:MM)
+
+   // Convert to Dubai time (UTC+4)
+   const dubaiTime = new Intl.DateTimeFormat("en-CA", {
+      timeZone: getTimeZone(),
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23" // Ensures 24-hour format
+   }).formatToParts(date)
+
+   // Convert to object {year, month, day, hour, minute}
+   const obj = Object.fromEntries(dubaiTime.map(p => [p.type, p.value]))
+
+   return `${obj.year}-${obj.month}-${obj.day}T${obj.hour}:${obj.minute}`
+}
+
+export function getTimeOfTimezone() {
+   return new Date().toLocaleString("sv-SE", { timeZone: getTimeZone() }).replace(" ", "T").slice(0, 16)
+}
 
 export const getTimeZone = () : string => {
    return 'Asia/Dubai'
 }
 
 export function formatDate(dateString: string): string {
-   const date = new Date(dateString);
-   const options: Intl.DateTimeFormatOptions = {
-     year: 'numeric',
-     month: '2-digit',
-     day: '2-digit',
-     hour: 'numeric',
-     minute: '2-digit',
-     hour12: true,
-   };
- 
-   const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
-   return formattedDate.replace(',', ''); // Remove the comma for formatting
+   const date = new Date(dateString)
+
+    // Extract day, month, and year
+    const day = date.getUTCDate().toString().padStart(2, "0")
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, "0")
+    const year = date.getUTCFullYear()
+
+    // Convert to 12-hour format
+    let hours = date.getUTCHours()
+    let minutes = date.getUTCMinutes().toString().padStart(2, "0")
+    const ampm = hours >= 12 ? "PM" : "AM"
+    
+    // Convert 24-hour time to 12-hour time
+    hours = hours % 12 || 12
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`
+}
+
+export function priceExclusiveVat(price: any, vat: any) {
+   const priceNum = parseFloat(price.replace("AED", ""))
+   const vatNum = parseFloat(vat.replace("%", ""))
+   if (isNaN(priceNum) || isNaN(vatNum)) {
+      throw new Error("Invalid price or VAT format")
+   }
+
+   const exclusivePrice = priceNum / (1 + vatNum / 100)
+   return exclusivePrice.toFixed(2)
 }
 
 export function getCurrentDateTime(timeZone: string): string {

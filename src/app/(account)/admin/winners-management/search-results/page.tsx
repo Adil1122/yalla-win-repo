@@ -15,7 +15,7 @@ function AdminWinnersSearchResult() {
    const [searchResults, setSearchResults] = useState<any>([])
    const [search, setSearch] = useState<string>('')
    const queryParams = useSearchParams()
-   const [amount, game, product, peoplePercent, country, city, area] = [
+   const [amount, game, product, peoplePercent, country, city, area, startDateTime, endDateTime] = [
       queryParams.get('amount') || '',
       queryParams.get('game_id') || '',
       queryParams.get('product_id') || '',
@@ -23,6 +23,8 @@ function AdminWinnersSearchResult() {
       queryParams.get('country') || '',
       queryParams.get('city') || '',
       queryParams.get('area') || '',
+      queryParams.get('start_date_time') || '',
+      queryParams.get('end_date_time') || '',
    ]
    const router = useRouter()
    const [pages, setPages] = useState<any>([])
@@ -55,7 +57,7 @@ function AdminWinnersSearchResult() {
       setModalTwoIsOpen(true)
    }
 
-   const initSearch = async (amount: string, game: string, product: string, peoplePercent: string, country: string, city: string, area: string) => {
+   const initSearch = async (amount: string, game: string, product: string, peoplePercent: string, country: string, city: string, area: string, startDateTime: string,  endDateTime: string) => {
       try {
          
          setIsLoading(true)
@@ -68,7 +70,7 @@ function AdminWinnersSearchResult() {
             item = `product_id=${product}`
          }
 
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}&search=${search}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&start_date_time=${startDateTime}&end_date_time=${endDateTime}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}&search=${search}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -103,7 +105,7 @@ function AdminWinnersSearchResult() {
 
       skip = recordsPerPage * (current_page - 1)
 
-      initSearch(amount, game, product, peoplePercent, country, city, area)
+      initSearch(amount, game, product, peoplePercent, country, city, area, startDateTime, endDateTime)
       setCurrentPage(current_page)
       
       for(var i = 1; i <= Math.ceil(totPages / recordsPerPage); i++) {
@@ -128,7 +130,7 @@ function AdminWinnersSearchResult() {
       }
 
       try {
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}&search=${search}`, {
+         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&start_date_time=${startDateTime}&end_date_time=${endDateTime}&people_percent=${peoplePercent}&search=${search}`, {
             method: 'OPTIONS',
          })
 
