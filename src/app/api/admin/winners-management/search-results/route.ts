@@ -40,6 +40,7 @@ export async function GET(request: Request) {
       }, {status: 200})
 
    } catch (error) {
+      console.log(error)
        return NextResponse.json({
            messge: "query error ....",
            error: JSON.stringify(error)
@@ -179,7 +180,9 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
             $project: {
                _id: 1,
                ticket_number: 1,
+               ticket_splitted: 1,
                ticket_type: 1,
+               createdAt: 1,
                "UserDetails.first_name": 1,
                "UserDetails.last_name": 1,
                "UserDetails.city": 1,
@@ -248,10 +251,15 @@ const getFilteredResults = (records: any, gameId: string, productId: string, max
 
    records.forEach((record: any) => {
       const ticketType = record.ticket_type
+      record.ticket_number = record.ticket_number.replace(/,/g, "").trim()
       const productPrice = parseInt(record.RuleDetails?.product_price) || 0
       let isValidTicket = false
 
       let expectedAmounts: number[] = []
+
+      if (record.GameDetails && record.GameDetails.name == 'Yalla 6' && record.ticket_splitted && record.ticket_splitted.length) {
+         record.ticket_number = record.ticket_splitted.join("")
+      }
 
       if (gameId && gameId !== '' && gameId !== 'null') {
 

@@ -5,6 +5,7 @@ import { faArrowLeft, faChevronLeft, faChevronRight, faSearch, faTimes } from '@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { formatDate } from '@/libs/common'
 import Modal from '@/components/modal'
 
 function AdminWinnersSearchResult() {
@@ -291,6 +292,7 @@ function AdminWinnersSearchResult() {
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Game Name' : 'Product Name'}</th>
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Winning Amount</th>
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Ticket No' : 'QR Code'}</th>
+                        <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Date Purchased</th>
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Country</th>
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">City</th>
                         <th scope="col" className="w-[14] py-5 text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Area</th>
@@ -303,6 +305,7 @@ function AdminWinnersSearchResult() {
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? `${result.GameDetails.name}` + `${result.ticket_type ? ' - ' + result.ticket_type : ''}` : result.ProductDetails.name}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result?.winning_amount?.length > 0 ? result.winning_amount.join(', ') : ''}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? result.ticket_number : result.invoice_number}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(result.createdAt)}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].country : ''}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].city : ''}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].area : ''}</td>

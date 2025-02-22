@@ -26,10 +26,10 @@ export async function POST(request: Request) {
       const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount), dateAnnounced)
       
       if (winners.length) {
-         await insertWinners(winners, inputType, dateAnnounced)
+         //await insertWinners(winners, inputType, dateAnnounced)
       }
       
-      return NextResponse.json({message: winners.length ? 'winners created successfully' : 'no winners found', data: winners}, {status: 200})
+      return NextResponse.json({message: winners.length ? 'winners created successfully' : 'no winners found', data: winners, records: records}, {status: 200})
    } catch (error) {
       return NextResponse.json({message: error}, {status: 500})
    }
@@ -191,27 +191,27 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
       if (inputType == 'game') {
 
          // todo: Games names should be dynamic
-
          if (!isGivenDateWinner(record.createdAt, dateAnnounced)) {
             continue
          }
 
          if (record.GameDetails.name == 'Yalla 3' || record.GameDetails.name == 'Yalla 4') {
-
+            
             if (record.ticket_type == 'Straight' && record.ticket_number == inputData) {
-
                const estimatedWinAmount = record.RuleDetails.option_straight_win_price * record.RuleDetails.product_price
                if (estimatedWinAmount <= maxWinAmount) {
 
                   filteredResults.push(record)
                   record.winning_price_multiplier = record.RuleDetails.option_straight_win_price
-
-                  console.log(record._id, record.createdAt)
                }
             } else if (record.ticket_type == 'Rumble') {
+               const estimatedWinAmount = record.RuleDetails.option_rumble_win_price * record.RuleDetails.product_price
+               if (estimatedWinAmount > maxWinAmount) {
+                  continue
+               }
+
                const combinations = getCombinations(record.ticket_number)
                const combinationMatch = combinations.find(combination => combination === parseInt(inputData)) || false
-               const estimatedWinAmount = record.RuleDetails.option_rumble_win_price * record.RuleDetails.product_price
    
                if (combinationMatch && estimatedWinAmount <= maxWinAmount) {
 
