@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount), dateAnnounced)
       
       if (winners.length) {
-         //await insertWinners(winners, inputType, dateAnnounced)
+         await insertWinners(winners, inputType, dateAnnounced)
       }
       
       return NextResponse.json({message: winners.length ? 'winners created successfully' : 'no winners found', data: winners, records: records}, {status: 200})
