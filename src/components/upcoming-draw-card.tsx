@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import Swiper from "swiper"
 import { Pagination } from "swiper/modules"
 import "swiper/css"
-import getDaysHoursMinsSecs, {formatISODate, getTimeZone} from '@/libs/common'
+import getDaysHoursMinsSecs, {formatISODate, getTimeZone, getTimeOfTimezone} from '@/libs/common'
 
 interface UpcomingDrawProps {
    game_draws: any;
@@ -17,6 +17,9 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
 
    const [prize_Draws, setPrizeDraws] = useState([]);
    const [prize_timers, setPrizeTimers] = useState<any>([]);
+   const currentDateTime = getTimeOfTimezone()
+   const [hours, minutes] = currentDateTime.split("T")[1].split(":").map(Number)
+
 
    const setTimings = (gameDraws: any, prizeDraws: any) => {
       var current_date = new Date(new Date().toLocaleString("en-US", {timeZone: getTimeZone()}));
@@ -78,7 +81,12 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
             <div ref={swiperDrawRef} className="swiper-custom flex w-full">
                <div className="swiper-wrapper">
                   <div className="swiper-slide">
-                     <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-6 lg:text-head-9 lg:mb-12">Upcoming Game Draw</h2>
+                     <div className="lg:mb-12">
+                        <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-6 lg:text-head-9">Upcoming Game Draw</h2>
+                        {((hours === 22 && minutes >= 30) || hours === 23) && (
+                           <h5 className="text-white text-center">(The draw will be announced next day)</h5>
+                        )}
+                     </div>
                      <div className="flex flex-col gap-3 lg:gap-12 mt-6">
 
 
