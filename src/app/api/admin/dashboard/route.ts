@@ -36,7 +36,7 @@ export async function GET(request: Request) {
          {
             createdAt: {
                $gte: new Date(start_date), 
-               $lt: new Date(end_date)
+               $lte: new Date(end_date)
             }
          },
          { invoice_type: invoice_type }
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
             $and: queryConditions
          })
          .sort({ 'createdAt': -1 })
-         .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date']);
+         .select(['_id', 'user_id', 'user_city', 'user_country', 'total_amount', 'invoice_date', 'createdAt']);
 
       var merchants = await User.find({
          $and: [
@@ -68,7 +68,7 @@ export async function GET(request: Request) {
       return NextResponse.json({
          messge: "Query success ....",
          graph_result: getGraphResult(records, start_date, end_date, schedule),
-         //records: records,
+         records: records,
          merchants: merchants
       }, {status: 200});
 
