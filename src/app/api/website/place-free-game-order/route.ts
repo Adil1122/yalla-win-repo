@@ -9,13 +9,16 @@ import Draw from "@/models/DrawModel";
 import User from "@/models/UserModel";
 import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
-import { getTimeOfTimezone } from "@/libs/common";
+import { getTimeOfTimezone, getSalesCloseTime } from "@/libs/common";
 export async function POST(request: NextRequest) {
 
   //try {
     await connectMongoDB();
 
     const currentDateTime = getTimeOfTimezone()
+    const [hours, minutes] = currentDateTime.split("T")[1].split(":").map(Number)
+    const salesCloseTime = await getSalesCloseTime() 
+    const [salesCloseHours, salesCloseMinutes] = salesCloseTime.split(":").map(Number)
     
     let {
         game_id, 
@@ -50,63 +53,86 @@ export async function POST(request: NextRequest) {
     if(draw && draw.length > 0) {
 
       console.log(draw[0])
-        let draw_id = draw[0]._id.toString();
-        let draw_date = draw[0].draw_date;
-        console.log(draw_date)
-        let invoiceDocument = {
-            game_id: game_id,
-            product_id: product_id, 
-            user_id: user._id.toString(), 
-            draw_id: draw_id,
-            draw_date: new Date(draw_date),
-            invoice_number: invoice_number, 
-            invoice_date: invoice_date, 
-            vat: vat, 
-            total_amount: total_amount, 
-            invoice_status: invoice_status,
-            invoice_type: 'game',
-            user_city: user.city,
-            user_country: user.country,
-            platform: platform
-        }
-        console.log(invoiceDocument)
+      console.log(currentDateTime)
+      let draw_id = draw[0]._id.toString();
+      let draw_date = draw[0].draw_date;
+      let invoiceDateObj = new Date(currentDateTime);
+      let drawDateObj = new Date(draw_date);
+      const [currentDatePart, currentTimePart] = currentDateTime.split("T");
 
-        let invoiceResult = await Invoice.create(invoiceDocument);
+      console.log(draw_date)
 
-        console.log(invoiceResult)
+      if (hours > salesCloseHours || (hours === salesCloseHours && minutes > salesCloseMinutes)) {
+         
+         drawDateObj.setDate(drawDateObj.getDate() + 1);
+         invoiceDateObj.setDate(invoiceDateObj.getDate() + 1);
+      }
 
-        if(invoiceResult && invoiceResult._id) {
+      const updatedDrawDatePart = drawDateObj.toISOString().split("T")[0];
+      const originalDrawTimePart = draw_date.toISOString().split("T")[1]; 
+      draw_date = `${updatedDrawDatePart}T${originalDrawTimePart}`;
 
-            for(var i = 0; i < ticket_details.length; i++) {
-                ticket_details[i]["invoice_id"] = invoiceResult._id
-                ticket_details[i]["createdAt"] = currentDateTime + ":00.000Z"
-            }
+      let updatedInvoiceDatePart = invoiceDateObj.toISOString().split("T")[0];
+      invoice_date = `${updatedInvoiceDatePart}T${currentTimePart}:00.000Z`; 
+      const created_at = invoice_date;
 
-            let ticketResult = await Ticket.insertMany(ticket_details);
+      console.log(invoice_date)
 
-            if(user && user.role !== 'merchant') {
-                let query = { user_id: user._id };
-                let walletResult = await Wallet.find(query);
-                const updates = {
-                    $set: {
-                        amount: walletResult[0].amount - total_amount,
-                    },
-                };
-                let walletUpdateResult = await Wallet.updateMany(query, updates);
-                if(!walletUpdateResult) {
-                    return NextResponse.json({
-                        message: "User wallet could not be updated ....",
-                        invoiceResult: invoiceResult
-                    }, {status: 500});
-                }
-            }
+      let invoiceDocument = {
+         game_id: game_id,
+         product_id: product_id, 
+         user_id: user._id.toString(), 
+         draw_id: draw_id,
+         draw_date: new Date(draw_date),
+         invoice_number: invoice_number, 
+         invoice_date: invoice_date, 
+         vat: vat, 
+         total_amount: total_amount, 
+         invoice_status: invoice_status,
+         invoice_type: 'game',
+         user_city: user.city,
+         user_country: user.country,
+         platform: platform,
+         createdAt: created_at
+      }
+      console.log(invoiceDocument)
 
-            return NextResponse.json({
-                message: "query successful ....",
-                invoiceResult: invoiceResult,
-                ticketResult: ticketResult
-            }, {status: 200});
-        }
+      let invoiceResult = await Invoice.create(invoiceDocument);
+
+      console.log(invoiceResult)
+
+      if(invoiceResult && invoiceResult._id) {
+
+         for(var i = 0; i < ticket_details.length; i++) {
+               ticket_details[i]["invoice_id"] = invoiceResult._id
+               ticket_details[i]["createdAt"] = currentDateTime + ":00.000Z"
+         }
+
+         let ticketResult = await Ticket.insertMany(ticket_details);
+
+         if(user && user.role !== 'merchant') {
+               let query = { user_id: user._id };
+               let walletResult = await Wallet.find(query);
+               const updates = {
+                  $set: {
+                     amount: walletResult[0].amount - total_amount,
+                  },
+               };
+               let walletUpdateResult = await Wallet.updateMany(query, updates);
+               if(!walletUpdateResult) {
+                  return NextResponse.json({
+                     message: "User wallet could not be updated ....",
+                     invoiceResult: invoiceResult
+                  }, {status: 500});
+               }
+         }
+
+         return NextResponse.json({
+               message: "query successful ....",
+               invoiceResult: invoiceResult,
+               ticketResult: ticketResult
+         }, {status: 200});
+      }
     } else {
         return NextResponse.json({
             message: "no draw found ....",
@@ -117,6 +143,7 @@ export async function POST(request: NextRequest) {
 
 
     } catch (error) {
+      console.log(error)
         return NextResponse.json({
           message: "error query exception ....",
           error: JSON.stringify(error)

@@ -59,6 +59,11 @@ export function getTimeOfTimezone() {
    return new Date().toLocaleString("sv-SE", { timeZone: getTimeZone() }).replace(" ", "T").slice(0, 16)
 }
 
+export async function getSalesCloseTime() {
+   //todo: fetch this time from database
+   return '23:30'
+}
+
 export const getTimeZone = () : string => {
    return 'Asia/Dubai'
 }

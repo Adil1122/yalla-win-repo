@@ -77,7 +77,7 @@ interface ResultsSectionProps {
                         <div className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">{yalla_6_top_winner.length > 0 ? yalla_6_top_winner[0].winnersWithTickets[0].ticket_splitted[5] : ''}</div>
                      </div>
                   }
-
+   
                   { yalla_4_top_winner.length > 0 &&
                      <div className="flex flex-row gap-2 lg:gap-3 ">
                         <div className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">{yalla_4_top_winner.length > 0 ? yalla_4_top_winner[0].winnersWithTickets[0].ticket_splitted[0] : ''}</div>
@@ -89,9 +89,11 @@ interface ResultsSectionProps {
 
                   { yalla_3_top_winner.length > 0 &&
                      <div className="flex flex-row gap-2 lg:gap-3 ">
-                        <div className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">{yalla_3_top_winner.length > 0 ? yalla_3_top_winner[0].winnersWithTickets[0].ticket_splitted[0] : ''}</div>
-                        <div className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">{yalla_3_top_winner.length > 0 ? yalla_3_top_winner[0].winnersWithTickets[0].ticket_splitted[1] : ''}</div>
-                        <div className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">{yalla_3_top_winner.length > 0 ? yalla_3_top_winner[0].winnersWithTickets[0].ticket_splitted[2] : ''}</div>
+                        {yalla_3_top_winner[0].winnersWithTickets[0].ticket_number.split(",").map((num: string, index: number) => (
+                           <div key={index} className="rounded-full border border-themetwo h-[30px] w-[30px] lg:h-[45px] lg:w-[45px] text-size-4 lg:text-head-3 text-black flex items-center justify-center">
+                              0{num}
+                           </div>
+                        ))}
                      </div>
                   }
 
