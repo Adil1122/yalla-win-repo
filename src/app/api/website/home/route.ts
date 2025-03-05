@@ -133,6 +133,15 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(1);
 
+        game_winners.forEach(winner => {
+               if (winner.winnersWithUsers) {
+                  winner.winnersWithUsers.forEach((user: any) => {
+                     delete user.password; 
+                     delete user.password_text; 
+                  });
+               }
+         });
+
         var game_winners_today = []
 
         if(yalla_3_obj.length > 0 && yalla_4_obj.length > 0 && yalla_6_obj.length > 0) {
@@ -252,6 +261,15 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(4);
 
+        product_winners.forEach(winner => {
+               if (winner.winnersWithUsers) {
+                  winner.winnersWithUsers.forEach((user: any) => {
+                     delete user.password; 
+                     delete user.password_text; 
+                  });
+               }
+         });
+
         var yalla_3_top_winner = []
         if(yalla_3_obj.length > 0) {
             yalla_3_top_winner = await Winner
@@ -363,6 +381,7 @@ export async function GET(request: any) {
                        {
                            $and: [ 
                                { prize_id: { $ne: null } },  
+                               { status: "Active" },
                                {
                            $or: [ 
                                {name: { $regex: '.*' + search + '.*', $options: 'i' }},

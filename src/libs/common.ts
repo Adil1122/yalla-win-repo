@@ -31,6 +31,12 @@ export default function getDaysHoursMinsSecs(date1: any, date2: any) {
 }
 
 
+export const convertToDubaiTime = (dateStr: string) => {
+   const utcDate = new Date(dateStr);
+   const dubaiOffset = 5 * 60 * 60 * 1000;
+   return new Date(utcDate.getTime() + dubaiOffset);
+ };
+
 export const getTimeFromTimezone = (offsetDays: number, hour: number, minute: number) => {
    const date = new Date()
 

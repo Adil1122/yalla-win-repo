@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Game from "@/models/GameModel";
 import mongoose from "mongoose";
+import Draw from "@/models/DrawModel";
 
 import Product from "@/models/ProductModel";
 //import Draw from "@/models/DrawModel";
@@ -31,6 +32,58 @@ export async function GET(request: any) {
                     }
                 }
             ]).sort({'draw_date': -1}).limit(10);*/
+
+            const game_draws = await Draw
+              .aggregate([
+                  {
+                      $match: {
+                        $and: [
+                            {draw_type: 'games'},
+                            {
+                                draw_date: {
+                                    $gt : new Date(), 
+                                    //$lt: new Date(tomorrow)
+                                }
+                            }
+                        ]
+
+                      },
+                  },
+                  {
+                    $lookup: {
+                        from: "products",
+                        localField: "product_id",
+                        foreignField: "_id",
+                        as: "productInDraw",
+                    },
+                  },
+              ]).sort({'draw_date': -1}).limit(3);
+
+            const prize_draws = await Draw
+              .aggregate([
+                  {
+                      $match: {
+                        $and: [
+                            {draw_type: 'products'},
+                            {
+                                draw_date: {
+                                    $gt : new Date(), 
+                                    //$lt: new Date(tomorrow)
+                                }
+                            }
+                        ]
+
+                      },
+                  },
+                  {
+                    $lookup: {
+                        from: "products",
+                        localField: "product_id",
+                        foreignField: "_id",
+                        as: "productInDraw",
+                    },
+                  },
+              ]).sort({'draw_date': -1}).limit(4);
 
         const game_winners = await Winner
         .aggregate([
@@ -135,6 +188,15 @@ export async function GET(request: any) {
    
            products_with_prize = await Product
                .aggregate([
+                  {
+                     $match:
+                     {
+                         $and: [ 
+                             { prize_id: { $ne: null } },  
+                             { status: "Active" }
+                        ]
+                     }
+                 },
                    {
                        $lookup: {
                            from: "prizes",
@@ -143,7 +205,7 @@ export async function GET(request: any) {
                            as: "productWithPrize",
                        },
                    }
-               ]).sort({'createdAt': -1}).limit(10);
+               ]).sort({'name': 1}).limit(4);
         }
 
 
@@ -226,7 +288,9 @@ export async function GET(request: any) {
             products_with_prize: products_with_prize,
             yalla_3_top_winner: yalla_3_top_winner,
             yalla_4_top_winner: yalla_4_top_winner,
-            yalla_6_top_winner: yalla_6_top_winner
+            yalla_6_top_winner: yalla_6_top_winner,
+            game_draws: game_draws,
+            prize_draws: prize_draws,
             }, {status: 200});
 
     } catch (error) {

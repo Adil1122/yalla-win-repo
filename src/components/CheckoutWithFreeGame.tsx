@@ -40,6 +40,7 @@ interface CheckoutWithFreeGameProps {
       vat: "",
       total_amount: 0,
       invoice_date: "",
+      draw_date: "",
       invoice_status: ""
    })
 
@@ -222,7 +223,8 @@ interface CheckoutWithFreeGameProps {
                               vat: invoice_result.vat,
                               total_amount: invoice_result.total_amount,
                               invoice_date: invoice_result.invoice_date,
-                              invoice_status: invoice_result.invoice_status
+                              invoice_status: invoice_result.invoice_status,
+                              draw_date: invoice_result.draw_date,
                            });
                            setTickets(ticket_result);
                            for(var i = 1; i <= quantity; i++) {
@@ -442,7 +444,11 @@ interface CheckoutWithFreeGameProps {
                            </div>
                            <div className="flex justify-between">
                               <div>Order Date</div>
-                              <div>{formatDate(invoice.invoice_date)}{/*28 July, 2024 8:22 PM*/}</div>
+                              <div>{formatDate(invoice.invoice_date)}</div>
+                           </div>
+                           <div className="flex justify-between">
+                              <div>Draw Date</div>
+                              <div>{formatDate(invoice.draw_date)}</div>
                            </div>
                            <div className="flex justify-between">
                               <div>Order Status</div>
@@ -468,7 +474,7 @@ interface CheckoutWithFreeGameProps {
                         <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">{game_name}</div>
                         <div className="flex flex-col px-8 lg:px-12 font-light text-sm lg:text-size-2 text-black my-4 lg:my-8 gap-6">
                            <div className="w-fit mx-auto">
-                              <img className="max-h-[100px] lg:max-h-[200px]" src="/assets/images/keychain.svg" alt="" />
+                              <img className="max-h-[100px] lg:max-h-[200px]" src={product.image} alt="" />
                            </div>
                            <div className="flex flex-col gap-2 lg:gap-4">
                               <div className="flex justify-between">

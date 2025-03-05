@@ -9,7 +9,7 @@ import Draw from "@/models/DrawModel";
 import User from "@/models/UserModel";
 import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
-import { getTimeOfTimezone, getSalesCloseTime } from "@/libs/common";
+import { getTimeOfTimezone, getSalesCloseTime, convertToDubaiTime } from "@/libs/common";
 export async function POST(request: NextRequest) {
 
   //try {
@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
       },
       {
          _id: 1,           
-         draw_date: 1      
+         date_only: 1,
+         time_only: 1     
       }
     ).sort({'draw_date': -1}).limit(1);
 
@@ -55,21 +56,22 @@ export async function POST(request: NextRequest) {
       console.log(draw[0])
       console.log(currentDateTime)
       let draw_id = draw[0]._id.toString();
-      let draw_date = draw[0].draw_date;
+      let draw_date = `${draw[0].date_only}T${draw[0].time_only}:00Z`;
       let invoiceDateObj = new Date(currentDateTime);
       let drawDateObj = new Date(draw_date);
       const [currentDatePart, currentTimePart] = currentDateTime.split("T");
 
       console.log(draw_date)
-
-      if (hours > salesCloseHours || (hours === salesCloseHours && minutes > salesCloseMinutes)) {
+      const originalDrawTimePart = draw[0].time_only; 
+      const [drawHours, drawMinutes] = originalDrawTimePart.split(":").map(Number);
+      
+      if (hours > drawHours || (hours === drawHours && minutes > drawMinutes)) {
          
          drawDateObj.setDate(drawDateObj.getDate() + 1);
-         invoiceDateObj.setDate(invoiceDateObj.getDate() + 1);
+         //invoiceDateObj.setDate(invoiceDateObj.getDate() + 1);
       }
 
       const updatedDrawDatePart = drawDateObj.toISOString().split("T")[0];
-      const originalDrawTimePart = draw_date.toISOString().split("T")[1]; 
       draw_date = `${updatedDrawDatePart}T${originalDrawTimePart}`;
 
       let updatedInvoiceDatePart = invoiceDateObj.toISOString().split("T")[0];
@@ -83,7 +85,7 @@ export async function POST(request: NextRequest) {
          product_id: product_id, 
          user_id: user._id.toString(), 
          draw_id: draw_id,
-         draw_date: new Date(draw_date),
+         draw_date: convertToDubaiTime(draw_date),
          invoice_number: invoice_number, 
          invoice_date: invoice_date, 
          vat: vat, 
