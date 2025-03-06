@@ -37,6 +37,11 @@ export const convertToDubaiTime = (dateStr: string) => {
    return new Date(utcDate.getTime() + dubaiOffset);
  };
 
+ export const drawDateHasPassed = (drawDateTime: string) => {
+   const currentDateTime = getTimeOfTimezone() + ':00.000Z';
+   return drawDateTime <= currentDateTime;
+ };
+
 export const getTimeFromTimezone = (offsetDays: number, hour: number, minute: number) => {
    const date = new Date()
 

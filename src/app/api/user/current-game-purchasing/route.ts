@@ -57,6 +57,14 @@ export async function GET(request: NextRequest) {
                     },
                   },
                   {
+                     $lookup: {
+                         from: "tickets",
+                         localField: "_id",
+                         foreignField: "invoice_id",
+                         as: "ticketInInvoice",
+                     },
+                   },
+                  {
                     $lookup: {
                         from: "draws",
                         localField: "draw_id",

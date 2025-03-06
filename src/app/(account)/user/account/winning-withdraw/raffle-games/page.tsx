@@ -3,7 +3,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { formatISODate } from '@/libs/common'
+import { formatDate, formatISODate } from '@/libs/common'
 import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default function UserAccountWinningWithdrawGames() {
@@ -122,7 +122,7 @@ export default function UserAccountWinningWithdrawGames() {
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm text-white lg:text-size-1">{winner.s_no}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.gameInWinner.length > 0 ? winner.gameInWinner[0].name : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.ticketInWinner.length > 0 ? winner.ticketInWinner[0].ticket_number : 'None'}</td>
-                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.invoiceInWinner.length > 0 && winner.invoiceInWinner[0].draw_date ? winner.invoiceInWinner[0].draw_date : 'None'}</td>
+                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.invoiceInWinner.length > 0 && winner.invoiceInWinner[0].draw_date ? formatDate(winner.invoiceInWinner[0].draw_date) : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.productInWinner.length > 0 ? winner.productInWinner[0].name : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">AED {winner.prize_amount}</td>
                         <td className="relative py-5 px-8 flex gap-2">

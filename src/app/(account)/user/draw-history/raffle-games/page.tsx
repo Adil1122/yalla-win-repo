@@ -2,7 +2,7 @@
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { formatDate, formatDateOnly, formatISODate } from '@/libs/common'
+import { drawDateHasPassed, formatDate, formatDateOnly, formatISODate } from '@/libs/common'
 import Link from 'next/link'
 import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
@@ -125,7 +125,7 @@ export default function UserDrawHistoryRaffleGame() {
                                  <img key={invoice._id + '3'} className="w-[70px] mx-auto" src={invoice.productInInvoice[0].image} alt="" />
                               </td>
                               <td key={invoice._id + '4'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{invoice.gameInInvoice[0].name}</td>
-                              <td key={invoice._id + '5'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">Announced</td>
+                              <td key={invoice._id + '5'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{drawDateHasPassed(invoice.draw_date) ? 'Announced' : 'In progress'}</td>
                               <td key={invoice._id + '7'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{invoice.invoice_number}</td>
                               <td key={invoice._id + '8'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatDateOnly(invoice.draw_date)}</td>
                               <td key={invoice._id + '9'} className="relative py-5 px-8">
