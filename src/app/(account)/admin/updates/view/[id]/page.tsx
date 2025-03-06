@@ -50,6 +50,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
       option_rumble_text: "",
       option_straight_win_price: "",
       option_rumble_win_price: "",
+      option_chance_4_correct_win_price: "",
       option_chance_3_correct_win_price: "",
       option_chance_2_correct_win_price: "",
       option_chance_1_correct_win_price: "",
@@ -66,6 +67,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
       option_rumble_text_error: "",
       option_straight_win_price_error: "",
       option_rumble_win_price_error: "",
+      option_chance_4_correct_win_price_error: "",
       option_chance_3_correct_win_price_error: "",
       option_chance_2_correct_win_price_error: "",
       option_chance_1_correct_win_price_error: "",
@@ -161,6 +163,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   option_rumble_text: content.record[0].option_rumble_text,
                   option_straight_win_price: content.record[0].option_straight_win_price,
                   option_rumble_win_price: content.record[0].option_rumble_win_price,
+                  option_chance_4_correct_win_price: content.record[0].option_chance_4_correct_win_price,
                   option_chance_3_correct_win_price: content.record[0].option_chance_3_correct_win_price,
                   option_chance_2_correct_win_price: content.record[0].option_chance_2_correct_win_price,
                   option_chance_1_correct_win_price: content.record[0].option_chance_1_correct_win_price,
@@ -177,6 +180,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                   option_rumble_text_error: "",
                   option_straight_win_price_error: "",
                   option_rumble_win_price_error: "",
+                  option_chance_4_correct_win_price_error: "",
                   option_chance_3_correct_win_price_error: "",
                   option_chance_2_correct_win_price_error: "",
                   option_chance_1_correct_win_price_error: "",
@@ -231,6 +235,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
          option_rumble_text_error: "",
          option_straight_win_price_error: "",
          option_rumble_win_price_error: "",
+         option_chance_4_correct_win_price_error: "",
          option_chance_3_correct_win_price_error: "",
          option_chance_2_correct_win_price_error: "",
          option_chance_1_correct_win_price_error: "",
@@ -288,6 +293,11 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
          err["option_chance_3_correct_win_price_error"] = "Win Price is Required";
          is_error = true;
        }
+       
+       if (record.game_name == 'Yalla 4' && record.option_chance_4_correct_win_price === "") {
+         err["option_chance_4_correct_win_price_error"] = "Win Price is Required";
+         is_error = true;
+       }
 
        if (record.game_name !== 'Yalla 6' && record.option_chance_2_correct_win_price === "") {
          err["option_chance_2_correct_win_price_error"] = "Win Price is Required";
@@ -332,6 +342,10 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
             formData.append("option_chance_2_correct_win_price", record.option_chance_2_correct_win_price);
             formData.append("option_chance_1_correct_win_price", record.option_chance_1_correct_win_price);
             formData.append("is_yalla_6", '0');
+
+            if (record.game_name == 'Yalla 4') {
+               formData.append("option_chance_4_correct_win_price", record.option_chance_4_correct_win_price);
+            }
          } else {
 
             formData.append("six_numbers_win_price", record.six_numbers_win_price.toString());
@@ -381,7 +395,7 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                <div className="cursor-pointer">
                   <FontAwesomeIcon size="xl" icon={faArrowLeft} />
                </div>
-               <Link href="/admin/updates" className="cursor-pointer text-head-3 font-medium">View Details</Link>
+               <Link href="/admin/updates" className="cursor-pointer text-head-3 font-medium">Back to updates</Link>
             </div>
             
             <div className="flex flex-col px-12 mt-12 gap-12">
@@ -552,6 +566,41 @@ export default function AdminViewMerchantDetails({ params } : {params: { id: str
                                     )}
                                  </div>
                                  <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+                                    {record.game_name == 'Yalla 4' && (
+                                       <>
+                                          <div className="flex flex-col gap-2 w-fit">
+                                             <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">4 Correct Numbers</div>
+                                             <div className="flex items-start text-darkone">
+                                                <div className="flex flex-col gap-2 justify-center items-center">
+                                                   <div className="text-size-4 font-medium whitespace-nowrap">Product Price</div>
+                                                   <div className="border border-lighttwo text-size-3 rounded">
+                                                      <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                      value={product.price}
+                                                      onChange={(e) => updateProduct({ price: e.target.value })} />
+                                                   </div>
+
+                                                   {product.price_error !== "" && (
+                                                      <span style={{ color: "red" }}>{product.price_error}</span>
+                                                   )}
+
+                                                </div>
+                                                <div className="mx-4 text-head-7">*</div>
+                                                <div className="flex flex-col gap-2 items-center">
+                                                   <div className="text-size-4 font-medium whitespace-nowrap">Win Price</div>
+                                                   <div className="border border-lighttwo text-size-3 rounded">
+                                                      <input type="text" className="w-[60px] h-[45px] border-none bg-transparent focus:outline-none focus:ring-0 ml-2"
+                                                      value={record.option_chance_4_correct_win_price}
+                                                      onChange={(e) => updateRecord({ option_chance_4_correct_win_price: e.target.value })} />
+                                                   </div>
+
+                                                   {record.option_chance_4_correct_win_price_error !== "" && (
+                                                      <span style={{ color: "red" }}>{record.option_chance_4_correct_win_price_error}</span>
+                                                   )}
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </>
+                                    )}
                                     <div className="flex flex-col gap-2 w-fit">
                                        <div className="text-theme-gradient text-size-4 font-medium whitespace-nowrap">3 Correct Numbers</div>
                                        <div className="flex items-start text-darkone">

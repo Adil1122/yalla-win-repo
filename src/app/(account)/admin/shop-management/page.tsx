@@ -235,6 +235,11 @@ export default function AdminShopManagement() {
         });
 
         if (!response.ok) {
+         if(response.status == 402) {
+            alert('Shop already exist for the given merchant or machine')
+         } else {
+            alert('Could not create a shop')
+         }
           setForm((prev) => {
             return {
               ...prev,

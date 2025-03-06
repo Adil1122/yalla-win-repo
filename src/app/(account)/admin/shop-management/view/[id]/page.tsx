@@ -9,6 +9,7 @@ import { SwitchComponent } from '@/components/SwitchComponent'
 import { get } from 'http'
 import Link from 'next/link'
 import { formatISODate } from '@/libs/common'
+import { useRouter } from 'next/navigation'
 
 type Tab = 'games' | 'products' | 'sales' | 'transaction'
 type InvoiceTab = 'invoice' | 'ticket'
@@ -321,13 +322,14 @@ export default function AdminViewShopDetails({ params } : {params: { id: string;
       getTotalRecords()
     }
 
+    const router = useRouter()
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
          {!showInvoice && (
 
             <div className="flex flex-col flex-grow">
-               <div className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
+               <div onClick={() => {router.back()}} className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
                   <div className="cursor-pointer">
                      <FontAwesomeIcon size="xl" icon={faArrowLeft} />
                   </div>

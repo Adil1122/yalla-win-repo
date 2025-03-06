@@ -14,6 +14,27 @@ export async function POST(request: Request) {
         var machine_id:any = data.get('machine_id');
         var shop_id:any = data.get('shop_id');
         var merchant: any = await User.findOne({_id: merchant_id}).select(['_id', 'city', 'country']);
+
+        if ((shop_id && shop_id !== '') || (merchant_id && merchant_id !== '')) {
+
+            let conditions = [];
+
+            if (shop_id) conditions.push({ shop_id });
+            if (merchant_id) conditions.push({ merchant_id });
+      
+            let existingMachine = null;
+            if (conditions.length > 0) {
+               existingMachine = await Machine.findOne({ $or: conditions });
+            }
+
+            if (existingMachine) {
+               return NextResponse.json(
+                  { message: "Machine already exists for the given Merchant ID or Shop ID." }, 
+                  { status: 402 }
+               );
+            }
+      }
+
         if(merchant) {
             let newDocument = {
                 merchant_id: merchant_id,

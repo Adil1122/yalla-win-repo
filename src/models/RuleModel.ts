@@ -13,6 +13,7 @@ const ruleSchema = new Schema (
         option_rumble_text: {type: String, required: false},
         option_straight_win_price: {type: Number, required: false},
         option_rumble_win_price: {type: Number, required: false},
+        option_chance_4_correct_win_price: {type: Number, required: false},
         option_chance_3_correct_win_price: {type: Number, required: false},
         option_chance_2_correct_win_price: {type: Number, required: false},
         option_chance_1_correct_win_price: {type: Number, required: false},

@@ -351,7 +351,7 @@ export default function AdminUpdatesSection() {
                                  <Link href={"updates/view/" + product._id} className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-white py-1.5 px-12 rounded-standard text-themeone text-size-4 whitespace-nowrap">View Details</Link>
                               </div>
                               <div className="flex w-full bg-white items-center justify-between px-5 py-3">
-                                 <div className="text-darkone text-head-2">{product.name}</div>
+                                 <div className="text-darkone text-head-2">{product.gameDetails[0].name}</div>
                                  <div className="text-theme-gradient text-head-2">AED {product.price}</div>
                               </div>
                            </div>

@@ -255,6 +255,14 @@ export default function DashboardSideBar() {
          });
       }
    }
+   
+   function subMenuItemClicked(item: any, child: any) {
+      if (child.href !== null) {
+         router.push(child.href);
+      }
+
+      toggleChildActive(child)
+   }
 
    function adminMenuItemClicked(item: any, index: any) {
       var temp: any = adminMenu;
@@ -271,6 +279,10 @@ export default function DashboardSideBar() {
       setAdminMenu((prev) => {
          return [...prev];
       });
+
+      if (item.href !== null) {
+         router.push(item.href);
+      }
    }
 
    const [userMenu, setUserMenu] = useState([
@@ -366,7 +378,7 @@ export default function DashboardSideBar() {
                {item.children.length > 0 && item.active == true && (
                   <div className="flex flex-col">
                   {item.children.map((child: any, childIndex: any) => (
-                     <div key={childIndex} className="flex flex-col">
+                     <div key={childIndex} className="flex flex-col" onClick={() => subMenuItemClicked(item, child)}>
                         <div className={`flex items-center ${childIndex === 0 ? "pb-5" : "py-5" } px-8 gap-6 ${childIndex !== item.children.length - 1 ? "border-b border-lighttwo" : ""}`}>
                            <div className="w-[25px]"></div>
                            <Link href={child.href} onClick={() => {toggleChildActive(child)}} className={`${child.active ? "text-themeone" : "text-darkone"} flex items-center`}>

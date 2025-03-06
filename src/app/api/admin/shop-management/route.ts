@@ -16,6 +16,27 @@ export async function POST(request: Request) {
         var machine_id:any = data.get('machine_id');
         var registeration_date:any = data.get('registeration_date');
         
+        if ((machine_id && machine_id !== '') || (merchant_id && merchant_id !== '')) {
+
+            let conditions = [];
+
+            if (merchant_id) conditions.push({ merchant_id });
+            if (machine_id) conditions.push({ machine_id });
+      
+            let existingShop = null;
+            if (conditions.length > 0) {
+               existingShop = await Shop.findOne({ $or: conditions });
+            }
+
+            if (existingShop) {
+               return NextResponse.json(
+                  { message: "Shop already exists for the given Merchant ID or Machine ID." }, 
+                  { status: 402 }
+               );
+            }
+        }
+        
+
         let newDocument : any = {
            name: name,
            location: location,
@@ -241,15 +262,23 @@ export async function GET(request: Request) {
         var search_by = searchparams.get('search_by') + '';
         var search = searchparams.get('search') + '';
 
-        var dates = getStartEndDates(schedule)
-        var start_date = dates.start_date
-        var end_date = dates.end_date
+        var start_date = new Date().toISOString().slice(0, 10)
+        var tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        var end_date = tomorrowDate.toISOString().slice(0, 10);
+
+        if(schedule === 'weekly') {
+            start_date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        }
+
+        if(schedule === 'monthly') {
+            start_date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        }
 
         var search_json = search_by === 'countries' ? 
         {country: { $regex: '.*' + search + '.*', $options: 'i' }} 
         :
         {city: { $regex: '.*' + search + '.*', $options: 'i' }}
-
+        
         const shops = await Shop
         .aggregate([
             {
@@ -261,7 +290,7 @@ export async function GET(request: Request) {
                                 $lt: new Date(end_date)
                             }
                         },
-                        search_json
+                        //search_json
                     ]
                 },
             },

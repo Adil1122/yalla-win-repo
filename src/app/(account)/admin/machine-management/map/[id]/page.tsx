@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import GoogleMap from '@/components/GoogleMap'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useRouter } from 'next/navigation'
 
 export default function AdminMachineMap({ params } : {params: { id: string; }}) {
 
@@ -36,11 +37,12 @@ export default function AdminMachineMap({ params } : {params: { id: string; }}) 
          
       }
    }
+   const router = useRouter()
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
          <div className="flex flex-col flex-grow gap-12">
-            <div className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
+            <div onClick={() => {router.back()}} className="flex items-center bg-light-background-three backdrop-blur-64 py-6 px-12 gap-6 text-white">
                <div className="cursor-pointer">
                   <FontAwesomeIcon size="xl" icon={faArrowLeft} />
                </div>

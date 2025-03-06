@@ -46,8 +46,18 @@ export async function POST(request: Request) {
         }
         //console.log(newDocument)
 
+        const existingUser = await User.findOne({ email: email });
+         if (existingUser) {
+            return NextResponse.json({
+               messge: "User email already exists ....",
+           }, {status: 402});
+         }
+
         if (machine_id && machine_id != '') {
          newDocument.machine_id = machine_id;
+        }
+        
+        if (shop_id && shop_id != '') {
          newDocument.shop_id = shop_id;
         }
 
@@ -59,13 +69,18 @@ export async function POST(request: Request) {
             }
         }
 
-        if (machine_id && machine_id !== '') {
+        if (machine_id && machine_id !== '' && shop_id && shop_id != '') {
          shopUpdate.$set.machine_id = machine_id;
          }
-        var shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+
+         var shopUpdateResult = null
+         if (shop_id && shop_id != '') {
+
+            shopUpdateResult = await Shop.updateOne({_id: shop_id}, shopUpdate);
+         }
 
         var machineUpdateResult = null
-        if (machine_id && machine_id !== '') {
+        if (machine_id && machine_id !== '' && shop_id && shop_id != '') {
 
            var machineUpdate = {
                $set: {

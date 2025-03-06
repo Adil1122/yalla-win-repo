@@ -81,6 +81,7 @@ export async function POST(request: Request) {
         var option_rumble_text:any = data.get('option_rumble_text');
         var option_straight_win_price:any = data.get('option_straight_win_price');
         var option_rumble_win_price:any = data.get('option_rumble_win_price');
+        var option_chance_4_correct_win_price:any = data.get('option_chance_4_correct_win_price');
         var option_chance_3_correct_win_price:any = data.get('option_chance_3_correct_win_price');
         var option_chance_2_correct_win_price:any = data.get('option_chance_2_correct_win_price');
         var option_chance_1_correct_win_price:any = data.get('option_chance_1_correct_win_price');
@@ -117,6 +118,7 @@ export async function POST(request: Request) {
                 option_rumble_text: option_rumble_text,
                 option_straight_win_price: option_straight_win_price,
                 option_rumble_win_price: option_rumble_win_price,
+                option_chance_4_correct_win_price: option_chance_4_correct_win_price,
                 option_chance_3_correct_win_price: option_chance_3_correct_win_price,
                 option_chance_2_correct_win_price: option_chance_2_correct_win_price,
                 option_chance_1_correct_win_price: option_chance_1_correct_win_price,

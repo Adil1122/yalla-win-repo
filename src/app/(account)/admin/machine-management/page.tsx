@@ -183,6 +183,11 @@ export default function AdminMachineManagement() {
             });
 
             if (!response.ok) {
+               if(response.status == 402) {
+                  alert('Machine already exist for the given merchant or shop')
+               } else {
+                  alert('Could not create a machine')
+               }
                setForm((prev) => {
                   return { ...prev, server_error: `HTTP error! status: ${response.status}` };
                });

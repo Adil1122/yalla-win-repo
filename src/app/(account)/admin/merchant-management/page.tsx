@@ -349,6 +349,13 @@ export default function AdminMerchantManagement() {
               server_error: `HTTP error! status: ${response.status}`,
             };
           });
+
+          if (response.status == 402){
+
+             alert('User email already exists')
+          } else {
+            alert('Merchant could not be created')
+          }
          
         } else {
           setForm((prev) => {

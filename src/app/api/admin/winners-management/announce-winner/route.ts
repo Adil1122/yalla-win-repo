@@ -222,8 +222,18 @@ const getWinners = async (records: any, inputType: string, inputValue: string, i
                const hasOneDigitMatching = isChanceMatch(parseInt(inputData), record.ticket_number, 1)
                const hasTwoDigitsMatching = isChanceMatch(parseInt(inputData), record.ticket_number, 2)
                const hasThreeDigitsMatching = isChanceMatch(parseInt(inputData), record.ticket_number, 3)
+               const hasFourDigitsMatching = isChanceMatch(parseInt(inputData), record.ticket_number, 4)
    
-               if (hasThreeDigitsMatching) {
+               if (record.GameDetails.name == 'Yalla 4' && hasFourDigitsMatching) {
+
+                  const estimatedWinAmount = record.RuleDetails.option_chance_4_correct_win_price * record.RuleDetails.product_price
+                  if (estimatedWinAmount <= maxWinAmount) {
+                     
+                     record.winning_price_multiplier = record.RuleDetails.option_chance_4_correct_win_price
+                     record.winning_match = 'chance with 4 digits'
+                     filteredResults.push(record)
+                  }
+               } else if (hasThreeDigitsMatching) {
 
                   const estimatedWinAmount = record.RuleDetails.option_chance_3_correct_win_price * record.RuleDetails.product_price
                   if (estimatedWinAmount <= maxWinAmount) {
