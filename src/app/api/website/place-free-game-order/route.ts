@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
          product_id: product_id, 
          user_id: user._id.toString(), 
          draw_id: draw_id,
-         draw_date: convertToDubaiTime(draw_date),
+         draw_date: draw_date,
          invoice_number: invoice_number, 
          invoice_date: invoice_date, 
          vat: vat, 
