@@ -8,6 +8,7 @@ import Product from "@/models/ProductModel";
 //import Draw from "@/models/DrawModel";
 import Winner from "@/models/WinnerModel";
 
+export const dynamic = "force-dynamic";
 export async function GET(request: any) {
 
    

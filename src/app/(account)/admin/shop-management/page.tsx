@@ -89,7 +89,9 @@ export default function AdminShopManagement() {
   const habdleScheduleTabChange = (tab: ScheduleTab) => {
     schedule = tab;
     setScheduleTab(tab)
-    getShopCounts()
+    getShopCounts(tab)
+
+    setPagination(1, tab)
   }
 
   var [id, setId] = useState("");
@@ -159,7 +161,6 @@ export default function AdminShopManagement() {
   }
 
   function updateForm(value: any) {
-    console.log(value);
     return setForm((prev) => {
       return { ...prev, ...value };
     });
@@ -204,7 +205,6 @@ export default function AdminShopManagement() {
       return { ...prev, ...err };
     });
 
-    console.log("is_error: ", is_error);
 
     return is_error;
   }
@@ -252,7 +252,7 @@ export default function AdminShopManagement() {
           });
         }
         setModalIsOpen(false);
-        getShopCounts();
+        getShopCounts(scheduleTab);
         
       } catch (error) {
         setForm((prev) => {
@@ -278,7 +278,7 @@ export default function AdminShopManagement() {
     getDropdownsData('merchants', '')
   }, [selectedItem])
 
-  var getShopCounts = async() => {
+  var getShopCounts = async(tab='daily') => {
     try {
       var selected_name = selectedItem !== null ? selectedItem.name : ''
       let response = await fetch('/api/admin/shop-management/shop-counts?search_by=' + searchType + '&search=' + selected_name, {
@@ -291,7 +291,7 @@ export default function AdminShopManagement() {
         setDailyShopCounts(content.daily_shop_counts)
         setWeeklyShopCounts(content.weekly_shop_counts)
         setMonthlyShopCounts(content.monthly_shop_counts)
-        getShops()
+        getShops(tab)
       }
     } catch (error) {
       
@@ -314,10 +314,8 @@ export default function AdminShopManagement() {
 
         } else {
           if(merchants_machines === 'merchants') {
-            console.log('merchants: ', content.merchants)
             setMerchants(content.merchants);
           } else {
-            console.log('machines: ', content.machines)
             setMachines(content.machines);
           }
         }
@@ -336,10 +334,10 @@ export default function AdminShopManagement() {
   var [shops, setShops] = useState<any>([])
   var [invoices, setInvoices] = useState<any>([])
 
-  var getShops = async() => {
+  var getShops = async(tab=scheduleTab) => {
     try {
         var selected_name = selectedItem !== null ? selectedItem.name : ''
-        let response = await fetch("/api/admin/shop-management?schedule=" + schedule + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
+        let response = await fetch("/api/admin/shop-management?schedule=" + tab + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
           method: 'GET',
         });
 
@@ -358,7 +356,6 @@ export default function AdminShopManagement() {
           }
           setShops(temp_shops)
           setInvoices(content.invoices)
-          console.log('temp_invoices: ', temp_invoices)
         }
 
     } catch (error) {
@@ -386,18 +383,37 @@ export default function AdminShopManagement() {
         show_pages.push(i);
     }
   }
-  console.log('pages: ', pages)
 
-  function setPagination(current_page: any) {
-    if(current_page < 1) {
-        current_page = 1;
+  function setPagination(current_page: any, tab='daily') {
+
+   var pages = [];
+   var show_pages: any = [];
+   if (tab == 'daily') {
+      totalPages = daily_shop_counts
+   }
+   if (tab == 'weekly') {
+      totalPages = weekly_shop_counts
+   }
+   if (tab == 'monthly') {
+      totalPages = monthly_shop_counts
+   }
+   
+   for(var i = 1; i <= Math.ceil(totalPages / recordsPerPage); i++) {
+      pages.push(i);
+      if(i === currentPage || i === (currentPage + 1) || i === (currentPage - 1) || i === (currentPage + 2) || i === (currentPage - 2)) {
+          show_pages.push(i);
+      }
     }
-
+    
+     if(current_page < 1) {
+        current_page = 1;
+      }
+      
     if(current_page > pages.length) {
         current_page = pages.length
     }
     skip = recordsPerPage * (current_page - 1);
-    getShops()
+    getShops(tab)
     setCurrentPage(current_page);
   }
 
@@ -618,24 +634,16 @@ export default function AdminShopManagement() {
 
                   {
                      pages.length > 0 &&
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1, scheduleTab)}>
                         <FontAwesomeIcon size="1x" icon={faChevronLeft} />
                      </div>
                   }
 
-                  {
-                     pages.map((page: any) => (
-                        show_pages.includes(page) && (
-                           page === currentPage ?
-                           <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                           :
-                           <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                        ) 
-                  ))}
+                  
 
                   {
                      pages.length > 0 &&
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
+                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1, scheduleTab)}>
                         <FontAwesomeIcon size="1x" icon={faChevronRight} />
                      </div>
                   }

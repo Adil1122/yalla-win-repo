@@ -36,7 +36,7 @@ export async function GET(request: Request) {
                     $gte : new Date(daily_start_date), 
                     $lt: new Date(end_date)
                 }},
-                search_json
+                //search_json
             ]
         }).countDocuments();
 
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
                     $gte : new Date(weekly_start_date), 
                     $lt: new Date(end_date)
                 }},
-                search_json
+                //search_json
             ]
         }).countDocuments();
 
@@ -58,7 +58,7 @@ export async function GET(request: Request) {
                     $gte : new Date(monthly_start_date), 
                     $lt: new Date(end_date)
                 }},
-                search_json
+                //search_json
             ]
         }).countDocuments();
             
