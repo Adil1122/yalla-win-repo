@@ -160,7 +160,7 @@ type InvoiceTab = 'invoice' | 'ticket';
                         </div>
                         <div className="flex flex-col px-8 lg:px-12 font-light text-sm lg:text-size-2 text-black my-4 lg:my-8 gap-6">
                            <div className="w-fit mx-auto">
-                              <img className="max-h-[100px] lg:max-h-[200px]" src="/assets/images/keychain.svg" alt="" />
+                              <img className="max-h-[100px] lg:max-h-[200px]" src={invoice[0].productInInvoice[0].image} alt="" />
                            </div>
                            <div className="flex flex-col gap-2 lg:gap-4">
                               <div className="flex justify-between">

@@ -38,7 +38,8 @@ export const convertToDubaiTime = (dateStr: string) => {
  };
 
  export const drawDateHasPassed = (drawDateTime: string) => {
-   const currentDateTime = getTimeOfTimezone() + ':00.000Z';
+   let currentDateTime = getTimeOfTimezone() + ':00.000Z';
+   drawDateTime = new Date(drawDateTime).toISOString();
    return drawDateTime <= currentDateTime;
  };
 

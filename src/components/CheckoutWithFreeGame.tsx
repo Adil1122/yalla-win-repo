@@ -179,10 +179,12 @@ interface CheckoutWithFreeGameProps {
                      for (var i = 1; i <= quantity*qty_multiple; i++) {
                         var localStorageDetails = JSON.parse(localStorage.getItem('ticket_number_' + i) + '');
                         var ticket_type = localStorage.getItem('game_type_' + i);
+                        var save_fav = localStorage.getItem('save_fav_' + i);
                         var ticket_detail = {
                            ticket_number: localStorageDetails.ticket_number + '',
                            ticket_splitted: localStorageDetails.ticket_number_splitted,
-                           ticket_type: ticket_type
+                           ticket_type: ticket_type,
+                           save_fav: save_fav,
                         }
                         ticket_details.push(ticket_detail)
                      }

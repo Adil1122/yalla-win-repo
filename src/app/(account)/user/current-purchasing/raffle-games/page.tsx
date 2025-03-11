@@ -119,7 +119,7 @@ export default function UserPurchaseRaffleGame() {
                <tbody className="divide-y divide-lightthree">
                { 
                      invoices.map((invoice: any) => (
-                        (invoice.gameInInvoice.length > 0 && invoice.productInInvoice.length > 0 && invoice.drawInInvoice.length > 0) && (
+                        (invoice.gameInInvoice.length > 0 && invoice.productInInvoice.length > 0 && invoice.drawInInvoice.length > 0 && invoice.ticketInInvoice.length > 0) && (
                         <tr key={invoice._id}>
                            <td key={invoice._id + '0'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">{invoice.s_no}</td>
                            <td key={invoice._id + '1'} className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">

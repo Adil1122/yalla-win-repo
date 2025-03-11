@@ -80,6 +80,7 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
          <div className="flex flex-grow h-full flex-col lg:rounded-standard lg:border lg:border-white lg:gap-6 px-10 py-10 bg-themeone">
             <div ref={swiperDrawRef} className="swiper-custom flex w-full">
                <div className="swiper-wrapper">
+                  {game_Draws.length > 0 && (
                   <div className="swiper-slide">
                      <div className="lg:mb-12">
                         <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-6 lg:text-head-9">Upcoming Game Draw</h2>
@@ -88,8 +89,6 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
                         )}
                      </div>
                      <div className="flex flex-col gap-3 lg:gap-12 mt-6">
-
-
                      { 
                         game_Draws.map((draw: any, index: any) => (
                         <div key={draw._id} className="flex flex-col lg:flex-row items-center lg:items-start gap-2 lg:gap-4 justify-between w-full">
@@ -117,6 +116,9 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
                      }
                      </div>
                   </div>
+                  )}
+                  {prize_Draws.length > 0 && (
+
                   <div className="swiper-slide">
                      <h2 className="text-white text-center uppercase font-noto-sans-bold text-head-9 lg:mb-12">Upcoming Mega Prize</h2>
                      <div className="flex flex-col gap-3 lg:gap-7 mt-6">
@@ -149,6 +151,7 @@ const UpcomingDraw: React.FC<UpcomingDrawProps> = ({ game_draws, prize_draws }) 
                      }
                      </div>
                   </div>
+                  )}
                </div>
             </div>
          </div>

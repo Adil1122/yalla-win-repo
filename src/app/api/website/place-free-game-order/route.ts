@@ -9,6 +9,7 @@ import Draw from "@/models/DrawModel";
 import User from "@/models/UserModel";
 import Wallet from "@/models/WalletModel";
 import mongoose from "mongoose";
+import Favourite from "@/models/FavouriteNodel";
 import { getTimeOfTimezone, getSalesCloseTime, convertToDubaiTime } from "@/libs/common";
 export async function POST(request: NextRequest) {
 
@@ -53,19 +54,21 @@ export async function POST(request: NextRequest) {
 
     if(draw && draw.length > 0) {
 
-      console.log(draw[0])
-      console.log(currentDateTime)
+      //console.log(draw[0])
+      //console.log(currentDateTime)
       let draw_id = draw[0]._id.toString();
       let draw_date = `${draw[0].date_only}T${draw[0].time_only}:00Z`;
       let invoiceDateObj = new Date(currentDateTime);
       let drawDateObj = new Date(draw_date);
       const [currentDatePart, currentTimePart] = currentDateTime.split("T");
+      console.log(currentDatePart)
+      console.log(draw[0].date_only)
 
       console.log(draw_date)
       const originalDrawTimePart = draw[0].time_only; 
       const [drawHours, drawMinutes] = originalDrawTimePart.split(":").map(Number);
       
-      if (hours > drawHours || (hours === drawHours && minutes > drawMinutes)) {
+      if (draw[0].date_only == currentDatePart && (hours > drawHours || (hours === drawHours && minutes > drawMinutes))) {
          
          drawDateObj.setDate(drawDateObj.getDate() + 1);
          //invoiceDateObj.setDate(invoiceDateObj.getDate() + 1);
@@ -108,6 +111,18 @@ export async function POST(request: NextRequest) {
          for(var i = 0; i < ticket_details.length; i++) {
                ticket_details[i]["invoice_id"] = invoiceResult._id
                ticket_details[i]["createdAt"] = currentDateTime + ":00.000Z"
+
+               var saveFav = ticket_details[i]["save_fav"];
+               if (saveFav == '1') {
+
+                  let favouriteDocument = {
+                     number: ticket_details[i]['ticket_number'],
+                     user_id: user._id.toString(), 
+                     draw_id: draw[0]._id,
+                     createdAt: created_at
+                  }
+                  await Favourite.create(favouriteDocument);
+               }
          }
 
          let ticketResult = await Ticket.insertMany(ticket_details);

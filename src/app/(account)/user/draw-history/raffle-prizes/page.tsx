@@ -2,7 +2,7 @@
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { formatISODate } from '@/libs/common'
+import { drawDateHasPassed, formatDateOnly, formatISODate } from '@/libs/common'
 import Link from 'next/link'
 import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { userAgent } from 'next/server'
@@ -132,8 +132,8 @@ export default function UserDrawHistoryRafflePrize() {
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1">
                            <img className="w-[70px] mx-auto" src={invoice.prize_image === 'None' ? "/assets/images/cap.svg" : invoice.prize_image} alt="" />
                         </td>
-                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{invoice.draw_date}</td>
-                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{invoice.invoice_status}</td>
+                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{formatDateOnly(invoice.draw_date)}</td>
+                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{drawDateHasPassed(invoice.draw_date) ? 'Announced' : 'In progress'}</td>
                         <td className="relative py-5 px-8">
                            <Link href={'/prize-invoice/' + invoice.invoice_id} className="text-themeone font-medium px-4 py-1 lg:py-3 cursor-pointer lg:px-8 text-sm lg:text-size-1 bg-white rounded mx-auto w-fit">Invoice</Link>
                         </td>

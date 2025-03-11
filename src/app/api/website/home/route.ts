@@ -16,6 +16,7 @@ export async function GET(request: any) {
         var url = new URL(request.url);
         var searchparams = new URLSearchParams(url.searchParams);
         var search = searchparams.get('search') + '';
+        var bannerType = searchparams.get('banner-type') + '';
 
         var yalla_3_obj = await Game.find({name: 'Yalla 3'}).select('_id').limit(1)
         var yalla_4_obj = await Game.find({name: 'Yalla 4'}).select('_id').limit(1)
@@ -427,7 +428,7 @@ export async function GET(request: any) {
                 } 
             }).countDocuments(); 
 
-        const home_page_banners: any = await Update.find({type: 'desktop-banners'});  
+        const home_page_banners: any = await Update.find({type: bannerType});  
 
 
             

@@ -131,6 +131,13 @@ interface TicketCardProps {
       setGameType(localStorage.getItem('game_type_' + s_no) + '');
    }
 
+   localStorage.setItem(`save_fav_${s_no}`, "0");
+
+   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const checked = event.target.checked;
+      localStorage.setItem(`save_fav_${s_no}`, checked ? "1" : "0");
+   }
+
    const validateTicketNumber = (e: any, game_name: any, index: any) => {
       console.log(e.target.value)
       console.log(game_name)
@@ -346,6 +353,11 @@ interface TicketCardProps {
                   </div>
                )
             }
+
+            <label htmlFor={`save_fav_${s_no}`} className="flex items-center gap-2 mt-4">
+               <input id={`save_fav_${s_no}`} type="checkbox" name={`save_fav_${s_no}`} value="1" className="h-5 w-5" onChange={handleChange} />
+               <span className="text-size-1 lg:text-size-3 font-light leading-6 text-black">Save as Favourite</span>
+            </label>
             
          </div>
       </div>

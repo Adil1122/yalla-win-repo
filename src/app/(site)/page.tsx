@@ -130,7 +130,7 @@ export default function Home() {
       try {
 
          let search = localStorage.getItem('yalla_search') !== null ? localStorage.getItem('yalla_search') : '';
-         let response = await fetch("api/website/home?search=" + search, {
+         let response = await fetch("api/website/home?search=" + search+"&banner-type=desktop-banners", {
             method: "GET",
             });
             const content = await response.json();
@@ -290,7 +290,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-6 lg:gap-12 lg:pr-16 lg:w-[35%]">
                {
-                  (section.game_draws.length > 0 && section.prize_draws.length > 0) &&
+                  (section.game_draws.length > 0 || section.prize_draws.length > 0) &&
                   <UpcomingDrawCard game_draws={section.game_draws} prize_draws={section.prize_draws} />
                }
             </div>

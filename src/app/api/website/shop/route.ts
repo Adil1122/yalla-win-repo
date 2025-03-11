@@ -125,6 +125,15 @@ export async function GET(request: any) {
             }
         ]).sort({'winning_date': -1}).limit(10);
 
+        game_winners.forEach(winner => {
+            if (winner.winnersWithUsers) {
+               winner.winnersWithUsers.forEach((user: any) => {
+                  delete user.password; 
+                  delete user.password_text; 
+               });
+            }
+         });
+
         const product_winners = await Winner
         .aggregate([
             {
@@ -155,6 +164,15 @@ export async function GET(request: any) {
                 }
             }
         ]).sort({'winning_date': -1}).limit(10);
+
+        product_winners.forEach(winner => {
+            if (winner.winnersWithUsers) {
+               winner.winnersWithUsers.forEach((user: any) => {
+                  delete user.password; 
+                  delete user.password_text; 
+               });
+            }
+         });
 
         var products_with_game = []
         var products_with_prize = []
