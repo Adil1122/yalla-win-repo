@@ -242,6 +242,7 @@ const getPipeline = (gameId: string, productId: string, estimatedAmount: string,
                invoice_type: 1,
                invoice_number: 1,
                user_id: 1,
+               createdAt: 1,
                "UserDetails.first_name": 1,
                "UserDetails.last_name": 1,
                "UserDetails.city": 1,
@@ -263,10 +264,13 @@ const getFilteredResults = (records: any, gameId: string, productId: string, max
 
    records.forEach((record: any) => {
       const ticketType = record.ticket_type
-      record.ticket_number = record.ticket_number.replace(/,/g, "").trim()
       const productPrice = parseInt(record.RuleDetails?.product_price) || 0
       let isValidTicket = false
-
+      
+      if (gameId && gameId !== '' && gameId !== 'null') {
+         record.ticket_number = record.ticket_number.replace(/,/g, "").trim()
+      }
+      
       let expectedAmounts: number[] = []
 
       if (record.GameDetails && record.GameDetails.name == 'Yalla 6' && record.ticket_splitted && record.ticket_splitted.length) {

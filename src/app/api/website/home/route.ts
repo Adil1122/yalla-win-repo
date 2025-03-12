@@ -7,6 +7,7 @@ import Winner from "@/models/WinnerModel";
 import Game from "@/models/GameModel";
 import mongoose from "mongoose";
 import Update from "@/models/UpdateModel";
+import Settings from "@/models/SettingsModel";
 
 export async function GET(request: any) {
 
@@ -21,6 +22,8 @@ export async function GET(request: any) {
         var yalla_3_obj = await Game.find({name: 'Yalla 3'}).select('_id').limit(1)
         var yalla_4_obj = await Game.find({name: 'Yalla 4'}).select('_id').limit(1)
         var yalla_6_obj = await Game.find({name: 'Yalla 6'}).select('_id').limit(1)
+
+        var settings = await Settings.find({}).limit(1)
 
         /*const upcoming_draws = await Draw
             .aggregate([
@@ -449,6 +452,7 @@ export async function GET(request: any) {
             prize_draws: prize_draws,
             home_page_banners: home_page_banners,
             game_winners_today: game_winners_today,
+            settings: settings[0]
             }, {status: 200});
 
     } catch (error) {

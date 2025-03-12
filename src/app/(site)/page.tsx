@@ -24,6 +24,7 @@ export default function Home() {
    const swiperDrawRef = useRef(null)
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [animationFile, setAnimationFile] = useState<string>('')
+   const [settings, setSettings] = useState<any>()
    const [iframeSrc, setIframeSrc] = useState<string>('')
 
    const checkAnimationTime = (winner: any, game: string) => {
@@ -138,6 +139,7 @@ export default function Home() {
 
             if(response.ok) {
 
+               setSettings(content.settings)
                var productsWithGame: any = Array.from(content.products_with_game);
                var productsWithPrize: any = Array.from(content.products_with_prize);
                 for(var i = 0; i < productsWithGame.length; i++) {
@@ -296,7 +298,9 @@ export default function Home() {
             </div>
          </section>
 
-         <ResultsSection yalla_3_top_winner={section.yalla_3_top_winner} yalla_4_top_winner={section.yalla_4_top_winner} yalla_6_top_winner={section.yalla_6_top_winner} game_winners={section.game_winners} product_winners={section.product_winners} />
+         {settings && settings.show_winners_web == '1' && (
+            <ResultsSection yalla_3_top_winner={section.yalla_3_top_winner} yalla_4_top_winner={section.yalla_4_top_winner} yalla_6_top_winner={section.yalla_6_top_winner} game_winners={section.game_winners} product_winners={section.product_winners} />
+         )}
          
          <section className="flex flex-col mb-6 mt-12 lg:my-12 gap-12">
             <h2 className="font-noto-sans-black text-center uppercase text-white text-head-4 lg:text-large-head">Lets get you started</h2>

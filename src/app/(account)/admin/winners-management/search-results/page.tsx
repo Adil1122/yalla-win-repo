@@ -304,9 +304,9 @@ function AdminWinnersSearchResult() {
                      {searchResults.map((result: any, index: number) => (
                         <tr key={index}>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? `${result.UserDetails[0].first_name} ${result.UserDetails[0].last_name}` : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? `${result.GameDetails.name}` + `${result.ticket_type ? ' - ' + result.ticket_type : ''}` : result.ProductDetails.name}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? `${result.GameDetails.name}` : result.ProductDetails.name}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result?.winning_amount?.length > 0 ? result.winning_amount.join(', ') : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? result.ticket_number : result.invoice_number}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game != '' ? (result.GameDetails.name == 'Yalla 6' ? result.ticket_splitted.join("") : result.ticket_number.replace(/,/g, "").trim()) : result.invoice_number}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(result.createdAt)}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].country : ''}</td>
                            <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].city : ''}</td>

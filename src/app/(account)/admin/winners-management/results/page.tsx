@@ -193,7 +193,7 @@ export default function AdminWinnerResults() {
                               {`${winner.UserDetails.first_name} ${winner.UserDetails.last_name}`}
                            </td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
-                              {winner.TicketDetails.ticket_number}
+                              {winner.GameDetails.name == 'Yalla 6' ? winner.TicketDetails.ticket_splitted.join("") : winner.TicketDetails.ticket_number.replace(/,/g, "").trim()}
                            </td>
                            <td className="whitespace-nowrap px-3 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                               {formatDate(winner.winning_date)}
@@ -235,10 +235,10 @@ export default function AdminWinnerResults() {
                )}
                
                {activeTabTwo == 'images' && (
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
                      {winnerImages.map((image: any, index: number) => (
                      <div className="" key={index}>
-                        <img src={image} alt="" />
+                        <img className="w-[200px] h-[200px] rounded-full object-cover" src={image} alt="" />
                      </div>
                      ))}
                   </div>

@@ -11,11 +11,13 @@ import { formatDate } from '@/libs/common'
 
 type Tab = 'games' | 'products'
 type WinnerType = 'shop' | 'app' | 'web'
+type ScheduleTab = "daily" | "weekly" | "monthly";
 
 export default function AdminWinnerHistory() {
 
    const [activeTab, setActiveTab] = useState<Tab>('games')
    const [activeTabTwo, setActiveTabTwo] = useState<WinnerType>('shop')
+   const [activeTabThree, setActiveTabThree] = useState<ScheduleTab>('daily')
    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
    const [currentWinners, setCurrentWinners] = useState<any>([])
    const [deleteId, setDeleteId] = useState<string>('')
@@ -29,7 +31,7 @@ export default function AdminWinnerHistory() {
 
    const getTotalRecords = async() => {
       try {
-         let response = await fetch('/api/admin/winners-management/history', {
+         let response = await fetch('/api/admin/winners-management/history?schedule='+activeTabThree, {
             method: 'OPTIONS',
          })
 
@@ -59,13 +61,19 @@ export default function AdminWinnerHistory() {
    
    useEffect(() => {
 
+      getTotalRecords()
+      setPagination(1)
+   }, [activeTabThree])
+   
+   useEffect(() => {
+
       setPagination(1)
    }, [activeTab, activeTabTwo, winnersCount])
 
-   const getWinners = async() => {
+   const getWinners = async(tab='daily') => {
       try {
          
-         let response = await fetch(`/api/admin/winners-management/history?winner_type=${activeTabTwo}&winner_sub_type=${activeTab}&skip=${skip}&limit=${recordsPerPage}`, {
+         let response = await fetch(`/api/admin/winners-management/history?winner_type=${activeTabTwo}&winner_sub_type=${activeTab}&schedule=${tab}&skip=${skip}&limit=${recordsPerPage}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -111,7 +119,7 @@ export default function AdminWinnerHistory() {
 
       skip = recordsPerPage * (current_page - 1)
 
-      getWinners()
+      getWinners(activeTabThree)
       setCurrentPage(current_page)
       
       for(var i = 1; i <= Math.ceil(totPages / recordsPerPage); i++) {
@@ -127,6 +135,7 @@ export default function AdminWinnerHistory() {
 
    const handleTabChange = (tab: Tab) => {
       setActiveTab(tab)
+      getTotalRecords()
       setCurrentPage(1)
    }
    
@@ -139,6 +148,11 @@ export default function AdminWinnerHistory() {
       setModalIsOpen(true)
       setCurrentPage(1)
       setDeleteId(id)
+   }
+
+   const handleScheduleTabChange = async (tab: ScheduleTab) => {
+
+      setActiveTabThree(tab)
    }
 
    const handleDeleteConfirmed = async () => {
@@ -180,19 +194,19 @@ export default function AdminWinnerHistory() {
                      <Menu>
                         <MenuButton className="w-full">
                            <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                              <div className="capitalize font-medium text-size-2">Daily</div>
+                              <div className="capitalize font-medium text-size-2">{activeTabThree}</div>
                               <FontAwesomeIcon size="lg" icon={faChevronDown} />
                            </div>
                         </MenuButton>
                         <MenuItems anchor="bottom" className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4">
                            <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Daily</div>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleScheduleTabChange('daily')}>Daily</div>
                            </MenuItem>
                            <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Weekly</div>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleScheduleTabChange('weekly')}>Weekly</div>
                            </MenuItem>
                            <MenuItem>
-                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5">Monthly</div>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleScheduleTabChange('monthly')}>Monthly</div>
                            </MenuItem>
                         </MenuItems>
                      </Menu>
@@ -233,7 +247,7 @@ export default function AdminWinnerHistory() {
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0]._id : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.WinnerInvoice ? winner.WinnerInvoice[0].user_id : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.GameDetails ? winner.GameDetails[0].name : ''}<br />{winner.TicketDetails ? winner.TicketDetails[0].ticket_type : ''}</td>
-                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails ? winner.TicketDetails[0].ticket_number : ''}</td>
+                              <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.TicketDetails ? (winner.GameDetails[0].name == 'Yalla 6' ? winner.TicketDetails[0].ticket_splitted.join("") : winner.TicketDetails[0].ticket_number.replace(/,/g, "").trim()) : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{winner.ProductDetails ? winner.ProductDetails[0].name : ''}</td>
                               <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(winner.winning_date)}</td>
                               <td>
