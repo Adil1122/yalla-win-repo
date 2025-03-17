@@ -6,7 +6,7 @@ import { XCircleIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { formatISODate } from '@/libs/common'
+import { formatDate, formatISODate } from '@/libs/common'
 import { faChevronLeft, faChevronRight, faCommentAlt, faDeleteLeft, faEye, faImage, faPaperPlane, faPencil, faPlus, faTimes, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default function UserAccountWinningWithdrawPrizes() {
@@ -131,7 +131,7 @@ export default function UserAccountWinningWithdrawPrizes() {
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-left">{winner.s_no}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm text-white lg:text-size-1">{winner.s_no}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.productInWinner[0].name}</td>
-                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.drawInWinner[0].draw_date}</td>
+                        <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.invoiceInWinner.length > 0 && winner.invoiceInWinner[0].draw_date ? formatDate(winner.invoiceInWinner[0].draw_date) : 'None'}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">{winner.prizeInWinner[0].name}</td>
                         <td className="whitespace-nowrap px-4 lg:py-5 lg:px-8 text-sm lg:text-size-1 text-white text-center">
                            <img className="w-[70px] mx-auto" src={winner.prizeInWinner[0].image} alt="" />

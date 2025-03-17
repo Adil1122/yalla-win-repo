@@ -60,7 +60,7 @@ type InvoiceTab = 'invoice' | 'ticket'
                   <div className={`cursor-pointer ${activeInvoiceTab === 'invoice' ? 'font-bold underline' : ''}`} onClick={() => handleInvoiceTabChange('invoice')}>Invoice</div>
                   <div className={`cursor-pointer ${activeInvoiceTab === 'ticket' ? 'font-bold underline' : ''}`} onClick={() => handleInvoiceTabChange('ticket')}>Ticket</div>
                </div>
-               <div className="bg-white w-full lg:w-1/2 mx-auto mt-4 py-4 lg:py-8">
+               <div className="bg-white w-full lg:w-2/3 mx-auto mt-4 py-4 lg:py-8">
                   {activeInvoiceTab == 'invoice' && (
                      <>
                         <div className="mx-auto w-fit">
@@ -93,9 +93,11 @@ type InvoiceTab = 'invoice' | 'ticket'
                               } AED</div>
                         </div>
                         <div className="bg-custom-purple text-black text-sm lg:text-size-3 font-light py-2 lg:py-4 mt-4">
-                           <div className="grid grid-cols-5 mx-auto w-full lg:mx-4">
+                           <div className="grid grid-cols-7 mx-auto w-full lg:mx-4">
                               <div className="text-center">Product Image</div>
                               <div className="text-center">Product Name</div>
+                              <div className="text-center">Prize Image</div>
+                              <div className="text-center">Prize Name</div>
                               <div className="text-center">Quantity</div>
                               <div className="text-center">Price</div>
                               <div className="text-center">Total Amount</div>
@@ -103,11 +105,15 @@ type InvoiceTab = 'invoice' | 'ticket'
                         </div>
                         { 
                         products.map((product: any) => (
-                           <div key={'product.product_id'} className="grid grid-cols-5 items-center mx-auto w-full lg:mx-4 mt-2 text-sm lg:text-size-3 font-light">
+                           <div key={'product.product_id'} className="grid grid-cols-7 items-center mx-auto w-full lg:mx-4 mt-2 text-sm lg:text-size-3 font-light">
                               <div className="flex items-center justify-center">
                                  <img className="max-h-[100px]" src={product.product_image} alt="" />
                               </div>
                               <div className="text-center">{product.product_name}</div>
+                              <div className="flex items-center justify-center">
+                                 <img className="max-h-[100px]" src={product.prize_image} alt="" />
+                              </div>
+                              <div className="text-center">{product.prize_name}</div>
                               <div className="text-center">{product.product_quantity}</div>
                               <div className="text-center">{product.product_price} AED</div>
                               <div className="text-center">{product.total_amount} AED</div>
@@ -143,9 +149,6 @@ type InvoiceTab = 'invoice' | 'ticket'
                         </div>
                         <div className="bg-custom-purple text-darkone font-noto-sans-black text-head-3 lg:text-big-four uppercase text-center py-2 lg:py-4 mt-4">Order Details</div>
                         <div className="flex flex-col px-6 lg:px-12 font-light text-sm lg:text-size-2 text-black my-4 lg:my-8 gap-6">
-                           <div className="w-fit mx-auto">
-                              <img className="max-h-[100px] lg:max-h-[200px]" src="/assets/images/keychain.svg" alt="" />
-                           </div>
                            <div className="flex flex-col gap-2 lg:gap-4">
                               
                               <div className="flex justify-between">
