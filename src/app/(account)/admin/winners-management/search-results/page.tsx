@@ -41,6 +41,8 @@ function AdminWinnersSearchResult() {
       amount,
       game_id: game,
       product_id: product,
+      start_date: startDateTime,
+      end_date: endDateTime,
       people_percent: peoplePercent,
       country,
       city,
@@ -175,7 +177,11 @@ function AdminWinnersSearchResult() {
                console.log('error in winner announcement api')
             } else {
                if (content.data && content.data.length) {
-                  router.push('/admin/winners-management/winners-history')
+                  if (game && game != '') {
+                     router.push('/admin/winners-management/game-winners-today')
+                  } else if (product && product != '') {
+                     router.push('/admin/winners-management/product-winners-today')
+                  }
                } else {
                   alert('No winners found matching your ticket number')
                }
@@ -236,6 +242,8 @@ function AdminWinnersSearchResult() {
          } else if (randomWinner.invoice_number) {
             setTicketNumber(randomWinner.invoice_number)
          }
+
+         setAnnounceDate(randomWinner.createdAt.split("T")[0])
    
          setModalIsOpen(false)
          setModalTwoIsOpen(true)
@@ -268,9 +276,11 @@ function AdminWinnersSearchResult() {
                      <button type="button" onClick={handleSearch} className="px-4 py-2 bg-themeone text-white rounded-md">Search</button>
                   </div>
                   <div className="w-full flex gap-3 lg:ml-auto lg:w-fit">
-                     <Link href={`/admin/winners-management/verify-results/?${queryString}`} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
-                        Verify Results
-                     </Link>
+                     {game != '' && (
+                        <Link href={`/admin/winners-management/verify-results/?${queryString}`} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
+                           Verify Results
+                        </Link>
+                     )}
                      <button type="button" onClick={handleSelectRandom} className="flex items-center border gap-3 lg:border-[3px] white-space-nowrap border-white lg:rounded-xl py-4 px-5 text-white w-full lg:w-fit ml-auto">
                         Select Random Number
                      </button>
@@ -359,7 +369,7 @@ function AdminWinnersSearchResult() {
          <Modal open={modalTwoIsOpen} onClose={() => setModalTwoIsOpen(false)}>
             <div className="flex flex-col justify-center gap-12 px-12 py-6 w-full lg:min-w-[800px]">
                <div className="flex items-center justify-between w-full">
-                  <div className="text-darkone text-head-2">Enter {game !== '' ? 'Ticket Number' : 'QR Code'}</div>
+                  <div className="text-darkone text-head-2">Announce Winner</div>
                   <div onClick={() => setModalTwoIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] rounded-full flex items-center justify-center">
                      <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
                   </div>

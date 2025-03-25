@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Modal from '@/components/modal'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { formatDate } from '@/libs/common'
 
 type Tab = 'all' | 'app' | 'web' | 'shop'
 type GameType = '' | 'straight' | 'rumble' | 'chance'
@@ -20,10 +21,12 @@ function AdminWinnersVerifyResult() {
    const [totalWinningAmount, setTotalWinningAmount] = useState<number>(0)
    const [searchResults, setSearchResults] = useState<any>([])
    const queryParams = useSearchParams()
-   const [amount, game, product, peoplePercent, country, city, area] = [
+   const [amount, game, product, startDate, endDate, peoplePercent, country, city, area] = [
       queryParams.get('amount') || '',
       queryParams.get('game_id') || '',
       queryParams.get('product_id') || '',
+      queryParams.get('start_date') || '',
+      queryParams.get('end_date') || '',
       queryParams.get('people_percent') || '',
       queryParams.get('country') || '',
       queryParams.get('city') || '',
@@ -59,20 +62,12 @@ function AdminWinnersVerifyResult() {
       setModalTwoIsOpen(true)
    }
 
-   const initSearch = async (amount: string, game: string, product: string, peoplePercent: string, country: string, city: string, area: string) => {
+   const initSearch = async () => {
       try {
          
          setIsLoading(true)
-         
-         let item = ''
 
-         if (game && game !== '') {
-            item = `game_id=${game}`
-         } else if (product && product !== '') {
-            item = `product_id=${product}`
-         }
-
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&skip=${skip}&limit=${recordsPerPage}&people_percent=${peoplePercent}&platform_type=${activeTab}&game_type=${gameType}&search=${search}`, {
+         let response = await fetch(`/api/admin/winners-management/verify-results?ticket_number=${search}&game_id=${game}&max_amount=${amount}&start_date=${startDate}&end_date=${endDate}`, {
             method: 'GET',
          })
          const content = await response.json()
@@ -90,64 +85,6 @@ function AdminWinnersVerifyResult() {
       }
 
       setIsLoading(false)
-   }
-
-   const setPagination = (current_page: number) => {
-
-      let pagess : any = []
-      let showPagess : any = []
-      let totPages = resultsCount
-  
-      if(current_page > pages.length) {
-         current_page = pages.length
-      }
-
-      if(current_page < 1) {
-         current_page = 1
-      }
-
-      skip = recordsPerPage * (current_page - 1)
-
-      initSearch(amount, game, product, peoplePercent, country, city, area)
-      setCurrentPage(current_page)
-      
-      for(var i = 1; i <= Math.ceil(totPages / recordsPerPage); i++) {
-         pagess.push(i)
-         if(i === current_page || i === (current_page + 1) || i === (current_page - 1) || i === (current_page + 2) || i === (current_page - 2)) {
-            showPagess.push(i)
-         }
-      }
-      
-      setPages(pagess)
-      setShowPages(showPagess)
-   }
-
-   const getTotalRecords = async() => {
-
-      let item = ''
-
-      if (game && game !== '') {
-         item = `game_id=${game}`
-      } else if (product && product !== '') {
-         item = `product_id=${product}`
-      }
-
-      try {
-         let response = await fetch(`/api/admin/winners-management/search-results?${item}&amount=${amount}&user_country=${country}&user_city=${city}&user_area=${area}&people_percent=${peoplePercent}&platform_type=all&game_type=&search=${search}`, {
-            method: 'OPTIONS',
-         })
-
-         var content = await response.json()
-
-         if(!response.ok) {
-
-         } else {
-            setResultsCount(content.count)
-            setTotalWinningAmount(content.sum)
-         }
-      } catch (error) {
-         console.log(error)
-      }
    }
 
    const handleWinnerSubmit = async () => {
@@ -180,7 +117,7 @@ function AdminWinnersVerifyResult() {
             } else {
 
                if (content.data && content.data.length) {
-                  router.push('/admin/winners-management/winners-history')
+                  router.push('/admin/winners-management/game-winners-today')
                } else {
                   alert('No winners found matching your ticket number')
                }
@@ -200,18 +137,14 @@ function AdminWinnersVerifyResult() {
    }
 
    const handleSearch = () => {
-      setPagination(1)
+      initSearch()
    }
 
    useEffect(() => {
 
-      getTotalRecords()
    }, [])
 
-   useEffect(() => {
-      
-      setPagination(1)
-   }, [resultsCount, activeTab, gameType])
+   const filteredResults = gameType != '' ? searchResults.filter((result: any) => result.ticket_type.toLowerCase() === gameType) : searchResults
 
    return (
       <section className="bg-gradient-to-r from-themeone to-themetwo flex-grow pb-20 flex-grow h-full">
@@ -246,13 +179,6 @@ function AdminWinnersVerifyResult() {
                </div>
             </div>
 
-            <div className="mx-12 mt-12 flex items-center w-full lg:max-w-[60%] border-[2px] border-white text-white font-bold text-size-4">
-               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'all' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('all')}>All</div>
-               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'app' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('app')}>App</div>
-               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'web' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('web')}>Web</div>
-               <div className={`md:w-1/2 w-full flex items-center justify-center whitespace-nowrap py-4 font-medium text-size-2 h-full cursor-pointer ${activeTab === 'shop' ? 'bg-white text-darkone' : 'text-white'}`} onClick={() => handleTabChange('shop')}>Shop</div>
-            </div>
-
             <div className="w-full px-12 mt-12 flex items-center">
                <div className="flex items-center gap-4">
                   <Menu>
@@ -281,11 +207,11 @@ function AdminWinnersVerifyResult() {
                <div className="flex flex-col gap-3 ml-auto text-white text-head-1 font-medium">
                   <div className="flex flex-row items-center gap-1">
                      <div>No of winners: </div>
-                     <div>{resultsCount}</div>
+                     <div>{filteredResults.length}</div>
                   </div>
                   <div className="flex flex-row items-center gap-1">
                      <div>Winning amount: </div>
-                     <div>{totalWinningAmount} AED</div>
+                     <div>{filteredResults.reduce((sum:any, result:any) => sum + (result.winning_amount || 0), 0)} AED</div>
                   </div>
                </div>
             </div>
@@ -295,58 +221,40 @@ function AdminWinnersVerifyResult() {
                   <thead>
                      <tr className="bg-white">
                         <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">User name</th>
-                        <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Game' : 'Product Name'}</th>
+                        <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Game</th>
                         <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Winning Amount</th>
-                        <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">{game !== '' ? 'Ticket No' : 'QR Code'}</th>
+                        <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Ticket</th>
+                        <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Purchase Date</th>
                         <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">Country</th>
                         <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone">City</th>
                         <th scope="col" className="w-[14%] py-5  text-sm lg:text-size-1 whitespace-nowrap font-medium text-center text-darkone rounded-tr rounded-br">Area</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-lightthree bg-light-background-three backdrop-blur-64">
-                     {searchResults.map((result: any, index: number) => (
+                     {!isLoading && filteredResults.map((result: any, index: number) => (
                         <tr key={index}>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? `${result.UserDetails[0].first_name} ${result.UserDetails[0].last_name}` : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? `${result.GameDetails.name}` + `${result.ticket_type ? ' - ' + result.ticket_type : ''}` : result.ProductDetails.name}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result?.winning_amount?.length > 0 ? result.winning_amount.join(', ') : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{game !== '' ? result.ticket_number : result.invoice_number}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].country : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].city : ''}</td>
-                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails[0].area : ''}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? `${result.UserDetails.first_name} ${result.UserDetails.last_name}` : ''}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.GameDetails.name}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.winning_amount ? result.winning_amount : ''}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center"><div>{result.ticket_number}</div> <div>{result.ticket_type}</div></td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{formatDate(result.createdAt)}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails.country : ''}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails.city : ''}</td>
+                           <td className="whitespace-nowrap lg:py-5 text-sm lg:text-size-1 text-white text-center">{result.UserDetails ? result.UserDetails.area : ''}</td>
                         </tr>
                      ))}
-                     {searchResults.length == 0 && !isLoading && (
+                     {filteredResults.length == 0 && !isLoading && (
                         <tr>
                            <td colSpan={8} className="text-center py-4 text-darkone font-medium">No results found</td>
                         </tr>
                      )}
-                     {searchResults.length == 0 && isLoading && (
+                     {isLoading && (
                         <tr>
                            <td colSpan={8} className="text-center py-4 text-darkone font-medium">Loading data. Please wait...</td>
                         </tr>
                      )}
                   </tbody>
                </table>
-               <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-                  {pages.length > 0 && (
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1)}>
-                        <FontAwesomeIcon size="1x" icon={faChevronLeft} />
-                     </div>
-                  )}
-                  {pages.map((page: any) => (
-                     showPages.includes(page) && (
-                        page === currentPage ?
-                        <div key={page} className="px-4 py-2 text-black bg-white flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                        :
-                        <div key={page} className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(page)}>{page}</div>
-                     ) 
-                  ))}
-                  {pages.length > 0 && (
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1)}>
-                        <FontAwesomeIcon size="1x" icon={faChevronRight} />
-                     </div>
-                  )}
-               </div>
             </div>
          </div>
          <Modal open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
@@ -361,7 +269,7 @@ function AdminWinnersVerifyResult() {
          <Modal open={modalTwoIsOpen} onClose={() => setModalTwoIsOpen(false)}>
             <div className="flex flex-col justify-center gap-12 px-12 py-6 w-full lg:min-w-[800px]">
                <div className="flex items-center justify-between w-full">
-                  <div className="text-darkone text-head-2">Enter {game !== '' ? 'Ticket Number' : 'QR Code'}</div>
+                  <div className="text-darkone text-head-2">Announce Winner</div>
                   <div onClick={() => setModalTwoIsOpen(false)} className="cursor-pointer bg-lighttwo w-[35px] h-[35px] rounded-full flex items-center justify-center">
                      <FontAwesomeIcon size="lg" icon={faTimes} className="text-gray-500" />
                   </div>

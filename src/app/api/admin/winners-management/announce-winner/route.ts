@@ -6,6 +6,7 @@ import TicketModel from "@/models/TicketModel"
 import GameModel from "@/models/GameModel"
 import ProductModel from "@/models/ProductModel"
 import InvoiceModel from "@/models/InvoiceModel"
+import WinnerTodayModel from "@/models/WinnerTodayModel"
 import { faBullseye } from "@fortawesome/free-solid-svg-icons"
 import { match } from "assert"
 
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       const winners = await getWinners(records, inputType, inputValue, inputData, parseInt(maxWinAmount), dateAnnounced)
       
       if (winners.length) {
-         await insertWinners(winners, inputType, dateAnnounced)
+         await insertWinners(winners, inputType, inputValue, dateAnnounced, inputData)
       }
       
       return NextResponse.json({message: winners.length ? 'winners created successfully' : 'no winners found', data: winners, records: records}, {status: 200})
@@ -368,24 +369,7 @@ const isChanceMatch = (givenNumber: number, ticketNumber: number, noOfDigits: nu
    const givenStr = givenNumber.toString()
    const ticketStr = ticketNumber.toString()
 
-   const givenLastDigits = givenStr.slice(-noOfDigits)
-   const ticketLastDigits = ticketStr.slice(-noOfDigits)
-
-   if (givenLastDigits !== ticketLastDigits) {
-      return false
-   }
-
-   const givenRemaining = givenStr.slice(0, -noOfDigits).split("")
-   const ticketRemaining = ticketStr.slice(0, -noOfDigits).split("")
-
-   return ticketRemaining.every(digit => {
-      const index = givenRemaining.indexOf(digit)
-      if (index !== -1) {
-         givenRemaining.splice(index, 1)
-         return true
-      }
-      return false
-   })
+   return givenStr.slice(-noOfDigits) === ticketStr.slice(-noOfDigits)
 }
 
 const countMatchingSets = (firstArray: string[], secondArray: string[]): number => {
@@ -404,7 +388,7 @@ const splitIntoSixPairs = (inputNumber: string): string[] => {
    return result
 }
 
-const insertWinners = async (winners: any, inputType: string, dateAnnounced: string) => {
+const insertWinners = async (winners: any, inputType: string, inputValue: string, dateAnnounced: string, inputData: string) => {
 
    for (const winner of winners) {
 
@@ -430,6 +414,9 @@ const insertWinners = async (winners: any, inputType: string, dateAnnounced: str
    
       await WinnerModel.create(winnerData)
    }
+
+   const winnerTodayData : any = getWinnerTodayDataFormated(inputType, inputValue, dateAnnounced, inputData)
+   await WinnerTodayModel.create(winnerTodayData)
 }
 
 const getWinnerDataFormated = (winner: any, inputType: string, date: string) => {
@@ -461,6 +448,26 @@ const getWinnerDataFormated = (winner: any, inputType: string, date: string) => 
          invoiceId: winner._id,
          amountWithdrawn: 0,
          platformType: 'shop'
+      }
+   }
+
+   return data
+}
+
+const getWinnerTodayDataFormated = (inputType: string, inputValue: string, date: string, winningNumber: string) => {
+
+   let data
+   if (inputType == 'game') {
+      data = {
+         game_id: inputValue,
+         winning_date: date,
+         winning_number: winningNumber
+      }
+   } else if (inputType == 'product') {
+      data = {
+         product_id: inputValue,
+         winning_date: date,
+         winning_number: winningNumber
       }
    }
 
