@@ -302,7 +302,7 @@ export async function GET(request: Request) {
                     as: "merchantWithShop",
                 }
             }
-        ]).sort({'registeration_date': -1}).skip(skip).limit(limit);
+        ]).sort({'registeration_date': -1});
 
         if(shops && shops.length > 0) {
             var merchant_ids = [];

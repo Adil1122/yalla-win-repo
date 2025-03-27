@@ -91,7 +91,8 @@ export default function AdminShopManagement() {
     setScheduleTab(tab)
     getShopCounts(tab)
 
-    setPagination(1, tab)
+    //setPagination(1, tab)
+    getShops(tab)
   }
 
   var [id, setId] = useState("");
@@ -337,7 +338,7 @@ export default function AdminShopManagement() {
   var getShops = async(tab=scheduleTab) => {
     try {
         var selected_name = selectedItem !== null ? selectedItem.name : ''
-        let response = await fetch("/api/admin/shop-management?schedule=" + tab + '&skip=' + skip + '&limit=' + recordsPerPage + '&search_by=' + searchType + '&search=' + selected_name, {
+        let response = await fetch("/api/admin/shop-management?schedule=" + tab + '&search_by=' + searchType + '&search=' + selected_name, {
           method: 'GET',
         });
 
@@ -625,30 +626,8 @@ export default function AdminShopManagement() {
               </tr>
               ))
             }
-
-
-
             </tbody>
           </table>
-          <div className="font-poppins-medium mt-6 ml-auto text-size-2 bg-light-background-three backdrop-blur-64 flex flex-row w-fit border-[2px] border-white rounded text-white divide-x divide-white">
-
-                  {
-                     pages.length > 0 &&
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage - 1, scheduleTab)}>
-                        <FontAwesomeIcon size="1x" icon={faChevronLeft} />
-                     </div>
-                  }
-
-                  
-
-                  {
-                     pages.length > 0 &&
-                     <div className="px-4 py-2 flex items-center justify-center cursor-pointer" onClick={() => setPagination(currentPage + 1, scheduleTab)}>
-                        <FontAwesomeIcon size="1x" icon={faChevronRight} />
-                     </div>
-                  }
-
-          </div>
         </div>
       </div>
       <Modal open={modalIsOpen} onClose={() => setModalIsOpen(false)}>

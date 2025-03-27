@@ -117,6 +117,7 @@ const getPipeline = (inputType: string, inputValue: string, inputData: string) =
                "InvoiceDetails.product_id": 1,
                "InvoiceDetails.invoice_number": 1,
                "InvoiceDetails.draw_id": 1,
+               "InvoiceDetails.platform": 1,
                "InvoiceDetails._id": 1,
                "UserDetails.first_name": 1,
                "UserDetails.last_name": 1,
@@ -159,6 +160,7 @@ const getPipeline = (inputType: string, inputValue: string, inputData: string) =
                _id: 1,
                invoice_type: 1,
                invoice_number: 1,
+               platform: 1,
                draws: 1,
                cart_product_details: 1,
                user_id: 1,
@@ -434,7 +436,7 @@ const getWinnerDataFormated = (winner: any, inputType: string, date: string) => 
          userName: `${winner.UserDetails.first_name} ${winner.UserDetails.last_name}`,
          invoiceId: winner.InvoiceDetails._id,
          amountWithdrawn: 0,
-         platformType: 'shop'
+         platformType: winner.InvoiceDetails.platform == 'merchant' ? 'shop' : winner.InvoiceDetails.platform
       }
    } else if (inputType == 'product') {
       data = {
@@ -447,7 +449,7 @@ const getWinnerDataFormated = (winner: any, inputType: string, date: string) => 
          userName: `${winner.UserDetails.first_name} ${winner.UserDetails.last_name}`,
          invoiceId: winner._id,
          amountWithdrawn: 0,
-         platformType: 'shop'
+         platformType: winner.platform == 'merchant' ? 'shop' : winner.platform
       }
    }
 
