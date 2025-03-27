@@ -7,13 +7,19 @@ export async function GET(request: Request) {
    try {
         await connectMongoDB()
 
-        const pipeline: PipelineStage[] = getPipeline()
-        const winners = await WinnerTodayModel.aggregate(pipeline)
+         const today = new Date();
+         today.setUTCHours(0, 0, 0, 0); // Start of today in UTC
+         const tomorrow = new Date(today);
+         tomorrow.setUTCDate(today.getUTCDate() + 1); // Start of tomorrow in UTC
 
-        return NextResponse.json({
-            message: "Query successful ....",
-            items: winners
-        }, {status: 200})
+         const pipeline: PipelineStage[] = getPipeline(today, tomorrow)
+         const winners = await WinnerTodayModel.aggregate(pipeline)
+
+         return NextResponse.json({
+               message: "Query successful ....",
+               items: winners,
+               date: today + ":" + tomorrow
+         }, {status: 200})
 
    } catch (error) {
       console.log(error)
@@ -24,12 +30,8 @@ export async function GET(request: Request) {
    }
 }
 
-const getPipeline = (): PipelineStage[] => {
-   const today = new Date();
-   today.setUTCHours(0, 0, 0, 0); // Start of today in UTC
-   const tomorrow = new Date(today);
-   tomorrow.setUTCDate(today.getUTCDate() + 1); // Start of tomorrow in UTC
-
+const getPipeline = (today: any, tomorrow: any): PipelineStage[] => {
+   
    return [
       {
          $match: {
