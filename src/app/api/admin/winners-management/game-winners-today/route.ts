@@ -15,11 +15,21 @@ export async function GET(request: Request) {
          const pipeline: PipelineStage[] = getPipeline(today, tomorrow)
          const winners = await WinnerTodayModel.aggregate(pipeline)
 
-         return NextResponse.json({
+         const response = NextResponse.json(
+            {
                message: "Query successful ....",
                items: winners,
-               date: today + ":" + tomorrow
-         }, {status: 200})
+               date: today + ":" + tomorrow,
+            },
+            { status: 200 }
+         );
+   
+         // Disable caching
+         response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+         response.headers.set("Pragma", "no-cache");
+         response.headers.set("Expires", "0");
+   
+         return response;
 
    } catch (error) {
       console.log(error)
