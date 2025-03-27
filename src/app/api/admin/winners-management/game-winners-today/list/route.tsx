@@ -3,7 +3,7 @@ import connectMongoDB from "@/libs/mongoosdb"
 import mongoose, { PipelineStage } from "mongoose"
 import Winner from "@/models/WinnerModel"
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
    try {
         await connectMongoDB()
 

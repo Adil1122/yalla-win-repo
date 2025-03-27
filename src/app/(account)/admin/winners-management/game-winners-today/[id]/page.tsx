@@ -15,7 +15,7 @@ function AdminGameWinnersList({ params } : any) {
     const getWinnersList = async () => {
         try {
             let response = await fetch(`/api/admin/winners-management/game-winners-today/list?game=${params.id}`, {
-                method: 'GET',
+                method: 'POST',
             })
 
             var content = await response.json()
