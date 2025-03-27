@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { formatDate } from '@/libs/common'
 import Modal from '@/components/modal'
+import axios from 'axios'
 
 function AdminGameWinnersToday() {
     const router = useRouter()
@@ -14,17 +15,16 @@ function AdminGameWinnersToday() {
     
     const getWinnersToday = async () => {
         try {
-            let response = await fetch(`/api/admin/winners-management/game-winners-today`, {
+            let response = await axios(`/api/admin/winners-management/game-winners-today`, {
                 method: 'GET',
-            })
-
-            var content = await response.json()
-
-            if(!response.ok) {
-
-            } else {
-                setWinners(content.items)
-            }
+                headers: {
+                    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            });
+            
+            setWinners(response.data.items);
         } catch (error) {
             console.log(error)
         }
