@@ -16,7 +16,7 @@ function AdminGameWinnersToday() {
     const getWinnersToday = async () => {
         try {
             let response = await axios(`/api/admin/winners-management/game-winners-today`, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
                     "Pragma": "no-cache",
