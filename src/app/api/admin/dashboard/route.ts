@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectMongoDB from "@/libs/mongoosdb";
 import Invoice from "@/models/InvoiceModel";
+import Game from "@/models/GameModel";
 import { getGraphResult, getStartEndDates } from "@/libs/common";
 import User from "@/models/UserModel";
 
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
       var invoice_type: any = searchparams.get('invoice_type') + '';
       var schedule: any = searchparams.get('schedule') + '';
       var search_by = searchparams.get('search_by') + '';
+      var game_type = searchparams.get('game_type') + '';
       var search = searchparams.get('search') + '';
 
       var dates = getStartEndDates(schedule)
@@ -41,6 +43,13 @@ export async function GET(request: Request) {
          },
          { invoice_type: invoice_type }
       ];
+
+      if (invoice_type === 'game' && game_type !== 'All') {
+         const game = await Game.findOne({ name: game_type }).select('_id');
+         if (game) {
+            queryConditions.push({ game_id: game._id });
+         }
+      }
 
       if (Object.keys(search_json).length > 0) {
          queryConditions.push(search_json);

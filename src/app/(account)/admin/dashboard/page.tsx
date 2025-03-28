@@ -18,15 +18,18 @@ export default function AdminDashboard() {
    const [activeTabTwo, setActiveTabTwo] = useState<TabTwo>('game')
    const [selectedItem, setSelectedItem] = useState<{ id: number; name: string } | null>(null)
    const [searchType, setSearchType] = useState<'cities' | 'countries'>('countries')
+   const [game, setGame] = useState<string>('All')
    var invoice_type = 'prize'
    var platform = 'app'
    var schedule = 'daily'
+   var game_type = 'All'
    const [scheduleTab, setScheduleTab] = useState('daily');
 
    const handleTabChange = (tab: Tab) => {
       invoice_type = activeTabTwo
       platform = tab
       schedule = scheduleTab
+      game_type = game
       setActiveTab(tab)
       getGraphData()
    }
@@ -35,7 +38,17 @@ export default function AdminDashboard() {
       invoice_type = tab
       platform = activeTab
       schedule = scheduleTab
+      game_type = game
       setActiveTabTwo(tab)
+      getGraphData()
+   }
+
+   const handleGameChange = (gamee: string) => {
+      setGame(gamee)
+      game_type = gamee
+      schedule = scheduleTab
+      invoice_type = activeTabTwo
+      platform = activeTab
       getGraphData()
    }
 
@@ -48,6 +61,7 @@ export default function AdminDashboard() {
       schedule = scheduleTab
       invoice_type = activeTabTwo
       platform = activeTab
+      game_type = game
       getGraphData()
    }, [selectedItem])
 
@@ -56,7 +70,7 @@ export default function AdminDashboard() {
    async function getGraphData() {
       try {
          var selected_name = selectedItem !== null ? selectedItem.name : ''
-         let response = await fetch('/api/admin/dashboard?invoice_type=' + invoice_type + '&schedule=' + schedule + '&platform=' + platform + '&search_by=' + searchType + '&search=' + selected_name, {
+         let response = await fetch('/api/admin/dashboard?invoice_type=' + invoice_type + '&schedule=' + schedule + '&game_type=' + game_type + '&platform=' + platform + '&search_by=' + searchType + '&search=' + selected_name, {
             method: 'GET',
          });
          var content = await response.json()
@@ -97,6 +111,7 @@ export default function AdminDashboard() {
       schedule = scheduleTab
       invoice_type = activeTabTwo
       platform = activeTab
+      game_type = game
     }
    
     const handleMenuItemClick = (event: any) => {
@@ -107,6 +122,7 @@ export default function AdminDashboard() {
       schedule = tab;
       invoice_type = activeTabTwo
       platform = activeTab
+      game_type = game
       setScheduleTab(tab)
       getGraphData()
     }
@@ -186,37 +202,74 @@ export default function AdminDashboard() {
                   <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white cursor-pointer" style={{display: 'none'}}>
                      <div className="capitalize font-medium text-size-2 whitespace-nowrap">View Details</div>
                   </div>
-                  <div className="w-full lg:w-fit">
-                  <Menu>
-                     <MenuButton className="w-full">
-                        <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
-                           <div className="capitalize font-medium text-size-2">
-                           {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
+                  <div className="w-full flex justify-end gap-4">
+                     <Menu>
+                        <MenuButton className="w-fit">
+                           <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                              <div className="capitalize font-medium text-size-2">
+                              {scheduleTab[0].toUpperCase() + scheduleTab.slice(1)}
+                              </div>
+                              <FontAwesomeIcon size="lg" icon={faChevronDown} />
                            </div>
-                           <FontAwesomeIcon size="lg" icon={faChevronDown} />
-                        </div>
-                     </MenuButton>
-                     <MenuItems
-                        anchor="bottom"
-                        className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
-                     >
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
-                           Daily
-                           </div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
-                           Weekly
-                           </div>
-                        </MenuItem>
-                        <MenuItem>
-                           <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
-                           Monthly
-                           </div>
-                        </MenuItem>
-                     </MenuItems>
-                  </Menu>
+                        </MenuButton>
+                        <MenuItems
+                           anchor="bottom"
+                           className="w-[110px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                        >
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('daily')}>
+                              Daily
+                              </div>
+                           </MenuItem>
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('weekly')}>
+                              Weekly
+                              </div>
+                           </MenuItem>
+                           <MenuItem>
+                              <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => habdleScheduleTabChange('monthly')}>
+                              Monthly
+                              </div>
+                           </MenuItem>
+                        </MenuItems>
+                     </Menu>
+                     {activeTabTwo == 'game' && (
+                        <Menu>
+                           <MenuButton className="w-fit">
+                              <div className="flex items-center border gap-6 lg:border-[3px] border-white lg:rounded-xl py-4 px-5 text-white">
+                                 <div className="capitalize font-medium text-size-2">
+                                 {game}
+                                 </div>
+                                 <FontAwesomeIcon size="lg" icon={faChevronDown} />
+                              </div>
+                           </MenuButton>
+                           <MenuItems
+                              anchor="bottom"
+                              className="w-[140px] bg-white py-2 lg:py-4 rounded-lg mt-[2px] px-4"
+                           >
+                              <MenuItem>
+                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleGameChange('All')}>
+                                 All
+                                 </div>
+                              </MenuItem>
+                              <MenuItem>
+                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleGameChange('Yalla 3')}>
+                                 Yalla 3
+                                 </div>
+                              </MenuItem>
+                              <MenuItem>
+                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleGameChange('Yalla 4')}>
+                                 Yalla 4
+                                 </div>
+                              </MenuItem>
+                              <MenuItem>
+                                 <div className="text-size-2 text-darkone hover:text-themeone cursor-pointer py-1.5" onClick={() => handleGameChange('Yalla 6')}>
+                                 Yalla 6
+                                 </div>
+                              </MenuItem>
+                           </MenuItems>
+                        </Menu>
+                     )}
                   </div>
                </div>
                {
